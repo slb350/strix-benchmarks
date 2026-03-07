@@ -4,8 +4,8 @@ const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout title="Home" activePage="home">
   <div class="hero fade-up">
-    <h1>Strix Benchmarks</h1>
-    <p class="subtitle">llama.cpp on AMD Strix Halo &mdash; the only comprehensive multi-backend benchmark suite for gfx1151</p>
+    <h1>Local LLM benchmarks on AMD Strix Halo</h1>
+    <p class="subtitle">The only comprehensive multi-backend benchmark suite for gfx1151 &mdash; comparing RADV, AMDVLK, and ROCm across performance, creative writing, and coding tasks.</p>
     <span class="hardware-tag">Ryzen AI MAX+ 395 &bull; Radeon 8060S &bull; 128GB UMA &bull; RDNA 3.5</span>
   </div>
 
@@ -15,22 +15,22 @@ const base = import.meta.env.BASE_URL;
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
-      <div class="value pink">3</div>
-      <div class="label">Vulkan / ROCm backends</div>
+      <div class="value">3</div>
+      <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value purple">20+</div>
+      <div class="value">20+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
-      <div class="value yellow">5</div>
+      <div class="value">5</div>
       <div class="label">Benchmark suites</div>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <h2>Why This Matters</h2>
+  <h2>Why this matters</h2>
   <div class="card fade-up">
     <p>AMD's Strix Halo APU pairs an RDNA 3.5 iGPU (gfx1151) with 128GB of unified memory, making it one of the most interesting platforms for running large language models locally. But benchmark data for this hardware is <strong>almost nonexistent</strong>.</p>
     <p>This site provides the missing data: head-to-head comparisons of <strong>RADV vs AMDVLK vs ROCm</strong> on identical hardware, across performance benchmarks, creative writing evaluation, and coding tasks.</p>
@@ -51,44 +51,44 @@ const base = import.meta.env.BASE_URL;
     </table>
   </div>
 
-  <h2>Three Backends, One GPU</h2>
+  <h2>Three backends, one GPU</h2>
   <div class="stats-grid fade-up">
     <div class="card">
-      <h3 style="color: var(--neon-cyan);">RADV</h3>
+      <h3>RADV</h3>
       <p>Mesa's open-source Vulkan driver. <strong>Best overall</strong> since b8119 MMQ fix. 25% pp boost on Qwen3-30B. Recommended default.</p>
     </div>
     <div class="card">
-      <h3 style="color: var(--neon-pink);">AMDVLK</h3>
+      <h3>AMDVLK</h3>
       <p>AMD's open-source Vulkan driver. Best for GPT-OSS-120B prompt processing. Good stability for production use.</p>
     </div>
     <div class="card">
-      <h3 style="color: var(--neon-purple);">ROCm</h3>
+      <h3>ROCm</h3>
       <p>AMD's compute stack via TheRock nightly. Requires <code>-mmp 0</code>. Best for some dense models (GLM-4.7, Qwen3.5-27B).</p>
     </div>
   </div>
 
-  <h2>Champion Model</h2>
-  <div class="card fade-up" style="border-color: rgba(255, 215, 0, 0.3);">
-    <h3 style="color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);">Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></h3>
-    <p>Perfect scores across the board: <strong>30/30 romance</strong>, <strong>10/10 coding</strong> in just 12 seconds. 1055 pp / 75 tg on RADV. Q6_K quant at only 23 GiB &mdash; fits easily in VRAM with room to spare.</p>
+  <h2>Champion model</h2>
+  <div class="card fade-up">
+    <h3>Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></h3>
+    <p>Perfect scores across the board: <strong>30/30 creative writing</strong>, <strong>10/10 coding</strong> in just 12 seconds. 1055 pp / 75 tg on RADV. Q6_K quant at only 23 GiB &mdash; fits easily in VRAM with room to spare.</p>
   </div>
 
-  <h2>Explore Results</h2>
+  <h2>Explore results</h2>
   <div class="stats-grid fade-up">
     <a href={`${base}performance/`} class="stat-card" style="text-decoration: none;">
       <div class="value">1424</div>
       <div class="label">Peak pp512 t/s</div>
     </a>
     <a href={`${base}creative-writing/`} class="stat-card" style="text-decoration: none;">
-      <div class="value pink">30/30</div>
-      <div class="label">Best romance score</div>
+      <div class="value">30/30</div>
+      <div class="label">Best writing score</div>
     </a>
     <a href={`${base}coding/`} class="stat-card" style="text-decoration: none;">
-      <div class="value purple">10/10</div>
+      <div class="value">10/10</div>
       <div class="label">Perfect coding (12s)</div>
     </a>
     <a href={`${base}quantization/`} class="stat-card" style="text-decoration: none;">
-      <div class="value yellow">AesSedai</div>
+      <div class="value">AesSedai</div>
       <div class="label">vs Unsloth quants</div>
     </a>
   </div>

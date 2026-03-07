@@ -16,18 +16,16 @@ const base = import.meta.env.BASE_URL;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content={description} />
-  <meta name="theme-color" content="#0a0a1a" />
+  <meta name="theme-color" content="#FAFAF8" />
   <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   <title>{title} | Strix Benchmarks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 <body>
-  <div class="scanlines"></div>
-
   <nav>
     <div class="container">
-      <a href={`${base}`} class="nav-brand">Strix Bench</a>
+      <a href={`${base}`} class="nav-brand">Strix Benchmarks</a>
       <button class="nav-hamburger" aria-label="Toggle menu">&#9776;</button>
       <ul class="nav-links">
         <li><a href={`${base}`} class={activePage === 'home' ? 'active' : ''}>Home</a></li>
@@ -55,4 +53,3 @@ const base = import.meta.env.BASE_URL;
   </script>
 </body>
 </html>
-

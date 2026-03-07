@@ -26,11 +26,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">35B-A3B pp (RADV)</td><td class="best">832 t/s</td><td>795 t/s</td></tr>
         <tr><td class="model-name">35B-A3B tg (AMDVLK)</td><td class="best">53 t/s</td><td>48 t/s</td></tr>
         <tr><td class="model-name">35B-A3B Coding</td><td class="best">10/10 (158s)</td><td>10/10 (228s)</td></tr>
-        <tr><td class="model-name">35B-A3B Romance</td><td class="best">~25-26/30</td><td>~24/30</td></tr>
+        <tr><td class="model-name">35B-A3B Creative Writing</td><td class="best">~25-26/30</td><td>~24/30</td></tr>
         <tr><td class="model-name">35B-A3B Size</td><td>21 GiB</td><td class="best">19 GiB</td></tr>
         <tr><td class="model-name">122B-A10B pp (RADV)</td><td>259 t/s</td><td>TBD (Mar 5 quant)</td></tr>
         <tr><td class="model-name">122B-A10B Coding</td><td>10/10 (415s)</td><td>TBD</td></tr>
-        <tr><td class="model-name">122B-A10B Romance</td><td class="best">~28/30</td><td>TBD</td></tr>
+        <tr><td class="model-name">122B-A10B Creative Writing</td><td class="best">~28/30</td><td>TBD</td></tr>
       </tbody>
     </table>
   </div>
@@ -41,7 +41,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <h3>The Unsloth MXFP4 Bug</h3>
   <div class="insight danger fade-up">
-    <p><strong>Critical bug found and fixed (2026-02-27):</strong> Unsloth's UD-Q4_K_XL was applying MXFP4 quantization to attention tensors by mistake. This caused coding to drop from 10/10 to 8/10 (TTL bugs from corrupted attention weights). The fix restored coding to 10/10 but romance quality remained slightly below AesSedai (~24 vs ~25-26/30).</p>
+    <p><strong>Critical bug found and fixed (2026-02-27):</strong> Unsloth's UD-Q4_K_XL was applying MXFP4 quantization to attention tensors by mistake. This caused coding to drop from 10/10 to 8/10 (TTL bugs from corrupted attention weights). The fix restored coding to 10/10 but creative writing quality remained slightly below AesSedai (~24 vs ~25-26/30).</p>
   </div>
 
   <div class="divider"></div>
@@ -53,14 +53,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="stats-grid fade-up">
     <div class="card">
-      <h3 style="color: var(--neon-green);">QAT-Trained MXFP4</h3>
+      <h3>QAT-Trained MXFP4</h3>
       <p>Models trained with quantization-aware training (like GPT-OSS-120B) <strong>outperform standard quants</strong>. The model learned to compensate for reduced precision during training.</p>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">GPT-OSS-120B MXFP4: 661 pp, 53 tg &mdash; excellent for 59 GiB</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">GPT-OSS-120B MXFP4: 661 pp, 53 tg &mdash; excellent for 59 GiB</p>
     </div>
     <div class="card">
-      <h3 style="color: var(--neon-pink);">Post-Hoc MXFP4</h3>
+      <h3>Post-Hoc MXFP4</h3>
       <p>Applying MXFP4 to a BF16 model after training <strong>underperforms standard quants</strong> like Q4_K_M. The precision loss isn't compensated for.</p>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">Bad for Qwen3.5 MoE &mdash; corrupted attention weights before fix</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Bad for Qwen3.5 MoE &mdash; corrupted attention weights before fix</p>
     </div>
   </div>
 
@@ -132,6 +132,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <div class="insight fade-up">
-    <p><strong>This is an architecture/stop-condition issue</strong>, not quant-dependent. The romance bench (shorter output) completes cleanly on all quants. The prose bench's longer output requirement triggers degeneration. Notably, the larger Qwen3.5-122B-A10B had the same issue but it was <strong>fixed in llama.cpp b8182</strong> (likely the M-RoPE kv-cache shift fix).</p>
+    <p><strong>This is an architecture/stop-condition issue</strong>, not quant-dependent. The short story bench (shorter output) completes cleanly on all quants. The prose bench's longer output requirement triggers degeneration. Notably, the larger Qwen3.5-122B-A10B had the same issue but it was <strong>fixed in llama.cpp b8182</strong> (likely the M-RoPE kv-cache shift fix).</p>
   </div>
 </BaseLayout>
