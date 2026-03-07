@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Creative Writing" activePage="creative" description="Creative writing benchmark results for local LLMs on AMD Strix Halo">
+  <div class="page-header fade-up">
+    <h1>Creative Writing</h1>
+    <p class="description">Two benchmark suites test creative writing quality: a short story generator scored on narrative quality, and a single-chapter style adherence test scored against a human reference. These go beyond speed &mdash; they evaluate actual output quality.</p>
+  </div>
+
+  <h2>Short Story (2,000 words)</h2>
+  <div class="card fade-up">
+    <p>Generates a ~2,000-word short story with specific narrative requirements: character setup, inciting event, conflict, emotional vulnerability, and a closing hook. Scored /30 across 6 quality categories including voice, pacing, sensory detail, dialogue, and emotional depth.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Backend</th>
+          <th data-type="number">Words</th>
+          <th data-type="number">Time</th>
+          <th data-type="number">Speed (w/s)</th>
+          <th data-type="number">Quality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></td><td>RADV</td><td>2203</td><td>48s</td><td class="best">46</td><td class="best">30/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B AesSedai-Q4 (b8182)</td><td>AMDVLK</td><td>1704</td><td>282s</td><td>6.0</td><td class="best">28/30</td></tr>
+        <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>AMDVLK</td><td>2384</td><td>87s</td><td>27</td><td>26/30</td></tr>
+        <tr><td class="model-name">Ling-Flash-2.0</td><td>RADV</td><td>2197</td><td>124s</td><td>18</td><td>26/30</td></tr>
+        <tr><td class="model-name">Ministral-3-14B-Instruct</td><td>AMDVLK</td><td>2318</td><td>205s</td><td>11</td><td>26/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B AesSedai-Q4</td><td>AMDVLK</td><td>2133</td><td>88s</td><td>24</td><td>25/30</td></tr>
+        <tr><td class="model-name">Devstral-2-123B</td><td>RADV</td><td>2164</td><td>1108s</td><td>2</td><td>25/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B UD-Q4_K_XL</td><td>RADV</td><td>2272</td><td>410s</td><td>5.5</td><td>25/30</td></tr>
+        <tr><td class="model-name">Nemotron-3-Nano-30B</td><td>AMDVLK</td><td>2000</td><td>60s</td><td>33</td><td>24/30</td></tr>
+        <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>RADV</td><td>2045</td><td>161s</td><td>13</td><td>24/30</td></tr>
+        <tr><td class="model-name">Kimi-Linear-48B Q5_K_M</td><td>AMDVLK</td><td>1833</td><td>54s</td><td>34</td><td>23/30</td></tr>
+        <tr><td class="model-name">Magistral-Small-2509</td><td>AMDVLK</td><td>861</td><td>138s</td><td>6</td><td>21/30</td></tr>
+        <tr><td class="model-name">Solar-Open-100B</td><td>RADV</td><td>4506</td><td>246s</td><td>18</td><td>21/30</td></tr>
+        <tr><td class="model-name">GPT-OSS-120B</td><td>ROCm</td><td>2467</td><td>101s</td><td>24</td><td>20/30</td></tr>
+        <tr><td class="model-name">Mistral-Large-2411</td><td>AMDVLK</td><td>1223</td><td>669s</td><td>1.8</td><td>20/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-9B Q8_0</td><td>RADV</td><td>1787</td><td>118s</td><td>15</td><td>19/30</td></tr>
+        <tr><td class="model-name">Devstral-Small-2-24B</td><td>ROCm</td><td>2431</td><td>269s</td><td>9</td><td>16/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-4B Q8_0</td><td>RADV</td><td>1784</td><td>71s</td><td>25</td><td>16/30</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Short Story Findings</h3>
+  <ul class="findings fade-up">
+    <li><strong>Qwen3-30B is the undisputed champion</strong> &mdash; perfect 30/30 at 46 w/s, no reasoning leak, all narrative beats hit with literary quality.</li>
+    <li><strong>Qwen3.5-122B-A10B produces the richest prose</strong> (~28/30) &mdash; restrained chemistry, excellent show-don't-tell. But at 6 w/s it's 8x slower than Qwen3-30B.</li>
+    <li><strong>Kimi-Linear Q5_K_M is a major upgrade over Q4_K_M</strong> (23 vs 16): rich sensory detail, literary polish vs workmanlike prose.</li>
+    <li><strong>GPT-OSS-120B and Solar-Open-100B</strong> expose reasoning/planning text before the story (instruction-following issue).</li>
+    <li><strong>Devstral-Small-2-24B</strong> has severe repetition loops despite being a "coding model."</li>
+  </ul>
+
+  <div class="divider"></div>
+
+  <h2>Single Chapter (Style Adherence)</h2>
+  <div class="card fade-up">
+    <p>Generates a full chapter (~2,500 words) following a detailed style guide and outline. Tests adherence to specific constraints: POV and tense, punctuation rules (no colons/semicolons, limited em dashes), sensory hierarchy, and 7 required narrative beats. Scored against a human-written reference chapter (2,495 words, 0 violations).</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th data-type="number">Words</th>
+          <th>Beats</th>
+          <th>Colons</th>
+          <th>Em Dashes</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Human (reference)</td><td>2495</td><td>7/7</td><td>0</td><td>0</td><td>Publishable quality</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B AesSedai-Q4 (b8182)</td><td>3900</td><td>7/7</td><td>19</td><td>1</td><td>No loop! b8182 fixed termination</td></tr>
+        <tr><td class="model-name">Qwen3.5-9B Q8_0</td><td>3549</td><td>7/7</td><td>5</td><td>4</td><td>Strong opening, world-building miss</td></tr>
+        <tr><td class="model-name">Qwen3.5-4B Q8_0</td><td>3326</td><td>7/7</td><td>3</td><td>4</td><td>Close to 9B quality</td></tr>
+        <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>3124</td><td>7/7</td><td>7</td><td>4</td><td>Best prose quality</td></tr>
+        <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>2497</td><td>7/7</td><td>4</td><td>23</td><td>Strongest character voice</td></tr>
+        <tr><td class="model-name">GPT-OSS-120B</td><td>2180</td><td>7/7</td><td>~5</td><td>~5</td><td>Workmanlike prose</td></tr>
+        <tr><td class="model-name">Kimi-Linear-48B</td><td>2157</td><td>7/7</td><td class="best">3</td><td>19</td><td>Best style adherence</td></tr>
+        <tr><td class="model-name">Qwen3-30B Q8</td><td>1819</td><td>7/7</td><td>~8</td><td>~10</td><td>Fragmented, repetition loop</td></tr>
+        <tr><td class="model-name">Ling-Flash-2.0</td><td>1758</td><td>7/7</td><td>~6</td><td>~8</td><td>Dense, purple prose</td></tr>
+        <tr><td class="model-name">GPT-OSS-20B-Derestricted</td><td>1643</td><td>7/7</td><td>24</td><td>~5</td><td>Short, heavy colon abuse</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B (all quants)</td><td>19000+</td><td>7/7</td><td>varies</td><td>varies</td><td>Architecture-level prose loop</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Chapter Findings</h3>
+  <ul class="findings fade-up">
+    <li><strong>No model matched human prose quality</strong> &mdash; the reference text remains the benchmark to beat.</li>
+    <li><strong>Qwen3-Coder-Next-80B has the strongest character voice</strong> &mdash; punchy, staccato style with excellent sensory hierarchy.</li>
+    <li><strong>MiniMax-M2.5 best overall prose quality</strong> &mdash; visceral action writing, strong character voice, touch-dominant sensory detail.</li>
+    <li><strong>Kimi-Linear-48B best style adherence</strong> &mdash; only 3 colons, 0 semicolons across the entire chapter.</li>
+    <li><strong>Qwen3.5-35B-A3B prose loops on ALL quants</strong> (6 tested) &mdash; architecture/stop-condition issue, not quant-dependent.</li>
+    <li><strong>Qwen3.5-122B-A10B prose loop fixed in b8182</strong> &mdash; completes at 3,900 words (was 17.7k loop on b8156).</li>
+  </ul>
+
+  <script is:inline>
+    document.querySelectorAll('table.sortable th').forEach((th, i) => {
+      const arrow = document.createElement('span');
+      arrow.className = 'sort-arrow';
+      arrow.textContent = ' \u25B4';
+      th.appendChild(arrow);
+      let asc = true;
+      th.addEventListener('click', () => {
+        const table = th.closest('table');
+        const tbody = table?.querySelector('tbody');
+        if (!table || !tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const isNum = th.dataset.type === 'number';
+        table.querySelectorAll('.sort-arrow').forEach(a => { a.classList.remove('active'); a.textContent = ' \u25B4'; });
+        arrow.classList.add('active');
+        arrow.textContent = asc ? ' \u25B4' : ' \u25BE';
+        rows.sort((a, b) => {
+          const av = a.children[i]?.textContent?.trim() ?? '';
+          const bv = b.children[i]?.textContent?.trim() ?? '';
+          if (isNum) return asc ? parseFloat(av) - parseFloat(bv) : parseFloat(bv) - parseFloat(av);
+          return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+        });
+        rows.forEach(r => tbody.appendChild(r));
+        asc = !asc;
+      });
+    });
+  </script>
+</BaseLayout>

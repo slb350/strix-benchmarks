@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Coding Benchmarks" activePage="coding" description="LRU cache, FastAPI, and LeetCode coding benchmark results for local LLMs on AMD Strix Halo">
+  <div class="page-header fade-up">
+    <h1>Coding Benchmarks</h1>
+    <p class="description">Three coding benchmark suites: a thread-safe LRU cache implementation, a FastAPI REST API generator, and algorithmic LeetCode problems.</p>
+  </div>
+
+  <h2>LRU Cache with TTL (10 Unit Tests)</h2>
+  <div class="card fade-up">
+    <p>Implements a thread-safe LRU cache with TTL support. Validated by 10 unit tests covering get/put, expiration, capacity eviction, thread safety, and edge cases.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Backend</th>
+          <th data-type="number">Tests</th>
+          <th data-type="number">Time</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></td><td>AMDVLK</td><td class="best">10/10</td><td>12s</td><td>Perfect, fastest</td></tr>
+        <tr><td class="model-name">Kimi-Linear-48B Q4_K_M</td><td>AMDVLK</td><td class="best">10/10</td><td>11s</td><td>Fastest perfect</td></tr>
+        <tr><td class="model-name">Kimi-Linear-48B Q5_K_M (b8055)</td><td>AMDVLK</td><td class="best">10/10</td><td>14s</td><td>Conv state fix improved reliability</td></tr>
+        <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>AMDVLK</td><td class="best">10/10</td><td>25s</td><td>Coding-focused variant</td></tr>
+        <tr><td class="model-name">Qwen3.5-9B Q8_0</td><td>RADV</td><td class="best">10/10</td><td>30s</td><td>No-think mode, fastest Qwen3.5</td></tr>
+        <tr><td class="model-name">GPT-OSS-120B</td><td>ROCm</td><td class="best">10/10</td><td>51s</td><td>Perfect</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B AesSedai-Q4</td><td>AMDVLK</td><td class="best">10/10</td><td>158s</td><td>MoE-aware quant preserves coding</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B Unsloth-UD-Q4 (fixed)</td><td>AMDVLK</td><td class="best">10/10</td><td>228s</td><td>MXFP4 bug fixed 2026-02-27</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B AesSedai-Q4</td><td>AMDVLK</td><td class="best">10/10</td><td>415s</td><td>b8182 faster than b8156</td></tr>
+        <tr><td class="model-name">Qwen3.5-4B Q8_0</td><td>RADV</td><td>9/10</td><td>24s</td><td>TTL init bug</td></tr>
+        <tr><td class="model-name">Nemotron-3-Nano-30B</td><td>AMDVLK</td><td>7/10</td><td>30s</td><td>Missing imports</td></tr>
+        <tr><td class="model-name">Ministral-3-14B-Instruct</td><td>AMDVLK</td><td>6/10</td><td>37s</td><td>Minor edge case bugs</td></tr>
+        <tr><td class="model-name">Devstral-Small-2-24B</td><td>ROCm</td><td>2/10</td><td>36s</td><td>TTL handling bugs</td></tr>
+        <tr><td class="model-name">Devstral-2-123B</td><td>RADV</td><td>2/10</td><td>204s</td><td>Size didn't help</td></tr>
+        <tr><td class="model-name">GLM-4.7-Flash-Opus-Distill</td><td>RADV</td><td>2/10</td><td>35s</td><td>Distillation didn't fix coding</td></tr>
+        <tr><td class="model-name">Ling-Flash-2.0</td><td>RADV</td><td>2/10</td><td>80s</td><td>Logic bugs</td></tr>
+        <tr><td class="model-name">Mistral-Large-2411</td><td>AMDVLK</td><td>2/10</td><td>291s</td><td>Mistral models struggle here</td></tr>
+        <tr><td class="model-name">GPT-OSS-20B-Derestricted</td><td>RADV</td><td class="badge failed">0/10</td><td>16s</td><td>Missing imports</td></tr>
+        <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>RADV</td><td class="badge failed">0/10</td><td>138s</td><td>Missing imports, logic correct</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B (Q8 / Q4)</td><td>RADV</td><td class="badge failed">0/10</td><td>600s</td><td>Thinking consumed all tokens</td></tr>
+        <tr><td class="model-name">Step3.5-Flash IQ3_XS</td><td>RADV</td><td class="badge failed">0/10</td><td>420s</td><td>Quant degraded imports</td></tr>
+        <tr><td class="model-name">Solar-Open-100B</td><td>RADV</td><td class="badge failed">0/10</td><td>164s</td><td>All reasoning, no code</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>FastAPI TODO List (8 Functional Tests)</h2>
+  <div class="card fade-up">
+    <p>Generates a complete FastAPI REST API for a TODO list, then validates it with 8 functional tests covering CRUD operations, error handling, and auto-incrementing IDs.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th data-type="number">Tests</th>
+          <th data-type="number">Time</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">GPT-OSS-120B</td><td class="best">8/8</td><td>48s</td><td>Proper DTO pattern (TodoCreate, TodoUpdate)</td></tr>
+        <tr><td class="model-name">Magistral-Small-2509</td><td class="best">8/8</td><td>265s</td><td>Proper DTOs, very slow (reasoning)</td></tr>
+        <tr><td class="model-name">Qwen3-30B-Instruct-2507</td><td>2/8</td><td>9s</td><td>Single model, requires id in POST</td></tr>
+        <tr><td class="model-name">Qwen3-Next-80B</td><td>2/8</td><td>49s</td><td>Same issue</td></tr>
+        <tr><td class="model-name">Nemotron-3-Nano-30B</td><td>2/8</td><td>20s</td><td>Same issue</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p><strong>Key insight:</strong> This benchmark tests prompt adherence as much as coding ability. The prompt specifies <code>POST /todos</code> accepts <code>{'{"title": "..."}'}</code> &mdash; only the 120B+ models used proper DTO patterns. Smaller models defaulted to a single model requiring <code>id</code> in POST.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>LeetCode (Algorithmic Problems)</h2>
+  <div class="card fade-up">
+    <p>Tests algorithmic coding across easy, medium, and hard LeetCode-style problems: Two Sum, 3Sum, Container With Most Water, Trapping Rain Water, Merge K Sorted Lists, and more.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Easy</th>
+          <th>Medium</th>
+          <th>Hard</th>
+          <th>Total</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Nemotron-3-Nano-30B <span class="badge perfect">Perfect</span></td><td class="best">5/5</td><td class="best">22/22</td><td class="best">32/32</td><td class="best">59/59</td><td>71s</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p><strong>Key insight:</strong> Nemotron-3-Nano's LRU cache failure (7/10 above) is specific to complex multi-requirement systems code, not general coding ability. Reasoning tokens excel at step-by-step algorithmic problem solving.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Coding Rankings</h2>
+  <ul class="findings fade-up">
+    <li><strong>Qwen3-30B dominates</strong> &mdash; 10/10 in 12s, 4x faster than the next perfect scorer.</li>
+    <li><strong>Qwen3.5-9B is the fastest Qwen3.5</strong> &mdash; 10/10 in 30s (vs 158s for 35B, 415s for 122B). No-think mode is key.</li>
+    <li><strong>Qwen3.5-27B fails completely</strong> &mdash; thinking consumed entire token budget on both Q8 and Q4.</li>
+    <li><strong>Model size doesn't guarantee coding quality</strong> &mdash; Devstral-2-123B scored the same 2/10 as the 24B version.</li>
+    <li><strong>Quant degradation kills coding</strong> &mdash; Step3.5-Flash IQ3_XS and MiniMax-M2.5 IQ3_XXS have correct logic but missing imports.</li>
+  </ul>
+
+  <script is:inline>
+    document.querySelectorAll('table.sortable th').forEach((th, i) => {
+      const arrow = document.createElement('span');
+      arrow.className = 'sort-arrow';
+      arrow.textContent = ' \u25B4';
+      th.appendChild(arrow);
+      let asc = true;
+      th.addEventListener('click', () => {
+        const table = th.closest('table');
+        const tbody = table?.querySelector('tbody');
+        if (!table || !tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const isNum = th.dataset.type === 'number';
+        table.querySelectorAll('.sort-arrow').forEach(a => { a.classList.remove('active'); a.textContent = ' \u25B4'; });
+        arrow.classList.add('active');
+        arrow.textContent = asc ? ' \u25B4' : ' \u25BE';
+        rows.sort((a, b) => {
+          const av = a.children[i]?.textContent?.trim() ?? '';
+          const bv = b.children[i]?.textContent?.trim() ?? '';
+          if (isNum) return asc ? parseFloat(av) - parseFloat(bv) : parseFloat(bv) - parseFloat(av);
+          return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+        });
+        rows.forEach(r => tbody.appendChild(r));
+        asc = !asc;
+      });
+    });
+  </script>
+</BaseLayout>
