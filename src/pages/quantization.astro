@@ -28,15 +28,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">35B-A3B Coding</td><td class="best">10/10 (158s)</td><td>10/10 (228s)</td></tr>
         <tr><td class="model-name">35B-A3B Creative Writing</td><td class="best">~25-26/30</td><td>~24/30</td></tr>
         <tr><td class="model-name">35B-A3B Size</td><td>21 GiB</td><td class="best">19 GiB</td></tr>
-        <tr><td class="model-name">122B-A10B pp (RADV)</td><td>259 t/s</td><td>TBD (Mar 5 quant)</td></tr>
-        <tr><td class="model-name">122B-A10B Coding</td><td>10/10 (415s)</td><td>TBD</td></tr>
-        <tr><td class="model-name">122B-A10B Creative Writing</td><td class="best">~28/30</td><td>TBD</td></tr>
+        <tr><td class="model-name">122B-A10B pp (RADV)</td><td>259 t/s</td><td>258 t/s</td></tr>
+        <tr><td class="model-name">122B-A10B Coding</td><td>10/10 (415s)</td><td>10/10 (517s)</td></tr>
+        <tr><td class="model-name">122B-A10B Creative Writing</td><td>~28/30</td><td>~28/30</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight success fade-up">
-    <p><strong>AesSedai wins on speed and quality.</strong> 30-45% faster pp, ~10% faster tg, and slightly better creative writing. Unsloth's Mar 5 update with improved imatrix may narrow the gap &mdash; evaluation pending.</p>
+    <p><strong>AesSedai wins on 35B speed and quality.</strong> 30-45% faster pp, ~10% faster tg on 35B. For 122B, the gap is nearly closed: identical performance (258 vs 259 pp), same coding score, and Unsloth actually has fewer prose style violations (5 vs 19 colons).</p>
   </div>
 
   <h3>The Unsloth MXFP4 Bug</h3>
