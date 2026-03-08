@@ -25,18 +25,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Strategy</td><td>Protects attention/shared experts at Q8_0, differentiates ffn_down from ffn_gate/up</td><td>Dynamic 2.0 &mdash; upcasts critical layers, new imatrix (Mar 5)</td></tr>
         <tr><td class="model-name">35B-A3B pp (RADV)</td><td class="best">832 t/s</td><td>795 t/s</td></tr>
         <tr><td class="model-name">35B-A3B tg (AMDVLK)</td><td class="best">53 t/s</td><td>48 t/s</td></tr>
-        <tr><td class="model-name">35B-A3B Coding</td><td class="best">10/10 (158s)</td><td>10/10 (228s)</td></tr>
-        <tr><td class="model-name">35B-A3B Creative Writing</td><td class="best">~25-26/30</td><td>~24/30</td></tr>
+        <tr><td class="model-name">35B-A3B Coding</td><td class="best">10/10 (158s)</td><td>10/10 (228s, 148s thinking)</td></tr>
+        <tr><td class="model-name">35B-A3B Creative Writing</td><td>~25-26/30</td><td class="best">~28/30 (thinking)</td></tr>
         <tr><td class="model-name">35B-A3B Size</td><td>21 GiB</td><td class="best">19 GiB</td></tr>
         <tr><td class="model-name">122B-A10B pp (RADV)</td><td>259 t/s</td><td>258 t/s</td></tr>
-        <tr><td class="model-name">122B-A10B Coding</td><td>10/10 (415s)</td><td>10/10 (517s)</td></tr>
-        <tr><td class="model-name">122B-A10B Creative Writing</td><td>~28/30</td><td>~28/30</td></tr>
+        <tr><td class="model-name">122B-A10B Coding</td><td>10/10 (415s)</td><td>10/10 (517s, 422s thinking)</td></tr>
+        <tr><td class="model-name">122B-A10B Creative Writing</td><td>~28/30</td><td class="best">~29/30 (thinking)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight success fade-up">
-    <p><strong>AesSedai wins on 35B speed and quality.</strong> 30-45% faster pp, ~10% faster tg on 35B. For 122B, the gap is nearly closed: identical performance (258 vs 259 pp), same coding score, and Unsloth actually has fewer prose style violations (5 vs 19 colons).</p>
+    <p><strong>AesSedai wins on raw speed, but Unsloth wins on quality with correct params.</strong> AesSedai is 30-45% faster pp, ~10% faster tg on 35B. But with Unsloth-recommended sampling params and thinking mode, Unsloth UD-Q4_K_XL achieves ~28/30 romance (35B) and ~29/30 (122B), surpassing AesSedai's quality scores.</p>
   </div>
 
   <h3>The Unsloth MXFP4 Bug</h3>
@@ -97,7 +97,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <h3>Impact on Usability</h3>
   <ul class="findings fade-up">
-    <li><strong>27B is impractical</strong> at 6-11 t/s &mdash; too slow for interactive use. Also fails coding (0/10, thinking consumes all tokens).</li>
+    <li><strong>27B is impractical</strong> at 6-11 t/s &mdash; too slow for interactive use. Coding fixed (10/10 with Unsloth params) but speed remains the bottleneck.</li>
     <li><strong>9B is usable</strong> at 22-23 t/s &mdash; acceptable for generation tasks, 10/10 coding in no-think mode.</li>
     <li><strong>4B is surprisingly capable</strong> at 38-40 t/s &mdash; good for lightweight tasks, 9/10 coding.</li>
     <li><strong>pp is not bottlenecked</strong> &mdash; Qwen3.5-4B hits 1375 pp on RADV, showing the issue is tg-specific.</li>
@@ -105,33 +105,63 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="divider"></div>
 
-  <h2>Qwen3.5-35B-A3B Prose Loop</h2>
+  <h2>Qwen3.5 Sampling Parameters (Critical)</h2>
   <div class="card fade-up">
-    <p>A persistent issue with Qwen3.5-35B-A3B: the model enters a repetition loop during long-form prose generation, producing 19,000-21,000 words instead of the target 2,900. This happens on <strong>every quant tested</strong>:</p>
+    <p>Qwen3.5 models require <strong>specific sampling parameters</strong> recommended by <a href="https://unsloth.ai/docs/models/qwen3.5">Unsloth</a>. Default llama.cpp params cause dramatic failures: 0/10 coding (27B), prose loops (35B), and excessive repetition across all sizes.</p>
   </div>
 
   <div class="table-wrap fade-up">
     <table>
       <thead>
         <tr>
-          <th>Quant Tested</th>
-          <th>Provider</th>
-          <th>Loop?</th>
-          <th>Words</th>
+          <th>Task</th>
+          <th>Mode</th>
+          <th>temp</th>
+          <th>top_p</th>
+          <th>top_k</th>
+          <th>presence_penalty</th>
+          <th>repeat_penalty</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Q8_0</td><td>Standard</td><td class="badge failed">Yes</td><td>~21k</td></tr>
-        <tr><td>Q5_K_M</td><td>Standard</td><td class="badge failed">Yes</td><td>~20k</td></tr>
-        <tr><td>Q4_K_M</td><td>AesSedai</td><td class="badge failed">Yes</td><td>~21k</td></tr>
-        <tr><td>UD-Q4_K_XL (old)</td><td>Unsloth</td><td class="badge failed">Yes</td><td>~20k</td></tr>
-        <tr><td>UD-Q4_K_XL (fixed)</td><td>Unsloth</td><td class="badge failed">Yes</td><td>~19.5k</td></tr>
-        <tr><td>MXFP4_MOE</td><td>Unsloth</td><td class="badge failed">Yes</td><td>~20k</td></tr>
+        <tr><td class="model-name">Coding</td><td>no-think</td><td>0.6</td><td>0.95</td><td>20</td><td>0.0</td><td>1.0</td></tr>
+        <tr><td class="model-name">Creative/General</td><td>no-think</td><td>0.7</td><td>0.8</td><td>20</td><td class="best">1.5</td><td>1.0</td></tr>
+        <tr><td class="model-name">Coding</td><td>thinking</td><td>0.6</td><td>0.95</td><td>20</td><td>0.0</td><td>1.0</td></tr>
+        <tr><td class="model-name">General</td><td>thinking</td><td>1.0</td><td>0.95</td><td>20</td><td class="best">1.5</td><td>1.0</td></tr>
       </tbody>
     </table>
   </div>
 
-  <div class="insight fade-up">
-    <p><strong>This is an architecture/stop-condition issue</strong>, not quant-dependent. The short story bench (shorter output) completes cleanly on all quants. The prose bench's longer output requirement triggers degeneration. Notably, the larger Qwen3.5-122B-A10B had the same issue but it was <strong>fixed in llama.cpp b8182</strong> (likely the M-RoPE kv-cache shift fix).</p>
+  <div class="insight success fade-up">
+    <p><strong>Key: use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code></strong> (NOT <code>--reasoning-budget 0</code> which produces zero output). The <code>presence_penalty=1.5</code> is the single most impactful param &mdash; it eliminated the 35B prose loop and halved colon count on 27B. However, it hurts 122B prose (5 vs 15 colons).</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Qwen3.5-35B-A3B Prose Loop (Resolved)</h2>
+  <div class="card fade-up">
+    <p>Previously reported as an "architecture-level issue" affecting all quants. <strong>Root cause identified: missing sampling parameters.</strong> With Unsloth-recommended <code>presence_penalty=1.5</code>, the loop is completely eliminated.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Configuration</th>
+          <th>Loop?</th>
+          <th>Words</th>
+          <th>Colons</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Default params (all quants)</td><td class="badge failed">Yes</td><td>19-21k</td><td>varies</td></tr>
+        <tr><td>Unsloth params, no-think</td><td><span class="badge perfect">No</span></td><td class="best">3,474</td><td class="best">5</td></tr>
+        <tr><td>Unsloth params, thinking</td><td><span class="badge perfect">No</span></td><td>5,121</td><td>11</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight success fade-up">
+    <p><strong>Not an architecture issue after all.</strong> The model needed <code>presence_penalty=1.5</code> to prevent repetition degeneration. No-think mode produces the best prose adherence (5 colons, 0 semicolons). Thinking mode overshoots but doesn't loop.</p>
   </div>
 </BaseLayout>

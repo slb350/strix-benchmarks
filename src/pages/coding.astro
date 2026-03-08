@@ -30,9 +30,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>AMDVLK</td><td class="best">10/10</td><td>25s</td><td>Coding-focused variant</td></tr>
         <tr><td class="model-name">Qwen3.5-9B Q8_0</td><td>RADV</td><td class="best">10/10</td><td>30s</td><td>No-think mode, fastest Qwen3.5</td></tr>
         <tr><td class="model-name">GPT-OSS-120B</td><td>ROCm</td><td class="best">10/10</td><td>51s</td><td>Perfect</td></tr>
-        <tr><td class="model-name">Qwen3.5-35B-A3B AesSedai-Q4</td><td>AMDVLK</td><td class="best">10/10</td><td>158s</td><td>MoE-aware quant preserves coding</td></tr>
-        <tr><td class="model-name">Qwen3.5-35B-A3B Unsloth-UD-Q4 (fixed)</td><td>AMDVLK</td><td class="best">10/10</td><td>228s</td><td>MXFP4 bug fixed 2026-02-27</td></tr>
-        <tr><td class="model-name">Qwen3.5-122B-A10B Unsloth-UD-Q4</td><td>AMDVLK</td><td class="best">10/10</td><td>517s</td><td>Mar 5 imatrix update</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (thinking)</td><td>RADV</td><td class="best">10/10</td><td>148s</td><td>Thinking ON, Unsloth params, 64k ctx</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B AesSedai-Q4 (defaults)</td><td>AMDVLK</td><td class="best">10/10</td><td>158s</td><td>MoE-aware quant preserves coding</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (no-think)</td><td>RADV</td><td class="best">10/10</td><td>195s</td><td>No-think, Unsloth params</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B UD-Q4_K_XL (thinking)</td><td>RADV</td><td class="best">10/10</td><td>422s</td><td>Thinking ON, Unsloth params, 64k ctx</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B Unsloth-UD-Q4 (defaults)</td><td>AMDVLK</td><td class="best">10/10</td><td>517s</td><td>Mar 5 imatrix update</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B UD-Q4_K_XL (Unsloth params)</td><td>RADV</td><td class="best">10/10</td><td>527s</td><td>Was 0/10 with default params</td></tr>
         <tr><td class="model-name">Qwen3.5-4B Q8_0</td><td>RADV</td><td>9/10</td><td>24s</td><td>TTL init bug</td></tr>
         <tr><td class="model-name">Nemotron-3-Nano-30B</td><td>AMDVLK</td><td>7/10</td><td>30s</td><td>Missing imports</td></tr>
         <tr><td class="model-name">Ministral-3-14B-Instruct</td><td>AMDVLK</td><td>6/10</td><td>37s</td><td>Minor edge case bugs</td></tr>
@@ -43,7 +46,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Mistral-Large-2411</td><td>AMDVLK</td><td>2/10</td><td>291s</td><td>Mistral models struggle here</td></tr>
         <tr><td class="model-name">GPT-OSS-20B-Derestricted</td><td>RADV</td><td class="badge failed">0/10</td><td>16s</td><td>Missing imports</td></tr>
         <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>RADV</td><td class="badge failed">0/10</td><td>138s</td><td>Missing imports, logic correct</td></tr>
-        <tr><td class="model-name">Qwen3.5-27B (Q8 / Q4)</td><td>RADV</td><td class="badge failed">0/10</td><td>600s</td><td>Thinking consumed all tokens</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B (Q8 / Q4, default params)</td><td>RADV</td><td class="badge failed">0/10</td><td>600s</td><td>Thinking consumed tokens; fixed with Unsloth params (10/10)</td></tr>
         <tr><td class="model-name">Step3.5-Flash IQ3_XS</td><td>RADV</td><td class="badge failed">0/10</td><td>420s</td><td>Quant degraded imports</td></tr>
         <tr><td class="model-name">Solar-Open-100B</td><td>RADV</td><td class="badge failed">0/10</td><td>164s</td><td>All reasoning, no code</td></tr>
       </tbody>
@@ -115,10 +118,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <h2>Coding Rankings</h2>
   <ul class="findings fade-up">
     <li><strong>Qwen3-30B dominates</strong> &mdash; 10/10 in 12s, 4x faster than the next perfect scorer.</li>
-    <li><strong>Qwen3.5-9B is the fastest Qwen3.5</strong> &mdash; 10/10 in 30s (vs 158s for 35B, 415s for 122B). No-think mode is key.</li>
-    <li><strong>Qwen3.5-27B fails completely</strong> &mdash; thinking consumed entire token budget on both Q8 and Q4.</li>
+    <li><strong>Qwen3.5-9B is the fastest Qwen3.5</strong> &mdash; 10/10 in 30s (vs 148s for 35B thinking, 422s for 122B thinking).</li>
+    <li><strong>Thinking mode speeds up coding</strong> &mdash; 35B: 148s thinking vs 195s no-think. 122B: 422s thinking vs 517s defaults. Thinking helps plan the implementation.</li>
+    <li><strong>Qwen3.5-27B FIXED with Unsloth params</strong> &mdash; was 0/10 (thinking consumed all tokens). With <code>enable_thinking:false</code> and Unsloth sampling params: 10/10 in 527s.</li>
+    <li><strong>Sampling params are critical</strong> &mdash; <code>--reasoning-budget 0</code> does NOT work for Qwen3.5. Must use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code>.</li>
     <li><strong>Model size doesn't guarantee coding quality</strong> &mdash; Devstral-2-123B scored the same 2/10 as the 24B version.</li>
-    <li><strong>Quant degradation kills coding</strong> &mdash; Step3.5-Flash IQ3_XS and MiniMax-M2.5 IQ3_XXS have correct logic but missing imports.</li>
   </ul>
 
   <script is:inline>
