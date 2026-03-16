@@ -24,11 +24,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </tr>
       </thead>
       <tbody>
-        <tr><td class="model-name">Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></td><td>AMDVLK</td><td class="best">10/10</td><td>12s</td><td>Perfect, fastest</td></tr>
+        <tr><td class="model-name">Qwen3-30B-Instruct-2507 UD-Q4_K_XL <span class="badge champion">Champion</span></td><td>RADV</td><td class="best">10/10</td><td>9.2s</td><td>Fastest perfect, UD quant</td></tr>
         <tr><td class="model-name">Kimi-Linear-48B Q4_K_M</td><td>AMDVLK</td><td class="best">10/10</td><td>11s</td><td>Fastest perfect</td></tr>
         <tr><td class="model-name">Kimi-Linear-48B Q5_K_M (b8055)</td><td>AMDVLK</td><td class="best">10/10</td><td>14s</td><td>Conv state fix improved reliability</td></tr>
         <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>AMDVLK</td><td class="best">10/10</td><td>25s</td><td>Coding-focused variant</td></tr>
-        <tr><td class="model-name">Qwen3.5-9B Q8_0</td><td>RADV</td><td class="best">10/10</td><td>30s</td><td>No-think mode, fastest Qwen3.5</td></tr>
+        <tr><td class="model-name">GPT-OSS-20B-Derestricted (b8356)</td><td>RADV</td><td class="best">10/10</td><td>13.4s</td><td>Fixed in b8356 (was 0/10)</td></tr>
+        <tr><td class="model-name">Qwen3.5-9B UD-Q4_K_XL</td><td>RADV</td><td class="best">10/10</td><td>226s</td><td>Unsloth params, repeat_penalty=1.1</td></tr>
         <tr><td class="model-name">GPT-OSS-120B</td><td>ROCm</td><td class="best">10/10</td><td>51s</td><td>Perfect</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (thinking)</td><td>RADV</td><td class="best">10/10</td><td>148s</td><td>Thinking ON, Unsloth params, 64k ctx</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B AesSedai-Q4 (defaults)</td><td>AMDVLK</td><td class="best">10/10</td><td>158s</td><td>MoE-aware quant preserves coding</td></tr>
@@ -45,7 +46,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">GLM-4.7-Flash-Opus-Distill</td><td>RADV</td><td>2/10</td><td>35s</td><td>Distillation didn't fix coding</td></tr>
         <tr><td class="model-name">Ling-Flash-2.0</td><td>RADV</td><td>2/10</td><td>80s</td><td>Logic bugs</td></tr>
         <tr><td class="model-name">Mistral-Large-2411</td><td>AMDVLK</td><td>2/10</td><td>291s</td><td>Mistral models struggle here</td></tr>
-        <tr><td class="model-name">GPT-OSS-20B-Derestricted</td><td>RADV</td><td class="badge failed">0/10</td><td>16s</td><td>Missing imports</td></tr>
+        <tr><td class="model-name">GPT-OSS-20B-Derestricted (old build)</td><td>RADV</td><td class="badge failed">0/10</td><td>16s</td><td>Fixed in b8356 &mdash; see above</td></tr>
         <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>RADV</td><td class="badge failed">0/10</td><td>138s</td><td>Missing imports, logic correct</td></tr>
         <tr><td class="model-name">Qwen3.5-27B (Q8 / Q4, default params)</td><td>RADV</td><td class="badge failed">0/10</td><td>600s</td><td>Thinking consumed tokens; fixed with Unsloth params (10/10)</td></tr>
         <tr><td class="model-name">Step3.5-Flash IQ3_XS</td><td>RADV</td><td class="badge failed">0/10</td><td>420s</td><td>Quant degraded imports</td></tr>
