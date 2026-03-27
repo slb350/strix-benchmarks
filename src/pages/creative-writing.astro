@@ -33,6 +33,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Ling-Flash-2.0</td><td>RADV</td><td>2197</td><td>124s</td><td>18</td><td>26/30</td></tr>
         <tr><td class="model-name">Ministral-3-14B-Instruct</td><td>AMDVLK</td><td>2318</td><td>205s</td><td>11</td><td>26/30</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (no-think)</td><td>RADV</td><td>2098</td><td>95s</td><td>22</td><td>26/30</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (b8546, defaults)</td><td>RADV</td><td>1945</td><td>109s</td><td>17.8</td><td>25/30</td></tr>
         <tr><td class="model-name">Nemotron-3-Super-120B-A12B (no-think)</td><td>ROCm</td><td>3132</td><td>308s</td><td>10.2</td><td>25/30</td></tr>
         <tr><td class="model-name">Qwen3.5-27B UD-Q4_K_XL (Unsloth params)</td><td>RADV</td><td>1886</td><td>377s</td><td>5.0</td><td>25/30</td></tr>
         <tr><td class="model-name">Devstral-2-123B</td><td>RADV</td><td>2164</td><td>1108s</td><td>2</td><td>25/30</td></tr>
@@ -82,6 +83,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </thead>
       <tbody>
         <tr><td class="model-name">Human (reference)</td><td>2495</td><td>7/7</td><td>0</td><td>0</td><td>Publishable quality</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (b8546, defaults)</td><td>1065</td><td>7/7</td><td class="best">0</td><td class="best">1</td><td>Perfect style, very short, 68/80</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (no-think)</td><td>3474</td><td>7/7</td><td class="best">5</td><td class="best">1</td><td>presence_penalty 1.5 eliminated loop</td></tr>
         <tr><td class="model-name">Qwen3.5-122B-A10B Unsloth-UD-Q4 (defaults)</td><td>3880</td><td>7/7</td><td class="best">5</td><td class="best">1</td><td>Best 122B prose result</td></tr>
         <tr><td class="model-name">Qwen3.5-27B UD-Q4_K_XL (Unsloth params)</td><td>3456</td><td>7/7</td><td>12</td><td>3</td><td>presence_penalty 1.5 cut overshoot</td></tr>

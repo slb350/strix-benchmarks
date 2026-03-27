@@ -33,12 +33,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>MXFP4</td><td>41 GiB</td><td>RADV</td><td class="best">586</td><td>40</td></tr>
         <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>MXFP4</td><td>41 GiB</td><td>AMDVLK</td><td>462</td><td class="best">43</td></tr>
         <tr><td class="model-name">Qwen3-Coder-Next-80B</td><td>MXFP4</td><td>41 GiB</td><td>ROCm</td><td>383</td><td>38</td></tr>
-        <tr><td class="model-name">Qwen3.5-35B-A3B</td><td>Unsloth UD-Q4_K_XL</td><td>21 GiB</td><td>RADV</td><td class="best">1021</td><td>59.4</td></tr>
-        <tr><td class="model-name">Qwen3.5-35B-A3B</td><td>Unsloth UD-Q4_K_XL</td><td>21 GiB</td><td>AMDVLK</td><td>656</td><td class="best">59.7</td></tr>
-        <tr><td class="model-name">Qwen3.5-27B</td><td>UD-Q4_K_XL</td><td>16 GiB</td><td>RADV</td><td class="best">322</td><td class="best">11.94</td></tr>
-        <tr><td class="model-name">Qwen3.5-27B</td><td>UD-Q4_K_XL</td><td>16 GiB</td><td>AMDVLK</td><td>85</td><td>11.92</td></tr>
-        <tr><td class="model-name">Qwen3.5-122B-A10B</td><td>Unsloth UD-Q4_K_XL</td><td>72 GiB</td><td>RADV</td><td class="best">292</td><td class="best">22.3</td></tr>
-        <tr><td class="model-name">Qwen3.5-122B-A10B</td><td>Unsloth UD-Q4_K_XL</td><td>72 GiB</td><td>AMDVLK</td><td>194</td><td>22.2</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B</td><td>Unsloth UD-Q4_K_XL</td><td>21 GiB</td><td>RADV</td><td class="best">1017</td><td>59.8</td></tr>
+        <tr><td class="model-name">Qwen3.5-35B-A3B</td><td>Unsloth UD-Q4_K_XL</td><td>21 GiB</td><td>AMDVLK</td><td>686</td><td class="best">60.4</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B</td><td>UD-Q4_K_XL</td><td>16 GiB</td><td>RADV</td><td class="best">310</td><td class="best">12.11</td></tr>
+        <tr><td class="model-name">Qwen3.5-27B</td><td>UD-Q4_K_XL</td><td>16 GiB</td><td>AMDVLK</td><td>86</td><td>11.93</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B</td><td>Unsloth UD-Q4_K_XL</td><td>72 GiB</td><td>RADV</td><td class="best">287</td><td class="best">22.4</td></tr>
+        <tr><td class="model-name">Qwen3.5-122B-A10B</td><td>Unsloth UD-Q4_K_XL</td><td>72 GiB</td><td>AMDVLK</td><td>197</td><td>21.9</td></tr>
         <tr><td class="model-name">Qwen3.5-9B</td><td>UD-Q4_K_XL</td><td>5.6 GiB</td><td>RADV</td><td class="best">972</td><td class="best">35.7</td></tr>
         <tr><td class="model-name">Qwen3.5-9B</td><td>UD-Q4_K_XL</td><td>5.6 GiB</td><td>AMDVLK</td><td>289</td><td>35.2</td></tr>
         <tr><td class="model-name">Qwen3.5-9B</td><td>UD-Q4_K_XL</td><td>5.6 GiB</td><td>ROCm</td><td>1057</td><td>32.1</td></tr>
@@ -93,7 +93,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <li><strong>ROCm requires <code>-mmp 0</code></strong> or models hang during load. Best for GLM-4.7 and Qwen3.5-27B dense. Crashes with FA enabled on GPT-OSS-120B.</li>
     <li><strong>Batch size 2048 is optimal</strong> for RDNA 3.5 &mdash; higher values (4096+) decrease performance.</li>
     <li><strong>MXFP4 quants outperform Q4_K_M</strong> for MoE models when QAT-trained (e.g., GPT-OSS-120B). Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
-    <li><strong>Qwen3.5 dense models have an architecture-level tg bottleneck</strong> &mdash; 6-11 t/s for 27B, 22-23 t/s for 9B regardless of backend.</li>
+    <li><strong>Qwen3.5 dense models have an architecture-level tg bottleneck</strong> &mdash; ~12 t/s for 27B, 22-23 t/s for 9B regardless of backend.</li>
   </ul>
 
   <script is:inline>
