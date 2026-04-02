@@ -28,16 +28,47 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Latest: Gemma 4</h2>
-  <div class="stats-grid fade-up">
-    <div class="card">
-      <h3>Gemma-4-26B-A4B <span class="badge new">New</span></h3>
-      <p><strong>MoE (4B active)</strong> &mdash; 16 GiB UD-Q4_K_XL. The fastest new entry: <strong>1196 pp / 52.9 tg</strong> on RADV. Perfect <strong>10/10 coding</strong> in 126s. <strong>23/30 creative writing</strong> at 33 w/s &mdash; best speed/quality ratio among recent additions. Clean prose style (3 colons, 2 em dashes).</p>
-    </div>
-    <div class="card">
-      <h3>Gemma-4-31B <span class="badge new">New</span></h3>
-      <p><strong>Dense</strong> &mdash; 17.5 GiB UD-Q4_K_XL. Hits the dense tg bottleneck (11.1 tg) but excels at quality: <strong>26/30 creative writing</strong> &mdash; best Gemma prose. <strong>10/10 coding</strong> in 156s. Cleanest style adherence of any Gemma model (3 colons, 3 em dashes).</p>
-    </div>
+  <h2>Latest: Gemma 4 <span class="badge new">New</span></h2>
+  <p>Google's newest open models, both tested as Unsloth UD-Q4_K_XL on RADV.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing</th>
+          <th data-type="number">Coding</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Gemma-4-26B-A4B</td>
+          <td>MoE (4B active)</td>
+          <td>16 GiB</td>
+          <td class="best">1196</td>
+          <td class="best">52.9</td>
+          <td>23/30</td>
+          <td class="best">10/10</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-31B</td>
+          <td>Dense</td>
+          <td>17.5 GiB</td>
+          <td>247</td>
+          <td>11.1</td>
+          <td class="best">26/30</td>
+          <td class="best">10/10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p><strong>The 26B-A4B MoE is the practical pick</strong> &mdash; nearly 5x faster generation than the dense 31B, with perfect coding and solid creative writing. The 31B writes better prose but hits the same tg bottleneck as other dense models (~11 t/s).</p>
   </div>
 
   <div class="divider"></div>
