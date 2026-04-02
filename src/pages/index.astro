@@ -28,6 +28,18 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
+  <h2>Latest: Gemma 4</h2>
+  <div class="stats-grid fade-up">
+    <div class="card">
+      <h3>Gemma-4-26B-A4B <span class="badge new">New</span></h3>
+      <p><strong>MoE (4B active)</strong> &mdash; 16 GiB UD-Q4_K_XL. The fastest new entry: <strong>1196 pp / 52.9 tg</strong> on RADV. Perfect <strong>10/10 coding</strong> in 126s. <strong>23/30 creative writing</strong> at 33 w/s &mdash; best speed/quality ratio among recent additions. Clean prose style (3 colons, 2 em dashes).</p>
+    </div>
+    <div class="card">
+      <h3>Gemma-4-31B <span class="badge new">New</span></h3>
+      <p><strong>Dense</strong> &mdash; 17.5 GiB UD-Q4_K_XL. Hits the dense tg bottleneck (11.1 tg) but excels at quality: <strong>26/30 creative writing</strong> &mdash; best Gemma prose. <strong>10/10 coding</strong> in 156s. Cleanest style adherence of any Gemma model (3 colons, 3 em dashes).</p>
+    </div>
+  </div>
+
   <div class="divider"></div>
 
   <h2>Why this matters</h2>
@@ -75,19 +87,19 @@ const base = import.meta.env.BASE_URL;
 
   <h2>Explore results</h2>
   <div class="stats-grid fade-up">
-    <a href={`${base}performance/`} class="stat-card" style="text-decoration: none;">
+    <a href={`${base}performance/`} class="stat-card">
       <div class="value">1424</div>
       <div class="label">Peak pp512 t/s</div>
     </a>
-    <a href={`${base}creative-writing/`} class="stat-card" style="text-decoration: none;">
+    <a href={`${base}creative-writing/`} class="stat-card">
       <div class="value">30/30</div>
       <div class="label">Best writing score</div>
     </a>
-    <a href={`${base}coding/`} class="stat-card" style="text-decoration: none;">
+    <a href={`${base}coding/`} class="stat-card">
       <div class="value">10/10</div>
       <div class="label">Perfect coding (12s)</div>
     </a>
-    <a href={`${base}quantization/`} class="stat-card" style="text-decoration: none;">
+    <a href={`${base}quantization/`} class="stat-card">
       <div class="value">AesSedai</div>
       <div class="label">vs Unsloth quants</div>
     </a>

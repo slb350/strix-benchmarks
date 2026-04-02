@@ -55,12 +55,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="card">
       <h3>QAT-Trained MXFP4</h3>
       <p>Models trained with quantization-aware training (like GPT-OSS-120B) <strong>outperform standard quants</strong>. The model learned to compensate for reduced precision during training.</p>
-      <p style="font-size: 0.85rem; color: var(--text-muted);">GPT-OSS-120B MXFP4: 661 pp, 53 tg &mdash; excellent for 59 GiB</p>
+      <p class="text-muted-sm">GPT-OSS-120B MXFP4: 661 pp, 53 tg &mdash; excellent for 59 GiB</p>
     </div>
     <div class="card">
       <h3>Post-Hoc MXFP4</h3>
       <p>Applying MXFP4 to a BF16 model after training <strong>underperforms standard quants</strong> like Q4_K_M. The precision loss isn't compensated for.</p>
-      <p style="font-size: 0.85rem; color: var(--text-muted);">Bad for Qwen3.5 MoE &mdash; corrupted attention weights before fix</p>
+      <p class="text-muted-sm">Bad for Qwen3.5 MoE &mdash; corrupted attention weights before fix</p>
     </div>
   </div>
 
