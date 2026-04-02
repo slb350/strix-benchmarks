@@ -48,6 +48,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Devstral-Small-2-24B</td><td>ROCm</td><td>2431</td><td>269s</td><td>9</td><td>16/30</td></tr>
         <tr><td class="model-name">Qwen3.5-4B Q8_0</td><td>RADV</td><td>1784</td><td>71s</td><td>25</td><td>16/30</td></tr>
         <tr><td class="model-name">Nemotron-Cascade-2-30B-A3B Q8_0 (no-think)</td><td>RADV</td><td>3153</td><td>82s</td><td>39</td><td>18/30</td></tr>
+        <tr><td class="model-name">Gemma-4-31B UD-Q4_K_XL (no-think) <span class="badge new">New</span></td><td>RADV</td><td>1738</td><td>248s</td><td>7.0</td><td>26/30</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B UD-Q4_K_XL (no-think) <span class="badge new">New</span></td><td>RADV</td><td>1887</td><td>57s</td><td>33</td><td>23/30</td></tr>
         <tr><td class="model-name">GPT-OSS-20B-Derestricted MXFP4</td><td>RADV</td><td>2014</td><td>65s</td><td>31</td><td>13/30</td></tr>
       </tbody>
     </table>
@@ -101,6 +103,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Qwen3.5-122B-A10B UD-Q4_K_XL (Unsloth no-think)</td><td>4298</td><td>7/7</td><td>15</td><td>1</td><td>Unsloth params worse for 122B prose</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B UD-Q4_K_XL (thinking)</td><td>5121</td><td>7/7</td><td>11</td><td>1</td><td>Overshoot with thinking; no-think better</td></tr>
         <tr><td class="model-name">Qwen3.5-35B-A3B (default params)</td><td>19000+</td><td>7/7</td><td>varies</td><td>varies</td><td>Loop caused by missing presence_penalty</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B UD-Q4_K_XL (no-think) <span class="badge new">New</span></td><td>1781</td><td>7/7</td><td>3</td><td>2</td><td>Clean style, short output</td></tr>
+        <tr><td class="model-name">Gemma-4-31B UD-Q4_K_XL (no-think) <span class="badge new">New</span></td><td>1553</td><td>7/7</td><td>3</td><td>3</td><td>Cleanest Gemma prose; slow (11 tg)</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B UD-Q4_K_XL (thinking)</td><td>2910</td><td>7/7</td><td>24</td><td>3</td><td>Massive colon regression with thinking</td></tr>
+        <tr><td class="model-name">Gemma-4-31B UD-Q4_K_XL (thinking)</td><td>2569</td><td>7/7</td><td>20</td><td>2</td><td>Heavy colons with thinking</td></tr>
       </tbody>
     </table>
   </div>

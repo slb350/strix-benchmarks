@@ -51,6 +51,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">MiniMax-M2.5 IQ3_XXS</td><td>RADV</td><td class="badge failed">0/10</td><td>138s</td><td>Missing imports, logic correct</td></tr>
         <tr><td class="model-name">Qwen3.5-27B (Q8 / Q4, default params)</td><td>RADV</td><td class="badge failed">0/10</td><td>600s</td><td>Thinking consumed tokens; fixed with Unsloth params (10/10)</td></tr>
         <tr><td class="model-name">Step3.5-Flash IQ3_XS</td><td>RADV</td><td class="badge failed">0/10</td><td>420s</td><td>Quant degraded imports</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B UD-Q4_K_XL <span class="badge new">New</span></td><td>RADV</td><td class="best">10/10</td><td>126s</td><td>No-think, Gemma 4 params</td></tr>
+        <tr><td class="model-name">Gemma-4-31B UD-Q4_K_XL <span class="badge new">New</span></td><td>RADV</td><td class="best">10/10</td><td>156s</td><td>No-think, Gemma 4 params</td></tr>
         <tr><td class="model-name">Solar-Open-100B</td><td>RADV</td><td class="badge failed">0/10</td><td>164s</td><td>All reasoning, no code</td></tr>
       </tbody>
     </table>
@@ -114,6 +116,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="insight fade-up">
     <p><strong>Key insight:</strong> Nemotron-3-Nano's LRU cache failure (7/10 above) is specific to complex multi-requirement systems code, not general coding ability. Reasoning tokens excel at step-by-step algorithmic problem solving.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Polyglot Coding Benchmark (65 Tests, 4 Languages) <span class="badge new">New</span></h2>
+  <div class="card fade-up">
+    <p>Seven challenges across Python, Bash, Ruby, and Go at LeetCode medium/hard difficulty. Designed to differentiate models that ace the LRU cache benchmark. Auto-graded: Python via unittest, Bash via output comparison, Ruby via minitest/rack-test, Go via <code>go test</code>.</p>
+  </div>
+
+  <div class="card fade-up" style="margin-top: 1rem;">
+    <h3>Challenge Descriptions</h3>
+    <table style="margin-top: 0.5rem;">
+      <thead>
+        <tr><th>#</th><th>Challenge</th><th>Language</th><th>Difficulty</th><th>Tests</th><th>What It Tests</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T1</td><td>Structured Log Parser</td><td>Python</td><td>Med-Hard</td><td>10</td><td>Regex with nested JSON in bracket-delimited fields</td></tr>
+        <tr><td>T2</td><td>Cron Expression Matcher</td><td>Python</td><td>Hard</td><td>10</td><td>Parse 5-field cron syntax (ranges, steps, names)</td></tr>
+        <tr><td>T3</td><td>Apache Log Analyzer</td><td>Bash</td><td>Medium</td><td>8</td><td>awk/sort/uniq pipeline on combined log format</td></tr>
+        <tr><td>T4</td><td>CSV Department Aggregator</td><td>Bash</td><td>Med-Hard</td><td>7</td><td>Group-by with avg/max aggregation, formatted output</td></tr>
+        <tr><td>T5</td><td>Sliding Window Rate Limiter</td><td>Python/FastAPI</td><td>Hard</td><td>10</td><td>Per-route per-IP rate limiting with 429+Retry-After</td></tr>
+        <tr><td>T6</td><td>Webhook Processor</td><td>Ruby/Sinatra</td><td>Hard</td><td>10</td><td>HMAC-SHA256 verification, idempotency, event routing</td></tr>
+        <tr><td>T7</td><td>Boolean Rule Engine</td><td>Go</td><td>Hard</td><td>10</td><td>Nested AND/OR/NOT rules with comparison operators</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap fade-up" style="margin-top: 1rem;">
+    <h3>Results</h3>
+    <table>
+      <thead>
+        <tr><th>Challenge</th><th>Gemma-4-26B-A4B</th><th>Qwen3.5-35B-A3B</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T1: Log Parser (Python)</td><td>0/10</td><td>1/10</td></tr>
+        <tr><td>T2: Cron Matcher (Python)</td><td>0/10</td><td>0/10</td></tr>
+        <tr><td>T3: Apache Logs (Bash)</td><td>3/8</td><td class="best">6/8</td></tr>
+        <tr><td>T4: CSV Aggregator (Bash)</td><td class="best">7/7</td><td>1/7</td></tr>
+        <tr><td>T5: Rate Limiter (FastAPI)</td><td>0/10</td><td>0/10</td></tr>
+        <tr><td>T6: Webhook (Ruby/Sinatra)</td><td>0/10</td><td>0/10</td></tr>
+        <tr><td>T7: Rule Engine (Go)</td><td>0/10</td><td>0/10</td></tr>
+        <tr><td><strong>TOTAL</strong></td><td><strong>10/65</strong></td><td><strong>8/65</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p><strong>Key insight:</strong> Both 3&ndash;4B active-parameter MoEs score under 20%. The LRU cache benchmark (above) can&rsquo;t differentiate these models&mdash;they both score 10/10. The polyglot benchmark reveals real limitations: neither model can reliably produce working FastAPI middleware, HMAC-verified Sinatra handlers, or recursive Go rule engines in a single shot. Bash pipelines are the only differentiator so far. Larger models have not been tested yet&mdash;the benchmark is designed to find the score ceiling.</p>
   </div>
 
   <div class="divider"></div>
