@@ -8,6 +8,7 @@ Personal benchmarking site. First person ("I") throughout, never "we".
 - No semicolons
 - No em dashes
 - Hyphens are fine (compound words, model names)
+- Never use the word "romance" on site. The writing benchmarks are "creative writing" or just "writing".
 - Keep copy direct and factual. This is a data site, not a blog post.
 
 ## AI Slop Prevention
