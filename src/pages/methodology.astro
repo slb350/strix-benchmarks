@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Methodology" activePage="methodology" description="Hardware specs, backend configuration, and benchmark methodology for Strix Halo LLM testing">
+  <div class="page-header fade-up">
+    <h1>Methodology</h1>
+    <p class="description">Hardware, software, backend configuration, and benchmark details. Coding benchmarks are fully specified below; creative writing evaluation is scored by human review.</p>
+  </div>
+
+  <h2>Hardware &amp; Software</h2>
+  <div class="table-wrap fade-up">
+    <table>
+      <tbody>
+        <tr><td class="model-name">CPU</td><td>AMD Ryzen AI MAX+ 395 (16C/32T)</td></tr>
+        <tr><td class="model-name">GPU</td><td>Radeon 8060S Graphics (RDNA 3.5, gfx1151)</td></tr>
+        <tr><td class="model-name">Memory</td><td>128GB unified (120GB soft VRAM cap)</td></tr>
+        <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
+        <tr><td class="model-name">Vulkan</td><td>1.4.321 &mdash; Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1</td></tr>
+        <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
+        <tr><td class="model-name">llama.cpp</td><td>b8461 (2026-03-20)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Backend Configuration</h2>
+  <div class="stats-grid fade-up">
+    <div class="card">
+      <h3>RADV</h3>
+      <p>Mesa's open-source Vulkan driver. <strong>Best overall</strong> since b8119 MMQ fix. 25% pp boost on Qwen3-30B. Recommended default for most models.</p>
+    </div>
+    <div class="card">
+      <h3>AMDVLK</h3>
+      <p>AMD's open-source Vulkan driver. Best for GPT-OSS-120B prompt processing. Good stability for production use.</p>
+    </div>
+    <div class="card">
+      <h3>ROCm</h3>
+      <p>AMD's compute stack via TheRock nightly. Requires <code>-mmp 0</code> or models hang during load. Best for some dense models. Crashes with FA enabled on GPT-OSS-120B.</p>
+    </div>
+  </div>
+
+  <div class="card fade-up">
+    <h3>Common Parameters</h3>
+    <table>
+      <tbody>
+        <tr><td class="model-name">ngl</td><td>999 (all layers offloaded)</td></tr>
+        <tr><td class="model-name">batch</td><td>2048 (optimal for RDNA 3.5 &mdash; higher values decrease performance)</td></tr>
+        <tr><td class="model-name">threads</td><td>32</td></tr>
+        <tr><td class="model-name">flash_attn</td><td>1 (enabled, except ROCm on GPT-OSS-120B)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Performance Benchmarks</h2>
+  <div class="card fade-up">
+    <p>All performance numbers come from <code>llama-bench</code> with pp512 (prompt processing, 512 tokens) and tg128 (token generation, 128 tokens). Each model is tested on all available backends with identical parameters. Results are reported in tokens per second (t/s).</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Coding Benchmarks</h2>
+  <p>All coding benchmarks are single-shot: the model receives one prompt and its output is automatically validated against a test suite. No retries, no iterative refinement.</p>
+
+  <h3>LRU Cache with TTL (10 tests)</h3>
+  <div class="card fade-up">
+    <p>Implement a thread-safe LRU cache with TTL support in Python. Required methods: <code>get()</code>, <code>put()</code>, <code>delete()</code>, <code>clear()</code>, <code>size()</code>. Tests cover basic get/put operations, capacity eviction, TTL expiration, concurrent read/write from multiple threads, and edge cases (empty cache, expired entries, delete nonexistent keys).</p>
+  </div>
+
+  <h3>FastAPI TODO List (8 tests)</h3>
+  <div class="card fade-up">
+    <p>Generate a complete FastAPI REST API for a TODO list application. The prompt specifies <code>POST /todos</code> should accept <code>{'{"title": "..."}'}</code> without an explicit ID &mdash; this tests whether models use proper DTO patterns (separate create/update schemas) vs a single model requiring ID in POST. Tests cover CRUD operations, error handling (404 on missing ID), and auto-incrementing IDs.</p>
+  </div>
+
+  <h3>LeetCode Algorithms (59 tests)</h3>
+  <div class="card fade-up">
+    <p>Eleven algorithmic problems spanning three difficulty tiers. <strong>Easy:</strong> Two Sum. <strong>Medium:</strong> Longest Substring Without Repeating Characters, 3Sum, Container With Most Water, Group Anagrams. <strong>Hard:</strong> Trapping Rain Water, Merge K Sorted Lists, Longest Valid Parentheses, Median of Two Sorted Arrays, Minimum Window Substring. Each problem has multiple test cases validating correctness and edge cases.</p>
+  </div>
+
+  <h3>Polyglot Coding (65 tests, 4 languages)</h3>
+  <div class="card fade-up">
+    <p>Seven challenges across Python, Bash, Ruby, and Go at LeetCode medium/hard difficulty. Designed to differentiate models that ace the simpler benchmarks above. Auto-graded: Python via unittest, Bash via output comparison, Ruby via minitest/rack-test, Go via <code>go test</code>.</p>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Challenge</th><th>Language</th><th>Difficulty</th><th>Tests</th><th>What It Tests</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T1</td><td>Structured Log Parser</td><td>Python</td><td>Med-Hard</td><td>10</td><td>Regex with nested JSON in bracket-delimited fields</td></tr>
+        <tr><td>T2</td><td>Cron Expression Matcher</td><td>Python</td><td>Hard</td><td>10</td><td>Parse 5-field cron syntax (ranges, steps, day names)</td></tr>
+        <tr><td>T3</td><td>Apache Log Analyzer</td><td>Bash</td><td>Medium</td><td>8</td><td>awk/sort/uniq pipeline on combined log format</td></tr>
+        <tr><td>T4</td><td>CSV Department Aggregator</td><td>Bash</td><td>Med-Hard</td><td>7</td><td>Group-by with avg/max aggregation, formatted output</td></tr>
+        <tr><td>T5</td><td>Sliding Window Rate Limiter</td><td>Python/FastAPI</td><td>Hard</td><td>10</td><td>Per-route per-IP rate limiting with 429 + Retry-After</td></tr>
+        <tr><td>T6</td><td>Webhook Processor</td><td>Ruby/Sinatra</td><td>Hard</td><td>10</td><td>HMAC-SHA256 verification, idempotency, event routing</td></tr>
+        <tr><td>T7</td><td>Boolean Rule Engine</td><td>Go</td><td>Hard</td><td>10</td><td>Nested AND/OR/NOT rules with comparison operators</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Creative Writing</h2>
+  <div class="card fade-up">
+    <p>Short stories (~2,000 words) are generated with specific narrative requirements and scored /30 by human evaluation across six quality dimensions including voice, pacing, sensory detail, dialogue, and emotional depth. Scoring is subjective but calibrated against the same rubric for every model.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Sampling &amp; Configuration Notes</h2>
+  <ul class="findings fade-up">
+    <li><strong>Unsloth-recommended params</strong> transformed results for Qwen3.5 models: <code>presence_penalty=1.5</code>, <code>top_k=20</code>, and thinking mode via <code>--chat-template-kwargs '&#123;"enable_thinking":true&#125;'</code> with 64k context.</li>
+    <li><strong>Thinking mode helps coding, hurts prose style</strong> &mdash; models plan implementations more effectively but overshoot word counts and introduce more punctuation violations in creative writing.</li>
+    <li><strong><code>--reasoning-budget 0</code> does not work</strong> for disabling Qwen3.5 thinking. Must use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code> instead.</li>
+    <li><strong>Model-specific defaults matter</strong> &mdash; Qwen3.5-27B went from 0/10 to 10/10 on coding just by switching from default params to Unsloth-recommended sampling.</li>
+  </ul>
+</BaseLayout>

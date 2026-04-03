@@ -110,29 +110,19 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Champion model</h2>
-  <div class="card fade-up">
-    <h3>Qwen3-30B-Instruct-2507 <span class="badge champion">Champion</span></h3>
-    <p>Perfect scores across the board: <strong>30/30 creative writing</strong>, <strong>10/10 coding</strong> in just 12 seconds. 1055 pp / 75 tg on RADV. Q6_K quant at only 23 GiB &mdash; fits easily in VRAM with room to spare.</p>
-  </div>
-
   <h2>Explore results</h2>
   <div class="stats-grid fade-up">
-    <a href={`${base}performance/`} class="stat-card">
-      <div class="value">1424</div>
-      <div class="label">Peak pp512 t/s</div>
-    </a>
-    <a href={`${base}creative-writing/`} class="stat-card">
-      <div class="value">30/30</div>
-      <div class="label">Best writing score</div>
-    </a>
-    <a href={`${base}coding/`} class="stat-card">
-      <div class="value">10/10</div>
-      <div class="label">Perfect coding (12s)</div>
+    <a href={`${base}models/`} class="stat-card">
+      <div class="value">26+</div>
+      <div class="label">Models compared</div>
     </a>
     <a href={`${base}quantization/`} class="stat-card">
       <div class="value">AesSedai</div>
       <div class="label">vs Unsloth quants</div>
+    </a>
+    <a href={`${base}methodology/`} class="stat-card">
+      <div class="value">65</div>
+      <div class="label">Polyglot test cases</div>
     </a>
   </div>
 </BaseLayout>

@@ -1,0 +1,561 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SortableTable from '../components/SortableTable.astro';
+---
+<BaseLayout title="Models" activePage="models" description="Consolidated LLM benchmark results across performance, creative writing, and coding on AMD Strix Halo gfx1151">
+  <div class="page-header fade-up">
+    <h1>Model Comparison</h1>
+    <p class="description">Every model tested on this hardware, sorted however you like. Click column headers to sort. Performance via llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality via automated test suites and human evaluation.</p>
+  </div>
+
+  <h2>Performance</h2>
+  <div class="table-wrap fade-up">
+    <table class="sortable table-sticky">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Quant</th>
+          <th>Size</th>
+          <th class="group-start" data-type="number">RADV pp</th>
+          <th data-type="number">RADV tg</th>
+          <th class="group-start" data-type="number">AMDVLK pp</th>
+          <th data-type="number">AMDVLK tg</th>
+          <th class="group-start" data-type="number">ROCm pp</th>
+          <th data-type="number">ROCm tg</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">GPT-OSS-20B-Derestricted</td>
+          <td>MXFP4</td>
+          <td>11 GiB</td>
+          <td class="group-start best">1405</td>
+          <td>77</td>
+          <td class="group-start">1380</td>
+          <td>77</td>
+          <td class="group-start">790</td>
+          <td>73</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3-30B-Instruct-2507</td>
+          <td>UD-Q4_K_XL</td>
+          <td>16.5 GiB</td>
+          <td class="group-start">1143</td>
+          <td class="best">92</td>
+          <td class="group-start">936</td>
+          <td class="best">93</td>
+          <td class="group-start">1153</td>
+          <td>73</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-26B-A4B <span class="badge new">New</span></td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>16 GiB</td>
+          <td class="group-start best">1196</td>
+          <td>52.9</td>
+          <td class="group-start">659</td>
+          <td>52.0</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-35B-A3B</td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>21 GiB</td>
+          <td class="group-start best">1017</td>
+          <td>59.8</td>
+          <td class="group-start">686</td>
+          <td>60.4</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-9B</td>
+          <td>UD-Q4_K_XL</td>
+          <td>5.6 GiB</td>
+          <td class="group-start">972</td>
+          <td>35.7</td>
+          <td class="group-start">289</td>
+          <td>35.2</td>
+          <td class="group-start best">1057</td>
+          <td>32.1</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-4B</td>
+          <td>Q8_0</td>
+          <td>4 GiB</td>
+          <td class="group-start best">1375</td>
+          <td>37.9</td>
+          <td class="group-start">510</td>
+          <td class="best">40.0</td>
+          <td class="group-start">958</td>
+          <td>36.3</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-Cascade-2-30B-A3B</td>
+          <td>Q8_0</td>
+          <td>31 GiB</td>
+          <td class="group-start">968</td>
+          <td>54</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">GLM-4.7-Flash</td>
+          <td>Q4_K_M</td>
+          <td>17 GiB</td>
+          <td class="group-start">949</td>
+          <td>75</td>
+          <td class="group-start">578</td>
+          <td class="best">78</td>
+          <td class="group-start">966</td>
+          <td>51</td>
+        </tr>
+        <tr>
+          <td class="model-name">GLM-4.7-Flash-Opus-Distill</td>
+          <td>Q8_0</td>
+          <td>30 GiB</td>
+          <td class="group-start">981</td>
+          <td>50</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">GPT-OSS-120B</td>
+          <td>MXFP4</td>
+          <td>59 GiB</td>
+          <td class="group-start">596</td>
+          <td class="best">56</td>
+          <td class="group-start best">661</td>
+          <td>53</td>
+          <td class="group-start">272</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3-Coder-Next-80B</td>
+          <td>MXFP4</td>
+          <td>41 GiB</td>
+          <td class="group-start best">586</td>
+          <td>40</td>
+          <td class="group-start">462</td>
+          <td>43</td>
+          <td class="group-start">383</td>
+          <td>38</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-27B</td>
+          <td>UD-Q4_K_XL</td>
+          <td>16 GiB</td>
+          <td class="group-start">310</td>
+          <td>12.1</td>
+          <td class="group-start">86</td>
+          <td>11.9</td>
+          <td class="group-start best">326</td>
+          <td>11.3</td>
+        </tr>
+        <tr>
+          <td class="model-name">Kimi-Linear-48B</td>
+          <td>Q5_K_M</td>
+          <td>33 GiB</td>
+          <td class="group-start">285</td>
+          <td>65</td>
+          <td class="group-start">238</td>
+          <td>63</td>
+          <td class="group-start best">303</td>
+          <td>55</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-122B-A10B</td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>72 GiB</td>
+          <td class="group-start best">287</td>
+          <td class="best">22.4</td>
+          <td class="group-start">197</td>
+          <td>21.9</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-31B <span class="badge new">New</span></td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>17.5 GiB</td>
+          <td class="group-start best">247</td>
+          <td>11.1</td>
+          <td class="group-start">70.8</td>
+          <td>11.1</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Step3.5-Flash</td>
+          <td>IQ3_XS</td>
+          <td>76 GiB</td>
+          <td class="group-start">237</td>
+          <td>32</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">MiniMax-M2.5</td>
+          <td>IQ3_XXS</td>
+          <td>87 GiB</td>
+          <td class="group-start">203</td>
+          <td>37</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>78 GiB</td>
+          <td class="group-start">196</td>
+          <td>10.2</td>
+          <td class="group-start">139</td>
+          <td>9.86</td>
+          <td class="group-start best">206</td>
+          <td class="best">16.1</td>
+        </tr>
+        <!-- Quality-only models (no llama-bench data) -->
+        <tr>
+          <td class="model-name">Nemotron-3-Nano-30B</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ling-Flash-2.0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ministral-3-14B-Instruct</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Magistral-Small-2509</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Solar-Open-100B</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Mistral-Large-2411</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-Small-2-24B</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-2-123B</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Quality</h2>
+  <div class="table-wrap fade-up">
+    <table class="sortable table-sticky">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th class="group-start" data-type="number">Writing /30</th>
+          <th class="group-start" data-type="number">LRU /10</th>
+          <th data-type="number">FastAPI /8</th>
+          <th data-type="number">LeetCode /59</th>
+          <th data-type="number">Polyglot /65</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Qwen3-30B-Instruct-2507</td>
+          <td class="group-start best">30</td>
+          <td class="group-start best">10</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-122B-A10B</td>
+          <td class="group-start best">29</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-35B-A3B</td>
+          <td class="group-start">28</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3-Coder-Next-80B</td>
+          <td class="group-start">26</td>
+          <td class="group-start best">10</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ling-Flash-2.0</td>
+          <td class="group-start">26</td>
+          <td class="group-start">2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ministral-3-14B-Instruct</td>
+          <td class="group-start">26</td>
+          <td class="group-start">6</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-31B <span class="badge new">New</span></td>
+          <td class="group-start">26</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
+          <td class="group-start">25</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-27B</td>
+          <td class="group-start">25</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-2-123B</td>
+          <td class="group-start">25</td>
+          <td class="group-start">2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Nano-30B</td>
+          <td class="group-start">24</td>
+          <td class="group-start">7</td>
+          <td>2</td>
+          <td class="best">59</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">MiniMax-M2.5</td>
+          <td class="group-start">24</td>
+          <td class="group-start">0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Kimi-Linear-48B</td>
+          <td class="group-start">23</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-26B-A4B <span class="badge new">New</span></td>
+          <td class="group-start">23</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td class="model-name">Magistral-Small-2509</td>
+          <td class="group-start">21</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="best">8</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Solar-Open-100B</td>
+          <td class="group-start">21</td>
+          <td class="group-start">0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">GPT-OSS-120B</td>
+          <td class="group-start">20</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Mistral-Large-2411</td>
+          <td class="group-start">20</td>
+          <td class="group-start">2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-9B</td>
+          <td class="group-start">20</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-Cascade-2-30B-A3B</td>
+          <td class="group-start">18</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-Small-2-24B</td>
+          <td class="group-start">16</td>
+          <td class="group-start">2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.5-4B</td>
+          <td class="group-start">16</td>
+          <td class="group-start">9</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">GPT-OSS-20B-Derestricted</td>
+          <td class="group-start">13</td>
+          <td class="group-start best">10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <!-- Performance-only models (no quality data) -->
+        <tr>
+          <td class="model-name">GLM-4.7-Flash</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">GLM-4.7-Flash-Opus-Distill</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="group-start">2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Step3.5-Flash</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="group-start">0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Key Findings</h2>
+  <ul class="findings fade-up">
+    <li><strong>RADV dominates prompt processing</strong> across Qwen3.5 models (50&ndash;280% faster than AMDVLK). Token generation is typically tied between drivers &mdash; bandwidth-bound.</li>
+    <li><strong>AMDVLK wins on GPT-OSS-120B pp only</strong> (661 vs 596 RADV). No longer leads tg on MoE models.</li>
+    <li><strong>ROCm requires <code>-mmp 0</code></strong> or models hang during load. Best for some dense models (GLM-4.7, Qwen3.5-27B). Crashes with FA enabled on GPT-OSS-120B.</li>
+    <li><strong>MXFP4 outperforms Q4_K_M</strong> for QAT-trained MoE models. Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
+    <li><strong>Qwen3.5 dense models hit an architecture-level tg bottleneck</strong> &mdash; ~12 t/s for 27B, ~22 t/s for 9B regardless of backend.</li>
+    <li><strong>Sampling params transform quality results</strong> &mdash; Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
+  </ul>
+
+  <SortableTable />
+</BaseLayout>

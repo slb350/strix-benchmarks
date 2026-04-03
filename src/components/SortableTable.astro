@@ -1,0 +1,29 @@
+<!-- Shared table sorting script for tables with class="sortable" -->
+<!-- Reads data-type="number" from <th> elements for numeric sorting -->
+<script is:inline>
+  document.querySelectorAll('table.sortable th').forEach((th, i) => {
+    const arrow = document.createElement('span');
+    arrow.className = 'sort-arrow';
+    arrow.textContent = ' \u25B4';
+    th.appendChild(arrow);
+    let asc = true;
+    th.addEventListener('click', () => {
+      const table = th.closest('table');
+      const tbody = table?.querySelector('tbody');
+      if (!table || !tbody) return;
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const isNum = th.dataset.type === 'number';
+      table.querySelectorAll('.sort-arrow').forEach(a => { a.classList.remove('active'); a.textContent = ' \u25B4'; });
+      arrow.classList.add('active');
+      arrow.textContent = asc ? ' \u25B4' : ' \u25BE';
+      rows.sort((a, b) => {
+        const av = a.children[i]?.textContent?.trim() ?? '';
+        const bv = b.children[i]?.textContent?.trim() ?? '';
+        if (isNum) return asc ? parseFloat(av) - parseFloat(bv) : parseFloat(bv) - parseFloat(av);
+        return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      rows.forEach(r => tbody.appendChild(r));
+      asc = !asc;
+    });
+  });
+</script>

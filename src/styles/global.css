@@ -33,7 +33,7 @@
   --font-body: 'Satoshi', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
 
-  --max-width: 1120px;
+  --max-width: 1240px;
   --nav-height: 56px;
   --radius: 8px;
   --radius-sm: 4px;
@@ -503,6 +503,34 @@ footer a:hover { color: var(--accent); }
 .fade-up:nth-child(3) { animation-delay: 0.1s; }
 .fade-up:nth-child(4) { animation-delay: 0.15s; }
 .fade-up:nth-child(5) { animation-delay: 0.2s; }
+
+/* ===== STICKY TABLE ===== */
+.table-sticky td:first-child,
+.table-sticky th:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--bg-card);
+  z-index: 1;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
+}
+
+.table-sticky tr:hover td:first-child {
+  background: var(--bg-table-alt);
+}
+
+/* ===== COLUMN GROUP SEPARATORS ===== */
+th.group-start {
+  border-left: 2px solid var(--border);
+}
+
+td.group-start {
+  border-left: 2px solid var(--border-light);
+}
+
+/* ===== MISSING DATA ===== */
+td.missing {
+  color: var(--text-faint);
+}
 
 /* ===== UTILITY ===== */
 a.stat-card {
