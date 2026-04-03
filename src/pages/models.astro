@@ -338,7 +338,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td>2</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>13</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-122B-A10B</td>
@@ -346,7 +346,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>7</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
@@ -362,7 +362,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td>2</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>9</td>
         </tr>
         <tr>
           <td class="model-name">Ling-Flash-2.0</td>
@@ -402,7 +402,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>10</td>
         </tr>
         <tr>
           <td class="model-name">Devstral-2-123B</td>
@@ -466,7 +466,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td class="best">8</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">14</td>
         </tr>
         <tr>
           <td class="model-name">Mistral-Large-2411</td>
@@ -482,7 +482,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>5</td>
         </tr>
         <tr>
           <td class="model-name">Nemotron-Cascade-2-30B-A3B</td>
@@ -490,7 +490,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>1</td>
         </tr>
         <tr>
           <td class="model-name">Devstral-Small-2-24B</td>
@@ -555,6 +555,8 @@ import SortableTable from '../components/SortableTable.astro';
     <li><strong>MXFP4 outperforms Q4_K_M</strong> for QAT-trained MoE models. Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
     <li><strong>Qwen3.5 dense models hit an architecture-level tg bottleneck</strong> &mdash; ~12 t/s for 27B, ~22 t/s for 9B regardless of backend.</li>
     <li><strong>Sampling params transform quality results</strong> &mdash; Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
+    <li><strong>Polyglot benchmark reveals what LRU cache hides</strong> &mdash; 15 models score 10/10 on LRU cache, but the polyglot gauntlet (regex, bash, FastAPI, Ruby/Sinatra, Go) tops out at 14/65. GPT-OSS-120B leads on bash pipelines; Qwen3-30B leads on Python regex and is the only model to score on Go.</li>
+    <li><strong>T2 (cron), T5 (FastAPI), T6 (Sinatra) remain unsolved</strong> &mdash; 0/10 across all 12 model runs. These single-shot challenges exceed current local model capabilities.</li>
   </ul>
 
   <SortableTable />
