@@ -337,7 +337,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start best">30</td>
           <td class="group-start best">10</td>
           <td>2</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td class="best">13</td>
         </tr>
         <tr>
@@ -353,7 +353,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">28</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td>8</td>
         </tr>
         <tr>
@@ -361,7 +361,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">26</td>
           <td class="group-start best">10</td>
           <td>2</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td>9</td>
         </tr>
         <tr>
@@ -385,7 +385,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">26</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td class="best">14</td>
         </tr>
         <tr>
@@ -401,7 +401,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">25</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td>10</td>
         </tr>
         <tr>
@@ -441,7 +441,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">23</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td>10</td>
         </tr>
         <tr>
@@ -465,7 +465,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">20</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td class="best">14</td>
         </tr>
         <tr>
@@ -473,7 +473,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">13</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td class="best">14</td>
         </tr>
         <tr>
@@ -489,7 +489,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">20</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>51</td>
           <td>5</td>
         </tr>
         <tr>
@@ -497,7 +497,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">18</td>
           <td class="group-start best">10</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">59</td>
           <td>1</td>
         </tr>
         <tr>
@@ -513,7 +513,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">16</td>
           <td class="group-start">9</td>
           <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
+          <td>54</td>
           <td class="missing">&mdash;</td>
         </tr>
         <!-- Performance-only models (no quality data) -->
@@ -555,7 +555,8 @@ import SortableTable from '../components/SortableTable.astro';
     <li><strong>MXFP4 outperforms Q4_K_M</strong> for QAT-trained MoE models. Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
     <li><strong>Qwen3.5 dense models hit an architecture-level tg bottleneck</strong> &mdash; ~12 t/s for 27B, ~22 t/s for 9B regardless of backend.</li>
     <li><strong>Sampling params transform quality results</strong> &mdash; Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
-    <li><strong>Polyglot benchmark reveals what LRU cache hides</strong> &mdash; 15 models score 10/10 on LRU cache, but the polyglot gauntlet tops out at 14/65. Three-way tie: GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B. The 20B matches its 120B sibling identically in 3 minutes vs 8.</li>
+    <li><strong>LeetCode is the new LRU cache</strong> &mdash; 10 of 12 models score a perfect 59/59 on classic algorithmic problems (Two Sum through Min Window Substring). Only Qwen3.5-4B (54) and 9B (51) miss any. Training data saturation makes traditional coding benchmarks useless for differentiation.</li>
+    <li><strong>Polyglot benchmark reveals what LRU cache and LeetCode hide</strong> &mdash; 15 models score 10/10 on LRU cache, 10 score 59/59 on LeetCode, but the polyglot gauntlet tops out at 14/65. Three-way tie: GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B. The 20B matches its 120B sibling identically in 3 minutes vs 8.</li>
     <li><strong>Dense beats MoE on structured output</strong> &mdash; Gemma-4-31B (dense, 14/65) outperforms its MoE sibling 26B-A4B (10/65) on bash despite being 5x slower. Qwen3-30B is the only model to score on Go (3/10).</li>
     <li><strong>T2 (cron), T5 (FastAPI), T6 (Sinatra) remain unsolved</strong> &mdash; 0/10 across all 14 model runs. These single-shot challenges exceed current local model capabilities.</li>
   </ul>
