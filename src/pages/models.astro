@@ -5,7 +5,7 @@ import SortableTable from '../components/SortableTable.astro';
 <BaseLayout title="Models" activePage="models" description="Consolidated LLM benchmark results across performance, creative writing, and coding on AMD Strix Halo gfx1151">
   <div class="page-header fade-up">
     <h1>Model Comparison</h1>
-    <p class="description">Every model tested on this hardware, sorted however you like. Click column headers to sort. Performance via llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality via automated test suites and human evaluation.</p>
+    <p class="description">Every model tested on this hardware, sorted however you like. Click any column header to sort. Performance numbers from llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality scores from automated test suites and human evaluation.</p>
   </div>
 
   <h2>Performance</h2>
@@ -549,16 +549,16 @@ import SortableTable from '../components/SortableTable.astro';
 
   <h2>Key Findings</h2>
   <ul class="findings fade-up">
-    <li><strong>RADV dominates prompt processing</strong> across Qwen3.5 models (50&ndash;280% faster than AMDVLK). Token generation is typically tied between drivers &mdash; bandwidth-bound.</li>
-    <li><strong>AMDVLK wins on GPT-OSS-120B pp only</strong> (661 vs 596 RADV). No longer leads tg on MoE models.</li>
-    <li><strong>ROCm requires <code>-mmp 0</code></strong> or models hang during load. Best for some dense models (GLM-4.7, Qwen3.5-27B). Crashes with FA enabled on GPT-OSS-120B.</li>
-    <li><strong>MXFP4 outperforms Q4_K_M</strong> for QAT-trained MoE models. Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
-    <li><strong>Qwen3.5 dense models hit an architecture-level tg bottleneck</strong> &mdash; ~12 t/s for 27B, ~22 t/s for 9B regardless of backend.</li>
-    <li><strong>Sampling params transform quality results</strong> &mdash; Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
-    <li><strong>LeetCode is the new LRU cache</strong> &mdash; 10 of 12 models score a perfect 59/59 on classic algorithmic problems (Two Sum through Min Window Substring). Only Qwen3.5-4B (54) and 9B (51) miss any. Training data saturation makes traditional coding benchmarks useless for differentiation.</li>
-    <li><strong>Polyglot benchmark reveals what LRU cache and LeetCode hide</strong> &mdash; 15 models score 10/10 on LRU cache, 10 score 59/59 on LeetCode, but the polyglot gauntlet tops out at 14/65. Three-way tie: GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B. The 20B matches its 120B sibling identically in 3 minutes vs 8.</li>
-    <li><strong>Dense beats MoE on structured output</strong> &mdash; Gemma-4-31B (dense, 14/65) outperforms its MoE sibling 26B-A4B (10/65) on bash despite being 5x slower. Qwen3-30B is the only model to score on Go (3/10).</li>
-    <li><strong>T2 (cron), T5 (FastAPI), T6 (Sinatra) remain unsolved</strong> &mdash; 0/10 across all 14 model runs. These single-shot challenges exceed current local model capabilities.</li>
+    <li>RADV dominates prompt processing across Qwen3.5 models (50-280% faster than AMDVLK). Token generation is typically tied between drivers since it's bandwidth-bound.</li>
+    <li>AMDVLK only wins on GPT-OSS-120B pp (661 vs 596 RADV). It no longer leads tg on MoE models.</li>
+    <li>ROCm requires <code>-mmp 0</code> or models hang during load. Best for some dense models like GLM-4.7 and Qwen3.5-27B. Crashes with FA enabled on GPT-OSS-120B.</li>
+    <li>MXFP4 outperforms Q4_K_M for QAT-trained MoE models. Post-hoc MXFP4 on BF16 underperforms standard quants.</li>
+    <li>Qwen3.5 dense models hit an architecture-level tg bottleneck. The 27B tops out at ~12 t/s and the 9B at ~22 t/s regardless of backend.</li>
+    <li>Sampling params transform quality results. Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
+    <li>LeetCode is the new LRU cache. 10 of 12 models score a perfect 59/59 on classic algorithmic problems from Two Sum through Min Window Substring. Only Qwen3.5-4B (54) and 9B (51) miss any. Training data saturation makes traditional coding benchmarks useless for differentiation.</li>
+    <li>The polyglot benchmark reveals what LRU cache and LeetCode hide. 15 models score 10/10 on LRU cache and 10 score 59/59 on LeetCode, but the polyglot gauntlet tops out at 14/65. Three-way tie between GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B. The 20B matches its 120B sibling identically in 3 minutes vs 8.</li>
+    <li>Dense beats MoE on structured output. Gemma-4-31B (dense, 14/65) outperforms its MoE sibling 26B-A4B (10/65) on bash despite being 5x slower. Qwen3-30B is the only model to score on Go (3/10).</li>
+    <li>T2 (cron), T5 (FastAPI), and T6 (Sinatra) remain unsolved at 0/10 across all 14 model runs. These single-shot challenges exceed current local model capabilities.</li>
   </ul>
 
   <SortableTable />

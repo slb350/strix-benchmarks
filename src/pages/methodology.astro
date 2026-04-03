@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Methodology" activePage="methodology" description="Hardware specs, backend configuration, and benchmark methodology for Strix Halo LLM testing">
   <div class="page-header fade-up">
     <h1>Methodology</h1>
-    <p class="description">Hardware, software, backend configuration, and benchmark details. Coding benchmarks are fully specified below; creative writing evaluation is scored by human review.</p>
+    <p class="description">Hardware, software, backend configuration, and benchmark details. Coding benchmarks are fully specified below. Creative writing evaluation is scored by human review.</p>
   </div>
 
   <h2>Hardware &amp; Software</h2>
@@ -15,7 +15,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">GPU</td><td>Radeon 8060S Graphics (RDNA 3.5, gfx1151)</td></tr>
         <tr><td class="model-name">Memory</td><td>128GB unified (120GB soft VRAM cap)</td></tr>
         <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
-        <tr><td class="model-name">Vulkan</td><td>1.4.321 &mdash; Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1</td></tr>
+        <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
         <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
         <tr><td class="model-name">llama.cpp</td><td>b8638 (2026-04-02)</td></tr>
       </tbody>
@@ -26,7 +26,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="stats-grid fade-up">
     <div class="card">
       <h3>RADV</h3>
-      <p>Mesa's open-source Vulkan driver. <strong>Best overall</strong> since b8119 MMQ fix. 25% pp boost on Qwen3-30B. Recommended default for most models.</p>
+      <p>Mesa's open-source Vulkan driver. Best overall since b8119 MMQ fix with a 25% pp boost on Qwen3-30B. Recommended default for most models.</p>
     </div>
     <div class="card">
       <h3>AMDVLK</h3>
@@ -43,7 +43,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <table>
       <tbody>
         <tr><td class="model-name">ngl</td><td>999 (all layers offloaded)</td></tr>
-        <tr><td class="model-name">batch</td><td>2048 (optimal for RDNA 3.5 &mdash; higher values decrease performance)</td></tr>
+        <tr><td class="model-name">batch</td><td>2048 (optimal for RDNA 3.5, higher values decrease performance)</td></tr>
         <tr><td class="model-name">threads</td><td>32</td></tr>
         <tr><td class="model-name">flash_attn</td><td>1 (enabled, except ROCm on GPT-OSS-120B)</td></tr>
       </tbody>
@@ -60,26 +60,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="divider"></div>
 
   <h2>Coding Benchmarks</h2>
-  <p>All coding benchmarks are single-shot: the model receives one prompt and its output is automatically validated against a test suite. No retries, no iterative refinement.</p>
+  <p>All coding benchmarks are single-shot. The model receives one prompt and its output is automatically validated against a test suite. No retries, no iterative refinement.</p>
 
   <h3>LRU Cache with TTL (10 tests)</h3>
   <div class="card fade-up">
-    <p>Implement a thread-safe LRU cache with TTL support in Python. Required methods: <code>get()</code>, <code>put()</code>, <code>delete()</code>, <code>clear()</code>, <code>size()</code>. Tests cover basic get/put operations, capacity eviction, TTL expiration, concurrent read/write from multiple threads, and edge cases (empty cache, expired entries, delete nonexistent keys).</p>
+    <p>Implement a thread-safe LRU cache with TTL support in Python. Required methods are <code>get()</code>, <code>put()</code>, <code>delete()</code>, <code>clear()</code>, and <code>size()</code>. Tests cover basic get/put operations, capacity eviction, TTL expiration, concurrent read/write from multiple threads, and edge cases (empty cache, expired entries, delete nonexistent keys).</p>
   </div>
 
   <h3>FastAPI TODO List (8 tests)</h3>
   <div class="card fade-up">
-    <p>Generate a complete FastAPI REST API for a TODO list application. The prompt specifies <code>POST /todos</code> should accept <code>{'{"title": "..."}'}</code> without an explicit ID &mdash; this tests whether models use proper DTO patterns (separate create/update schemas) vs a single model requiring ID in POST. Tests cover CRUD operations, error handling (404 on missing ID), and auto-incrementing IDs.</p>
+    <p>Generate a complete FastAPI REST API for a TODO list application. The prompt specifies <code>POST /todos</code> should accept <code>{'{"title": "..."}'}</code> without an explicit ID. This tests whether models use proper DTO patterns (separate create/update schemas) or fall back to a single model requiring ID in POST. Tests cover CRUD operations, error handling (404 on missing ID), and auto-incrementing IDs.</p>
   </div>
 
   <h3>LeetCode Algorithms (59 tests)</h3>
   <div class="card fade-up">
-    <p>Ten classic algorithmic problems spanning three difficulty tiers. <strong>Easy:</strong> Two Sum. <strong>Medium:</strong> Longest Substring Without Repeating Characters, 3Sum, Container With Most Water, Group Anagrams. <strong>Hard:</strong> Trapping Rain Water, Merge K Sorted Lists, Longest Valid Parentheses, Median of Two Sorted Arrays, Minimum Window Substring. 59 test cases total. <strong>Result: 10 of 12 models score a perfect 59/59</strong> &mdash; these problems are too saturated in training data to differentiate modern models.</p>
+    <p>Ten classic algorithmic problems spanning three difficulty tiers. Easy (Two Sum), Medium (Longest Substring Without Repeating Characters, 3Sum, Container With Most Water, Group Anagrams), and Hard (Trapping Rain Water, Merge K Sorted Lists, Longest Valid Parentheses, Median of Two Sorted Arrays, Minimum Window Substring). 59 test cases total. 10 of 12 models score a perfect 59/59. These problems are too saturated in training data to differentiate modern models.</p>
   </div>
 
   <h3>Polyglot Coding (65 tests, 4 languages)</h3>
   <div class="card fade-up">
-    <p>Seven challenges across Python, Bash, Ruby, and Go at LeetCode medium/hard difficulty. Designed to differentiate models that ace the simpler benchmarks above. Auto-graded: Python via unittest, Bash via output comparison, Ruby via minitest/rack-test, Go via <code>go test</code>.</p>
+    <p>Seven challenges across Python, Bash, Ruby, and Go at LeetCode medium/hard difficulty. Designed to differentiate models that ace the simpler benchmarks above. Auto-graded with Python via unittest, Bash via output comparison, Ruby via minitest/rack-test, and Go via <code>go test</code>.</p>
     <table>
       <thead>
         <tr><th>#</th><th>Challenge</th><th>Language</th><th>Difficulty</th><th>Tests</th><th>What It Tests</th></tr>
@@ -107,9 +107,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <h2>Sampling &amp; Configuration Notes</h2>
   <ul class="findings fade-up">
-    <li><strong>Unsloth-recommended params</strong> transformed results for Qwen3.5 models: <code>presence_penalty=1.5</code>, <code>top_k=20</code>, and thinking mode via <code>--chat-template-kwargs '&#123;"enable_thinking":true&#125;'</code> with 64k context.</li>
-    <li><strong>Thinking mode helps coding, hurts prose style</strong> &mdash; models plan implementations more effectively but overshoot word counts and introduce more punctuation violations in creative writing.</li>
-    <li><strong><code>--reasoning-budget 0</code> does not work</strong> for disabling Qwen3.5 thinking. Must use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code> instead.</li>
-    <li><strong>Model-specific defaults matter</strong> &mdash; Qwen3.5-27B went from 0/10 to 10/10 on coding just by switching from default params to Unsloth-recommended sampling.</li>
+    <li>Unsloth-recommended params transformed results for Qwen3.5 models. Use <code>presence_penalty=1.5</code>, <code>top_k=20</code>, and thinking mode via <code>--chat-template-kwargs '&#123;"enable_thinking":true&#125;'</code> with 64k context.</li>
+    <li>Thinking mode helps coding but hurts prose style. Models plan implementations more effectively but overshoot word counts and introduce more punctuation violations in creative writing.</li>
+    <li><code>--reasoning-budget 0</code> does not work for disabling Qwen3.5 thinking. Use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code> instead.</li>
+    <li>Qwen3.5-27B went from 0/10 to 10/10 on coding just by switching from default params to Unsloth-recommended sampling.</li>
   </ul>
 </BaseLayout>

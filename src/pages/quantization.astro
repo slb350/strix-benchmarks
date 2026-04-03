@@ -9,7 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <h2>AesSedai vs Unsloth (Qwen3.5 MoE)</h2>
   <div class="card fade-up">
-    <p>For Qwen3.5 MoE models (35B-A3B, 122B-A10B), we tested quants from both <strong>AesSedai</strong> (MoE-aware quantization) and <strong>Unsloth</strong> (Dynamic 2.0). The differences are significant and measurable.</p>
+    <p>For Qwen3.5 MoE models (35B-A3B, 122B-A10B), I tested quants from both <strong>AesSedai</strong> (MoE-aware quantization) and <strong>Unsloth</strong> (Dynamic 2.0). The differences are significant and measurable.</p>
   </div>
 
   <div class="table-wrap fade-up">
@@ -22,7 +22,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </tr>
       </thead>
       <tbody>
-        <tr><td class="model-name">Strategy</td><td>Protects attention/shared experts at Q8_0, differentiates ffn_down from ffn_gate/up</td><td>Dynamic 2.0 &mdash; upcasts critical layers, new imatrix (Mar 5)</td></tr>
+        <tr><td class="model-name">Strategy</td><td>Protects attention/shared experts at Q8_0, differentiates ffn_down from ffn_gate/up</td><td>Dynamic 2.0, upcasts critical layers, new imatrix (Mar 5)</td></tr>
         <tr><td class="model-name">35B-A3B pp (RADV)</td><td class="best">832 t/s</td><td>795 t/s</td></tr>
         <tr><td class="model-name">35B-A3B tg (AMDVLK)</td><td class="best">53 t/s</td><td>48 t/s</td></tr>
         <tr><td class="model-name">35B-A3B Coding</td><td class="best">10/10 (158s)</td><td>10/10 (228s, 148s thinking)</td></tr>
@@ -36,31 +36,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <div class="insight success fade-up">
-    <p><strong>AesSedai wins on raw speed, but Unsloth wins on quality with correct params.</strong> AesSedai is 30-45% faster pp, ~10% faster tg on 35B. But with Unsloth-recommended sampling params and thinking mode, Unsloth UD-Q4_K_XL achieves ~28/30 romance (35B) and ~29/30 (122B), surpassing AesSedai's quality scores.</p>
+    <p>AesSedai wins on raw speed, Unsloth wins on quality with correct params. AesSedai is 30-45% faster pp and ~10% faster tg on 35B. With Unsloth-recommended sampling params and thinking mode, Unsloth UD-Q4_K_XL achieves ~28/30 romance (35B) and ~29/30 (122B), surpassing AesSedai's quality scores.</p>
   </div>
 
   <h3>The Unsloth MXFP4 Bug</h3>
   <div class="insight danger fade-up">
-    <p><strong>Critical bug found and fixed (2026-02-27):</strong> Unsloth's UD-Q4_K_XL was applying MXFP4 quantization to attention tensors by mistake. This caused coding to drop from 10/10 to 8/10 (TTL bugs from corrupted attention weights). The fix restored coding to 10/10 but creative writing quality remained slightly below AesSedai (~24 vs ~25-26/30).</p>
+    <p>Critical bug found and fixed (2026-02-27). Unsloth's UD-Q4_K_XL was applying MXFP4 quantization to attention tensors by mistake. This caused coding to drop from 10/10 to 8/10 (TTL bugs from corrupted attention weights). The fix restored coding to 10/10 but creative writing quality remained slightly below AesSedai (~24 vs ~25-26/30).</p>
   </div>
 
   <div class="divider"></div>
 
-  <h2>MXFP4: QAT vs Post-Hoc</h2>
+  <h2>MXFP4, QAT vs Post-Hoc</h2>
   <div class="card fade-up">
-    <p>MXFP4 (Microscaling FP4) quantization behaves very differently depending on how it was applied:</p>
+    <p>MXFP4 (Microscaling FP4) quantization behaves very differently depending on how it was applied.</p>
   </div>
 
   <div class="stats-grid fade-up">
     <div class="card">
       <h3>QAT-Trained MXFP4</h3>
       <p>Models trained with quantization-aware training (like GPT-OSS-120B) <strong>outperform standard quants</strong>. The model learned to compensate for reduced precision during training.</p>
-      <p class="text-muted-sm">GPT-OSS-120B MXFP4: 661 pp, 53 tg &mdash; excellent for 59 GiB</p>
+      <p class="text-muted-sm">GPT-OSS-120B MXFP4 at 661 pp, 53 tg. Excellent for 59 GiB.</p>
     </div>
     <div class="card">
       <h3>Post-Hoc MXFP4</h3>
       <p>Applying MXFP4 to a BF16 model after training <strong>underperforms standard quants</strong> like Q4_K_M. The precision loss isn't compensated for.</p>
-      <p class="text-muted-sm">Bad for Qwen3.5 MoE &mdash; corrupted attention weights before fix</p>
+      <p class="text-muted-sm">Bad for Qwen3.5 MoE. Corrupted attention weights before fix.</p>
     </div>
   </div>
 
@@ -68,7 +68,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <h2>Qwen3.5 Dense Architecture Bottleneck</h2>
   <div class="card fade-up">
-    <p>Qwen3.5 dense models (4B, 9B, 27B) exhibit a <strong>token generation speed bottleneck</strong> that is consistent across all backends and quants. This appears to be an architecture-level issue, not related to quantization or driver choice.</p>
+    <p>Qwen3.5 dense models (4B, 9B, 27B) exhibit a token generation speed bottleneck that is consistent across all backends and quants. This appears to be baked into the architecture itself rather than caused by quantization or driver choice.</p>
   </div>
 
   <div class="table-wrap fade-up">
@@ -92,22 +92,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <div class="insight warning fade-up">
-    <p><strong>The tg speeds barely vary across backends</strong> &mdash; typically within 1-2 t/s of each other. Compare to Qwen3-30B (MoE) which gets 75 t/s on RADV at a similar model size. The bottleneck appears to be in how the dense Qwen3.5 architecture interacts with the inference engine, not in compute throughput.</p>
+    <p>The tg speeds barely vary across backends, typically within 1-2 t/s of each other. Compare to Qwen3-30B (MoE) which gets 75 t/s on RADV at a similar model size. The bottleneck is in how the dense Qwen3.5 architecture interacts with the inference engine, not in raw compute throughput.</p>
   </div>
 
   <h3>Impact on Usability</h3>
   <ul class="findings fade-up">
-    <li><strong>27B is impractical</strong> at 6-11 t/s &mdash; too slow for interactive use. Coding fixed (10/10 with Unsloth params) but speed remains the bottleneck.</li>
-    <li><strong>9B is usable</strong> at 22-23 t/s &mdash; acceptable for generation tasks, 10/10 coding in no-think mode.</li>
-    <li><strong>4B is surprisingly capable</strong> at 38-40 t/s &mdash; good for lightweight tasks, 9/10 coding.</li>
-    <li><strong>pp is not bottlenecked</strong> &mdash; Qwen3.5-4B hits 1375 pp on RADV, showing the issue is tg-specific.</li>
+    <li>27B is impractical at 6-11 t/s. Too slow for interactive use. Coding is fixed (10/10 with Unsloth params) but speed remains the bottleneck.</li>
+    <li>9B is usable at 22-23 t/s. Acceptable for generation tasks, 10/10 coding in no-think mode.</li>
+    <li>4B is surprisingly capable at 38-40 t/s. Good for lightweight tasks, 9/10 coding.</li>
+    <li>pp is not bottlenecked. Qwen3.5-4B hits 1375 pp on RADV, showing the issue is tg-specific.</li>
   </ul>
 
   <div class="divider"></div>
 
   <h2>Qwen3.5 Sampling Parameters (Critical)</h2>
   <div class="card fade-up">
-    <p>Qwen3.5 models require <strong>specific sampling parameters</strong> recommended by <a href="https://unsloth.ai/docs/models/qwen3.5">Unsloth</a>. Default llama.cpp params cause dramatic failures: 0/10 coding (27B), prose loops (35B), and excessive repetition across all sizes.</p>
+    <p>Qwen3.5 models require <strong>specific sampling parameters</strong> recommended by <a href="https://unsloth.ai/docs/models/qwen3.5">Unsloth</a>. Default llama.cpp params cause dramatic failures. 0/10 coding on the 27B, prose loops on the 35B, and excessive repetition across all sizes.</p>
   </div>
 
   <div class="table-wrap fade-up">
@@ -133,14 +133,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <div class="insight success fade-up">
-    <p><strong>Key: use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code></strong> (NOT <code>--reasoning-budget 0</code> which produces zero output). The <code>presence_penalty=1.5</code> is the single most impactful param &mdash; it eliminated the 35B prose loop and halved colon count on 27B. However, it hurts 122B prose (5 vs 15 colons).</p>
+    <p>Use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code> and NOT <code>--reasoning-budget 0</code> which produces zero output. The <code>presence_penalty=1.5</code> is the single most impactful param. It eliminated the 35B prose loop and halved colon count on 27B. It hurts 122B prose though (5 vs 15 colons).</p>
   </div>
 
   <div class="divider"></div>
 
   <h2>Qwen3.5-35B-A3B Prose Loop (Resolved)</h2>
   <div class="card fade-up">
-    <p>Previously reported as an "architecture-level issue" affecting all quants. <strong>Root cause identified: missing sampling parameters.</strong> With Unsloth-recommended <code>presence_penalty=1.5</code>, the loop is completely eliminated.</p>
+    <p>Previously reported as an "architecture-level issue" affecting all quants. Root cause was missing sampling parameters. With Unsloth-recommended <code>presence_penalty=1.5</code>, the loop is completely eliminated.</p>
   </div>
 
   <div class="table-wrap fade-up">
@@ -162,6 +162,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <div class="insight success fade-up">
-    <p><strong>Not an architecture issue after all.</strong> The model needed <code>presence_penalty=1.5</code> to prevent repetition degeneration. No-think mode produces the best prose adherence (5 colons, 0 semicolons). Thinking mode overshoots but doesn't loop.</p>
+    <p>Turned out it wasn't an architecture issue. The model needed <code>presence_penalty=1.5</code> to prevent repetition degeneration. No-think mode produces the best prose adherence (5 colons, 0 semicolons). Thinking mode overshoots word count but doesn't loop.</p>
   </div>
 </BaseLayout>

@@ -5,7 +5,7 @@ const base = import.meta.env.BASE_URL;
 <BaseLayout title="Home" activePage="home">
   <div class="hero fade-up">
     <h1>Local LLM benchmarks on AMD Strix Halo</h1>
-    <p class="subtitle">The only comprehensive multi-backend benchmark suite for gfx1151 &mdash; comparing RADV, AMDVLK, and ROCm across performance, creative writing, and coding tasks.</p>
+    <p class="subtitle">Multi-backend benchmark results for gfx1151, comparing RADV, AMDVLK, and ROCm across performance, creative writing, and coding tasks.</p>
     <span class="hardware-tag">Ryzen AI MAX+ 395 &bull; Radeon 8060S &bull; 128GB UMA &bull; RDNA 3.5</span>
   </div>
 
@@ -28,7 +28,7 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Latest: Gemma 4 <span class="badge new">New</span></h2>
+  <h2>Gemma 4 <span class="badge new">New</span></h2>
   <p>Google's newest open models, both tested as Unsloth UD-Q4_K_XL on RADV.</p>
 
   <div class="table-wrap fade-up">
@@ -68,25 +68,25 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p><strong>The 26B-A4B MoE is the practical pick</strong> &mdash; nearly 5x faster generation than the dense 31B, with perfect coding and solid creative writing. The 31B writes better prose but hits the same tg bottleneck as other dense models (~11 t/s).</p>
+    <p>The 26B-A4B MoE is the practical pick. Nearly 5x faster generation than the dense 31B, with perfect coding and solid creative writing. The 31B writes better prose but hits the same tg bottleneck as other dense models (~11 t/s).</p>
   </div>
 
   <div class="divider"></div>
 
   <h2>Polyglot Coding Gauntlet <span class="badge new">New</span></h2>
   <div class="card fade-up">
-    <p>The LRU cache benchmark ran its course &mdash; 15 models score a perfect 10/10, making it useless for differentiation. Today we shipped a new polyglot coding gauntlet: seven challenges across Python, Bash, Ruby/Sinatra, and Go, totalling 65 auto-graded tests at LeetCode medium/hard difficulty. The challenges test real-world skills: parsing structured logs with nested JSON, matching cron expressions, building awk pipelines, implementing FastAPI rate-limiting middleware, writing HMAC-verified Sinatra webhook handlers, and building recursive Go rule engines.</p>
-    <p>We ran every model on disk through the gauntlet. The results are humbling. <strong>Nobody breaks 22%.</strong> A three-way tie leads at 14/65: GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B &mdash; all winning on bash pipelines. The 20B matches its 120B sibling identically in 3 minutes vs 8, proving the extra 100B parameters add zero value here. Qwen3-30B is right behind at 13/65 and is the only model to score on the Go rule engine (3/10) &mdash; and it did it all in 90 seconds. Three challenges remain completely unsolved across all 14 model runs: the cron matcher, the FastAPI rate limiter, and the Sinatra webhook processor.</p>
-    <p>Two clear capability profiles emerged. The Qwen3 family (30B, Coder-Next, 27B dense) excels at Python regex &mdash; scoring 9&ndash;10/10 on the structured log parser &mdash; but completely fails bash extraction. GPT-OSS, Gemma, and the Qwen3.5 MoE family handle bash pipelines well but are weak on regex. Dense models outperform their MoE siblings on structured output: Gemma-4-31B (dense, 14/65) beats the 26B-A4B MoE (10/65) despite being 5x slower. Thinking mode actively hurts: Qwen3.5-9B jumped from 1 to 5 points when thinking was disabled. Model size doesn't correlate with score &mdash; the 30B outperforms the 122B, and Nemotron-Cascade-2's IMO gold medal reasoning scored just 1/65.</p>
-    <p>We also tested whether quantization precision matters by running Gemma-4-26B-A4B at both Q4_K_XL and Q8_0. It doesn't &mdash; run-to-run variance exceeds the quant quality difference when you only have 3.8B active parameters. The benchmark is measuring model capability ceilings, not quant artifacts.</p>
+    <p>The LRU cache benchmark ran its course. 15 models score a perfect 10/10, making it useless for differentiation. I built a new polyglot coding gauntlet with seven challenges across Python, Bash, Ruby/Sinatra, and Go, totalling 65 auto-graded tests at LeetCode medium/hard difficulty. The challenges test real-world skills like parsing structured logs with nested JSON, matching cron expressions, building awk pipelines, implementing FastAPI rate-limiting middleware, writing HMAC-verified Sinatra webhook handlers, and building recursive Go rule engines.</p>
+    <p>I ran every model on disk through the gauntlet. <strong>Nobody breaks 22%.</strong> A three-way tie leads at 14/65 (GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B), all winning on bash pipelines. The 20B matches its 120B sibling identically in 3 minutes vs 8, proving the extra 100B parameters add zero value here. Qwen3-30B is right behind at 13/65 and is the only model to score on the Go rule engine (3/10), finishing in 90 seconds. Three challenges remain completely unsolved across all 14 model runs. The cron matcher, the FastAPI rate limiter, and the Sinatra webhook processor all sit at 0/10.</p>
+    <p>Two clear capability profiles emerged. The Qwen3 family (30B, Coder-Next, 27B dense) excels at Python regex, scoring 9-10/10 on the structured log parser, but completely fails bash extraction. GPT-OSS, Gemma, and the Qwen3.5 MoE family handle bash pipelines well but are weak on regex. Dense models outperform their MoE siblings on structured output. Gemma-4-31B (dense, 14/65) beats the 26B-A4B MoE (10/65) despite being 5x slower. Thinking mode actively hurts. Qwen3.5-9B jumped from 1 to 5 points when thinking was disabled. Model size doesn't correlate with score. The 30B outperforms the 122B, and Nemotron-Cascade-2's IMO gold medal reasoning scored just 1/65.</p>
+    <p>I also tested whether quantization precision matters by running Gemma-4-26B-A4B at both Q4_K_XL and Q8_0. It doesn't. Run-to-run variance exceeds the quant quality difference when you only have 3.8B active parameters. The benchmark measures model capability ceilings, not quant artifacts.</p>
   </div>
 
   <div class="divider"></div>
 
   <h2>Why this matters</h2>
   <div class="card fade-up">
-    <p>AMD's Strix Halo APU pairs an RDNA 3.5 iGPU (gfx1151) with 128GB of unified memory, making it one of the most interesting platforms for running large language models locally. But benchmark data for this hardware is <strong>almost nonexistent</strong>.</p>
-    <p>This site provides the missing data: head-to-head comparisons of <strong>RADV vs AMDVLK vs ROCm</strong> on identical hardware, across performance benchmarks, creative writing evaluation, and coding tasks.</p>
+    <p>AMD's Strix Halo APU pairs an RDNA 3.5 iGPU (gfx1151) with 128GB of unified memory. That's enough VRAM to run 120B parameter models locally. But benchmark data for this hardware barely exists.</p>
+    <p>This site fills the gap with head-to-head comparisons of <strong>RADV vs AMDVLK vs ROCm</strong> on identical hardware, across performance benchmarks, creative writing evaluation, and coding tasks.</p>
   </div>
 
   <h2>Hardware</h2>
@@ -97,7 +97,7 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">GPU</td><td>Radeon 8060S Graphics (RDNA 3.5, gfx1151)</td></tr>
         <tr><td class="model-name">Memory</td><td>128GB unified (120GB soft VRAM cap)</td></tr>
         <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
-        <tr><td class="model-name">Vulkan</td><td>1.4.321 &mdash; Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1</td></tr>
+        <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
         <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
         <tr><td class="model-name">llama.cpp</td><td>b8638 (2026-04-02)</td></tr>
       </tbody>
@@ -108,7 +108,7 @@ const base = import.meta.env.BASE_URL;
   <div class="stats-grid fade-up">
     <div class="card">
       <h3>RADV</h3>
-      <p>Mesa's open-source Vulkan driver. <strong>Best overall</strong> since b8119 MMQ fix. 25% pp boost on Qwen3-30B. Recommended default.</p>
+      <p>Mesa's open-source Vulkan driver. Best overall since b8119 MMQ fix with a 25% pp boost on Qwen3-30B. Recommended default.</p>
     </div>
     <div class="card">
       <h3>AMDVLK</h3>
