@@ -23,7 +23,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">7</div>
+      <div class="value">8</div>
       <div class="label">Benchmark suites</div>
     </div>
   </div>
@@ -42,6 +42,7 @@ const base = import.meta.env.BASE_URL;
           <th data-type="number">tg128 (t/s)</th>
           <th data-type="number">Writing /30</th>
           <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
         </tr>
       </thead>
       <tbody>
@@ -53,6 +54,7 @@ const base = import.meta.env.BASE_URL;
           <td class="best">109</td>
           <td>18</td>
           <td>7</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-E4B</td>
@@ -62,6 +64,7 @@ const base = import.meta.env.BASE_URL;
           <td>59</td>
           <td>23</td>
           <td>3</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-26B-A4B</td>
@@ -71,6 +74,7 @@ const base = import.meta.env.BASE_URL;
           <td>52.9</td>
           <td>23</td>
           <td>10</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-31B</td>
@@ -80,6 +84,7 @@ const base = import.meta.env.BASE_URL;
           <td>11.1</td>
           <td class="best">26</td>
           <td class="best">14</td>
+          <td class="best">46</td>
         </tr>
       </tbody>
     </table>
@@ -105,6 +110,7 @@ const base = import.meta.env.BASE_URL;
           <th data-type="number">tg128 (t/s)</th>
           <th data-type="number">Writing /30</th>
           <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
         </tr>
       </thead>
       <tbody>
@@ -116,6 +122,7 @@ const base = import.meta.env.BASE_URL;
           <td>38</td>
           <td>16</td>
           <td>3</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-9B</td>
@@ -125,6 +132,7 @@ const base = import.meta.env.BASE_URL;
           <td>36</td>
           <td>20</td>
           <td>5</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-27B</td>
@@ -134,6 +142,7 @@ const base = import.meta.env.BASE_URL;
           <td>12</td>
           <td>25</td>
           <td>10</td>
+          <td class="missing">&mdash;</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
@@ -143,6 +152,7 @@ const base = import.meta.env.BASE_URL;
           <td class="best">60</td>
           <td class="best">28</td>
           <td>8</td>
+          <td class="missing">&mdash;</td>
         </tr>
       </tbody>
     </table>
@@ -154,7 +164,15 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>Polyglot Coding Gauntlet <span class="badge new">New</span></h2>
+  <h2>PostgreSQL Benchmark <span class="badge new">New</span></h2>
+  <div class="card fade-up">
+    <p>I added a database benchmark that tests real PostgreSQL skills against a live Postgres 18 instance. A fresh container spins up per run with 2.7 million rows of seeded e-commerce data. 28 challenges across four tiers, 57 test points total. Tier 1 tests complex SQL writing (window functions, recursive CTEs, LATERAL JOINs, JSONB aggregation). Tier 2 tests query optimization where the model receives a slow query and its EXPLAIN plan, then has to produce a fix that actually reduces cost against the live data. Tier 3 tests DBA diagnosis from simulated pg_stat_activity and EXPLAIN output. Tier 4 is the hard one. Models write PL/pgSQL functions, triggers, exclusion constraints, RLS policies, and batch procedures with savepoint error handling. Their code gets executed and validated through behavioral test cases.</p>
+    <p>Gemma-4-31B scored 46/57 (T1 9/10, T2 9/10, T3 6/6, T4 22/31). T3 diagnosis was trivially easy at 6/6. The real differentiation happens in T4 where the model aced exclusion constraints, audit triggers, partition management, and batch savepoints but failed completely on row-level security (0/5) and recursive cycle detection (0/4). The cycle detection challenge asks for a PG14+ CYCLE clause or manual path tracking on a directed graph with cycles. Gemma-4-31B echoed the setup DDL from the prompt and never wrote the actual recursive CTE.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Polyglot Coding Gauntlet</h2>
   <div class="card fade-up">
     <p>The LRU cache benchmark ran its course. 15 models score a perfect 10/10, making it useless for differentiation. I built a new polyglot coding gauntlet with seven challenges across Python, Bash, Ruby/Sinatra, and Go, totalling 65 auto-graded tests at LeetCode medium/hard difficulty. The challenges test real-world skills like parsing structured logs with nested JSON, matching cron expressions, building awk pipelines, implementing FastAPI rate-limiting middleware, writing HMAC-verified Sinatra webhook handlers, and building recursive Go rule engines.</p>
     <p>I ran every model on disk through the gauntlet. <strong>Nobody breaks 22%.</strong> A three-way tie leads at 14/65 (GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B), all winning on bash pipelines. The 20B matches its 120B sibling identically in 3 minutes vs 8, proving the extra 100B parameters add zero value here. Qwen3-30B is right behind at 13/65 and is the only model to score on the Go rule engine (3/10), finishing in 90 seconds. Three challenges remain completely unsolved across all 14 model runs. The cron matcher, the FastAPI rate limiter, and the Sinatra webhook processor all sit at 0/10.</p>
@@ -212,8 +230,8 @@ const base = import.meta.env.BASE_URL;
       <div class="label">vs Unsloth quants</div>
     </a>
     <a href={`${base}methodology/`} class="stat-card">
-      <div class="value">65</div>
-      <div class="label">Polyglot test cases</div>
+      <div class="value">57</div>
+      <div class="label">PostgreSQL test cases</div>
     </a>
   </div>
 </BaseLayout>

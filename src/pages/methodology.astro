@@ -62,6 +62,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <h2>Coding Benchmarks</h2>
   <p>All coding benchmarks are single-shot. The model receives one prompt and its output is automatically validated against a test suite. No retries, no iterative refinement.</p>
 
+  <h3>PostgreSQL (57 tests, 4 tiers) <span class="badge new">New</span></h3>
+  <div class="card fade-up">
+    <p>I built a PostgreSQL benchmark that spins up a fresh Postgres 18 container per run, seeds it with 2.7 million rows of deterministic e-commerce data (customers, orders, products, inventory, sessions, audit logs), and throws 28 challenges at the model across four tiers. The model talks to <code>llama-cli</code> on the Strix server. Its output gets extracted, executed against the live database, and validated automatically. Every run starts clean. The seed uses <code>SELECT setseed(0.42)</code> so the data is identical across runs.</p>
+    <p>Tier 1 tests whether a model can write complex SQL. Ten challenges covering window functions with monthly resets, recursive CTEs for category trees, gap detection with LAG/LEAD, top-N-per-group via ROW_NUMBER, LATERAL JOINs for recommendation queries, nested JSONB aggregation, GROUPING SETS reports, percentile analysis, array operations, and date range overlap detection. The model gets a schema description and a natural language requirement. Its SQL runs against the seeded database and the result set is compared row-by-row against a known-good query.</p>
+    <p>Tier 2 tests optimization reasoning. Ten challenges where the model receives a slow query, its EXPLAIN output, and the schema. It has to return a fix, either a CREATE INDEX statement or a rewritten query or both. The fix gets applied in a savepoint and verified two ways. First, the optimized query must return identical results to the original. Second, the EXPLAIN cost must actually drop. Cost comparison uses <code>EXPLAIN (FORMAT JSON)</code> total cost, which is deterministic, rather than wall-clock time. The first six challenges cover general SQL patterns (composite indexes, correlated subquery elimination, expression indexes, NOT IN to NOT EXISTS, window-to-GROUP-BY, correlated SELECT to JOIN). The last four test PostgreSQL-specific index knowledge (GIN for JSONB containment, partial indexes, covering indexes with INCLUDE, expression indexes on JSONB path extraction).</p>
+    <p>Tier 3 tests DBA diagnostic skills. Six challenges where the model receives simulated PostgreSQL diagnostic output (pg_stat_activity snapshots, EXPLAIN ANALYZE plans, pg_stat_user_tables data) and must return a JSON response identifying the root cause and suggesting a fix. Lock chain diagnosis, stale statistics, work_mem sort spills, connection exhaustion, table bloat, and failed partition pruning. Verification uses keyword matching against accepted causes and fix patterns. This tier turned out to be easy for 30B+ models. Both Gemma 4 models scored 6/6.</p>
+    <p>Tier 4 is where things get hard. Six procedural challenges where the model writes PL/pgSQL functions, triggers, DDL, and constraint definitions. Its code is executed against the live database and then validated through behavioral test cases (4 to 7 tests per challenge). The challenges cover exclusion constraints with tstzrange for scheduling conflicts, audit triggers that compute JSONB diffs of only the changed columns, partition management functions using dynamic DDL and pg_catalog introspection, row-level security policies for multi-tenant data isolation, recursive graph traversal with cycle detection, and batch processing procedures with savepoint-based error handling. Gemma-4-31B scored 22/31 on this tier, acing four challenges but failing completely on RLS policy creation (0/5) and cycle detection (0/4).</p>
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>Focus</th><th>Challenges</th><th>Tests</th><th>Verification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T1</td><td>Complex SQL Writing</td><td>10</td><td>10</td><td>Result set comparison (row-by-row)</td></tr>
+        <tr><td>T2</td><td>Query Optimization</td><td>10</td><td>10</td><td>Same results + lower EXPLAIN cost</td></tr>
+        <tr><td>T3</td><td>DBA Diagnosis</td><td>6</td><td>6</td><td>Root cause keyword matching</td></tr>
+        <tr><td>T4</td><td>Procedural/Architecture</td><td>6</td><td>31</td><td>Execute code, run behavioral test cases</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <h3>LRU Cache with TTL (10 tests)</h3>
   <div class="card fade-up">
     <p>Implement a thread-safe LRU cache with TTL support in Python. Required methods are <code>get()</code>, <code>put()</code>, <code>delete()</code>, <code>clear()</code>, and <code>size()</code>. Tests cover basic get/put operations, capacity eviction, TTL expiration, concurrent read/write from multiple threads, and edge cases (empty cache, expired entries, delete nonexistent keys).</p>
