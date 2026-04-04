@@ -54,7 +54,7 @@ const base = import.meta.env.BASE_URL;
           <td class="best">109</td>
           <td>18</td>
           <td>7</td>
-          <td class="missing">&mdash;</td>
+          <td>27</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-E4B</td>
@@ -64,7 +64,7 @@ const base = import.meta.env.BASE_URL;
           <td>59</td>
           <td>23</td>
           <td>3</td>
-          <td class="missing">&mdash;</td>
+          <td>26</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-26B-A4B</td>
@@ -74,7 +74,7 @@ const base = import.meta.env.BASE_URL;
           <td>52.9</td>
           <td>23</td>
           <td>10</td>
-          <td class="missing">&mdash;</td>
+          <td>44</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-31B</td>
@@ -167,7 +167,7 @@ const base = import.meta.env.BASE_URL;
   <h2>PostgreSQL Benchmark <span class="badge new">New</span></h2>
   <div class="card fade-up">
     <p>I added a database benchmark that tests real PostgreSQL skills against a live Postgres 18 instance. A fresh container spins up per run with 2.7 million rows of seeded e-commerce data. 28 challenges across four tiers, 57 test points total. Tier 1 tests complex SQL writing (window functions, recursive CTEs, LATERAL JOINs, JSONB aggregation). Tier 2 tests query optimization where the model receives a slow query and its EXPLAIN plan, then has to produce a fix that actually reduces cost against the live data. Tier 3 tests DBA diagnosis from simulated pg_stat_activity and EXPLAIN output. Tier 4 is the hard one. Models write PL/pgSQL functions, triggers, exclusion constraints, RLS policies, and batch procedures with savepoint error handling. Their code gets executed and validated through behavioral test cases.</p>
-    <p>Gemma-4-31B scored 46/57 (T1 9/10, T2 9/10, T3 6/6, T4 22/31). T3 diagnosis was trivially easy at 6/6. The real differentiation happens in T4 where the model aced exclusion constraints, audit triggers, partition management, and batch savepoints but failed completely on row-level security (0/5) and recursive cycle detection (0/4). The cycle detection challenge asks for a PG14+ CYCLE clause or manual path tracking on a directed graph with cycles. Gemma-4-31B echoed the setup DDL from the prompt and never wrote the actual recursive CTE.</p>
+    <p>I ran the full Gemma 4 family through it. The dense 31B leads at 46/57, followed closely by the 26B-A4B MoE at 44/57. The E2B and E4B small models land at 27 and 26 respectively. Query optimization (T2) turned out to be the great equalizer. Even the 2B model scores 8/10, correctly suggesting GIN indexes, partial indexes, and covering indexes. Tier 4 is where model size actually matters. The 31B and 26B both score 22/31, acing exclusion constraints, audit triggers, partition management, and batch savepoints. The small models collapse to 7-10/31 on the same challenges. Row-level security and recursive cycle detection defeated the entire family at 0/5 and 0/4.</p>
   </div>
 
   <div class="divider"></div>
