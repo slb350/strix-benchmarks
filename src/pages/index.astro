@@ -122,7 +122,7 @@ const base = import.meta.env.BASE_URL;
           <td>38</td>
           <td>16</td>
           <td>3</td>
-          <td class="missing">&mdash;</td>
+          <td>17</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-9B</td>
@@ -132,7 +132,7 @@ const base = import.meta.env.BASE_URL;
           <td>36</td>
           <td>20</td>
           <td>5</td>
-          <td class="missing">&mdash;</td>
+          <td>28</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-27B</td>
@@ -141,8 +141,8 @@ const base = import.meta.env.BASE_URL;
           <td>310</td>
           <td>12</td>
           <td>25</td>
-          <td>10</td>
-          <td class="missing">&mdash;</td>
+          <td class="best">10</td>
+          <td class="best">34</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
@@ -152,14 +152,14 @@ const base = import.meta.env.BASE_URL;
           <td class="best">60</td>
           <td class="best">28</td>
           <td>8</td>
-          <td class="missing">&mdash;</td>
+          <td>32</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The 35B-A3B MoE is the standout. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on creative writing (28/30 vs 25/30). All four models require Unsloth's recommended sampling params or they produce garbage. With correct settings, the 4B scores a perfect 8/8 on the FastAPI bench. The dense models hit an architecture-level generation bottleneck on this hardware, with the 27B capping at 12 t/s and the 9B at 36 t/s regardless of backend. The 27B leads the family on the polyglot gauntlet (10/65) thanks to its Python regex ability, matching the Gemma-4-26B-A4B MoE despite being a dense model one-fifth the speed.</p>
+    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All four models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 32/57 for the MoE), driven entirely by T1 complex SQL where the MoE's 3B active params fall short. T2 optimization and T3 diagnosis are saturated across the whole family (8/10 and 5-6/6 regardless of size). The 9B is the only model in either the Qwen 3.5 or Gemma 4 family to solve the recursive cycle detection challenge. RLS defeats the entire family, same as Gemma. The dense models hit an architecture-level generation bottleneck on this hardware, with the 27B capping at 12 t/s and the 9B at 36 t/s regardless of backend.</p>
   </div>
 
   <div class="divider"></div>
