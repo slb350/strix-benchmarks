@@ -315,7 +315,7 @@ th {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: 0.7rem 1rem;
+  padding: 0.7rem 0.75rem;
   text-align: left;
   cursor: pointer;
   user-select: none;
@@ -336,7 +336,7 @@ th:hover .sort-arrow { opacity: 0.4; }
 th .sort-arrow.active { opacity: 1; color: var(--accent); }
 
 td {
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-secondary);
   font-size: 0.82rem;
