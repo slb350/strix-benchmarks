@@ -56,7 +56,7 @@ const base = import.meta.env.BASE_URL;
           <td>18</td>
           <td>7</td>
           <td>27</td>
-          <td>20</td>
+          <td>27</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-E4B</td>
@@ -67,7 +67,7 @@ const base = import.meta.env.BASE_URL;
           <td>23</td>
           <td>3</td>
           <td>26</td>
-          <td>17</td>
+          <td>26</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-26B-A4B</td>
@@ -78,7 +78,7 @@ const base = import.meta.env.BASE_URL;
           <td>23</td>
           <td>10</td>
           <td>44</td>
-          <td class="best">30</td>
+          <td>38</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-31B</td>
@@ -89,14 +89,14 @@ const base = import.meta.env.BASE_URL;
           <td class="best">26</td>
           <td class="best">14</td>
           <td class="best">46</td>
-          <td class="best">30</td>
+          <td class="best">39</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B still writes the best prose of the group at 26/30. Cassandra adds a new dimension. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested. Both the MoE and dense 31B tie at 30/56 overall, leading the entire field. No Gemma 4 model can write valid CQL (0/10 T1), but their distributed systems reasoning is the strongest I've measured.</p>
+    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B still writes the best prose of the group at 26/30. On Cassandra, Gemma 4 leads the entire field. The dense 31B tops the leaderboard at 39/56 with 9/10 on CQL query writing. The E4B also scores 9/10 on T1, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
   </div>
 
   <div class="divider"></div>
@@ -129,7 +129,7 @@ const base = import.meta.env.BASE_URL;
           <td>16</td>
           <td>3</td>
           <td>17</td>
-          <td>14</td>
+          <td>16</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-9B</td>
@@ -140,7 +140,7 @@ const base = import.meta.env.BASE_URL;
           <td>20</td>
           <td>5</td>
           <td>28</td>
-          <td>16</td>
+          <td>22</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-27B</td>
@@ -151,7 +151,7 @@ const base = import.meta.env.BASE_URL;
           <td>25</td>
           <td class="best">10</td>
           <td class="best">34</td>
-          <td>22</td>
+          <td>29</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
@@ -162,7 +162,7 @@ const base = import.meta.env.BASE_URL;
           <td class="best">28</td>
           <td>8</td>
           <td>32</td>
-          <td>25</td>
+          <td class="best">33</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-122B-A10B</td>
@@ -173,14 +173,14 @@ const base = import.meta.env.BASE_URL;
           <td>29</td>
           <td>7</td>
           <td>-</td>
-          <td class="best">26</td>
+          <td class="best">33</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 32/57 for the MoE), driven by T1 complex SQL where the MoE's 3B active params fall short. On Cassandra, the 122B leads the family at 26/56 but trails Gemma's 30/56 by a wide margin. The gap comes from T2 anti-pattern detection where Qwen3.5 tops out at 8/10 versus Gemma's 10/10. T3 diagnostics saturate at 6/6 for both families at 27B+. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS and CQL query writing defeat everyone.</p>
+    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 32/57 for the MoE), driven by T1 complex SQL where the MoE's 3B active params fall short. On Cassandra, the 35B MoE and 122B tie at 33/56. The MoE gets there on T1 CQL writing (8/10) and T4 procedural (13/30), while the 122B compensates with stronger T2 anti-pattern detection (8/10 vs 6/10). Both trail Gemma's 39/56 at the top. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS defeats everyone.</p>
   </div>
 
   <div class="divider"></div>
@@ -198,7 +198,7 @@ const base = import.meta.env.BASE_URL;
     <p>I built a Cassandra benchmark to test whether models that handle PostgreSQL can also reason about distributed databases. A 3-node Cassandra 5.0 cluster spins up on Strix per run, seeded with 1.5 million rows of IoT sensor data across 8 tables. 32 challenges across four tiers, 56 test points total. The fundamental question is whether the model understands that Cassandra is not SQL with different syntax. Every partition key must be in the WHERE clause. There are no JOINs. ORDER BY only works on clustering columns. Deletes create tombstones. Consistency is per-operation. A model trained on relational patterns will fail even if it knows CQL keywords.</p>
     <p>Tier 2 is the most interesting tier and the hardest departure from PostgreSQL. Cassandra has no EXPLAIN, so there is no query optimizer to reason about. Instead, the model receives a broken schema with symptoms and has to identify the anti-pattern. Unbounded partition growth, hot partitions, secondary index scatter-gather, tombstone accumulation from queue patterns, ALLOW FILTERING abuse, compaction strategy mismatches, consistency level math, batch misuse, materialized view pitfalls, and collection size limits. Gemma-4-E2B scored 7/10 here. A 2B model explaining why a logged multi-partition batch is slower than individual async inserts, or why a secondary index on email causes fan-out to all 12 nodes. These concepts need distributed systems understanding, not coding ability.</p>
     <p>Tier 4 executes model code against the live cluster. Time-bucketed schema design with TWCS compaction, distributed locks via lightweight transactions, materialized views, counter-based rate limiters, batch denormalization, and Storage-Attached Indexes. The 26B-A4B and 31B both score 14-15/30, acing LWT locks and counters but failing materialized views and batch denormalization. The E2B actually outperforms the E4B here (10 vs 4), perfectly solving both the LWT lock and counter challenges while the 4B model can't produce valid CQL for any of them.</p>
-    <p>The most striking result is that Tier 1 CQL query writing defeats the entire family at 0/10. Every model produces syntax errors, echoes CREATE TABLE statements, or wraps queries in explanatory prose. CQL is clearly underrepresented in Gemma 4's training data compared to SQL. Meanwhile, the 26B-A4B MoE ties the dense 31B at 30/56, the same pattern as PostgreSQL where MoE active parameter count doesn't limit reasoning ability.</p>
+    <p>T1 CQL writing scores range from 2/10 (Qwen3.5-4B) to 9/10 (Gemma-4-31B and E4B). The E4B result stands out: a 7.5B dense model matching the 31B on CQL syntax while most MoE models with more total parameters score 7-8/10. TOKEN() range scans, GROUP BY semantics, and PER PARTITION LIMIT with multi-column clustering keys are the remaining unsolved patterns. The dense 31B leads the overall leaderboard at 39/56, edging the 26B MoE (38/56) by one point, breaking the tie that exists on PostgreSQL.</p>
   </div>
 
   <div class="divider"></div>
