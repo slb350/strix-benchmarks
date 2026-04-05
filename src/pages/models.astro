@@ -5,7 +5,7 @@ import SortableTable from '../components/SortableTable.astro';
 <BaseLayout title="Models" activePage="models" description="Consolidated LLM benchmark results across performance, creative writing, and coding on AMD Strix Halo gfx1151">
   <div class="page-header fade-up">
     <h1>Model Comparison</h1>
-    <p class="description">Every model tested on this hardware, sorted however you like. Click any column header to sort. Performance numbers from llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality scores from automated test suites and human evaluation.</p>
+    <p class="description">Every fully tested model on this hardware, sorted however you like. Click any column header to sort. Performance numbers from llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality scores from automated test suites and human evaluation. Partial results from earlier evaluations are listed separately below.</p>
   </div>
 
   <h2>Performance</h2>
@@ -125,28 +125,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="missing">&mdash;</td>
         </tr>
         <tr>
-          <td class="model-name">GLM-4.7-Flash</td>
-          <td>Q4_K_M</td>
-          <td>17 GiB</td>
-          <td class="group-start">949</td>
-          <td>75</td>
-          <td class="group-start">578</td>
-          <td class="best">78</td>
-          <td class="group-start">966</td>
-          <td>51</td>
-        </tr>
-        <tr>
-          <td class="model-name">GLM-4.7-Flash-Opus-Distill</td>
-          <td>Q8_0</td>
-          <td>30 GiB</td>
-          <td class="group-start">981</td>
-          <td>50</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
           <td class="model-name">GPT-OSS-120B</td>
           <td>MXFP4</td>
           <td>59 GiB</td>
@@ -180,17 +158,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td>11.3</td>
         </tr>
         <tr>
-          <td class="model-name">Kimi-Linear-48B</td>
-          <td>Q5_K_M</td>
-          <td>33 GiB</td>
-          <td class="group-start">285</td>
-          <td>65</td>
-          <td class="group-start">238</td>
-          <td>63</td>
-          <td class="group-start best">303</td>
-          <td>55</td>
-        </tr>
-        <tr>
           <td class="model-name">Qwen3.5-122B-A10B</td>
           <td>Unsloth UD-Q4_K_XL</td>
           <td>72 GiB</td>
@@ -209,128 +176,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td>11.1</td>
           <td class="group-start">70.8</td>
           <td>11.1</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Step3.5-Flash</td>
-          <td>IQ3_XS</td>
-          <td>76 GiB</td>
-          <td class="group-start">237</td>
-          <td>32</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">MiniMax-M2.5</td>
-          <td>IQ3_XXS</td>
-          <td>87 GiB</td>
-          <td class="group-start">203</td>
-          <td>37</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
-          <td>Unsloth UD-Q4_K_XL</td>
-          <td>78 GiB</td>
-          <td class="group-start">196</td>
-          <td>10.2</td>
-          <td class="group-start">139</td>
-          <td>9.86</td>
-          <td class="group-start best">206</td>
-          <td class="best">16.1</td>
-        </tr>
-        <!-- Quality-only models (no llama-bench data) -->
-        <tr>
-          <td class="model-name">Nemotron-3-Nano-30B</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Ling-Flash-2.0</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Ministral-3-14B-Instruct</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Magistral-Small-2509</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Solar-Open-100B</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Mistral-Large-2411</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Devstral-Small-2-24B</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Devstral-2-123B</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
           <td class="group-start missing">&mdash;</td>
           <td class="missing">&mdash;</td>
         </tr>
@@ -511,161 +356,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td>16</td>
           <td class="group-start">123</td>
         </tr>
-        <tr>
-          <td class="model-name">Ling-Flash-2.0</td>
-          <td class="group-start">26</td>
-          <td class="group-start">2</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Ministral-3-14B-Instruct</td>
-          <td class="group-start">26</td>
-          <td class="group-start">6</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
-          <td class="group-start">25</td>
-          <td class="group-start best">10</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Devstral-2-123B</td>
-          <td class="group-start">25</td>
-          <td class="group-start">2</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Nemotron-3-Nano-30B</td>
-          <td class="group-start">24</td>
-          <td class="group-start">7</td>
-          <td>2</td>
-          <td class="best">59</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">MiniMax-M2.5</td>
-          <td class="group-start">24</td>
-          <td class="group-start">0</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Kimi-Linear-48B</td>
-          <td class="group-start">23</td>
-          <td class="group-start best">10</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Magistral-Small-2509</td>
-          <td class="group-start">21</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="best">8</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Solar-Open-100B</td>
-          <td class="group-start">21</td>
-          <td class="group-start">0</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Mistral-Large-2411</td>
-          <td class="group-start">20</td>
-          <td class="group-start">2</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Devstral-Small-2-24B</td>
-          <td class="group-start">16</td>
-          <td class="group-start">2</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">GLM-4.7-Flash-Opus-Distill</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="group-start">2</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">Step3.5-Flash</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="group-start">0</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
-        <!-- Performance-only models (no quality data) -->
-        <tr>
-          <td class="model-name">GLM-4.7-Flash</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-          <td class="group-start missing">&mdash;</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -687,6 +377,181 @@ import SortableTable from '../components/SortableTable.astro';
     <li>Cassandra T1 CQL query writing ranges from 2/10 (Qwen3.5-4B) to 9/10 (Gemma-4-31B and E4B). The E4B matching the 31B at 9/10 despite being a 7.5B model is the standout result. T2 anti-pattern detection is where distributed reasoning separates models, with Gemma-4-26B-A4B the only perfect 10/10. T3 diagnostics saturate at 6/6 for models 26B and above.</li>
     <li>Gemma 4 leads Cassandra at 39/56 (dense 31B), edging the 26B MoE (38/56) by one point. Qwen3.5-35B and 122B tie at 33/56. The dense 31B breaks the MoE parity that holds on PostgreSQL.</li>
   </ul>
+
+  <div class="divider"></div>
+
+  <h2>Partial Results</h2>
+  <p class="description fade-up">Models evaluated before the full benchmark suite was established. These ran writing and LRU cache tests but not the complete battery (database, polyglot, LeetCode). No longer on disk. Listed here for historical reference.</p>
+
+  <h3>Performance</h3>
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Quant</th>
+          <th>Size</th>
+          <th class="group-start" data-type="number">RADV pp</th>
+          <th data-type="number">RADV tg</th>
+          <th class="group-start" data-type="number">AMDVLK pp</th>
+          <th data-type="number">AMDVLK tg</th>
+          <th class="group-start" data-type="number">ROCm pp</th>
+          <th data-type="number">ROCm tg</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">GLM-4.7-Flash</td>
+          <td>Q4_K_M</td>
+          <td>17 GiB</td>
+          <td class="group-start">949</td>
+          <td>75</td>
+          <td class="group-start">578</td>
+          <td>78</td>
+          <td class="group-start">966</td>
+          <td>51</td>
+        </tr>
+        <tr>
+          <td class="model-name">Kimi-Linear-48B</td>
+          <td>Q5_K_M</td>
+          <td>33 GiB</td>
+          <td class="group-start">285</td>
+          <td>65</td>
+          <td class="group-start">238</td>
+          <td>63</td>
+          <td class="group-start">303</td>
+          <td>55</td>
+        </tr>
+        <tr>
+          <td class="model-name">Step3.5-Flash</td>
+          <td>IQ3_XS</td>
+          <td>76 GiB</td>
+          <td class="group-start">237</td>
+          <td>32</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">MiniMax-M2.5</td>
+          <td>IQ3_XXS</td>
+          <td>87 GiB</td>
+          <td class="group-start">203</td>
+          <td>37</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+          <td class="group-start missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>78 GiB</td>
+          <td class="group-start">196</td>
+          <td>10.2</td>
+          <td class="group-start">139</td>
+          <td>9.86</td>
+          <td class="group-start">206</td>
+          <td>16.1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Quality</h3>
+  <div class="table-wrap fade-up">
+    <table class="sortable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">LRU /10</th>
+          <th data-type="number">FastAPI /8</th>
+          <th data-type="number">LeetCode /59</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Ling-Flash-2.0</td>
+          <td>26</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ministral-3-14B-Instruct</td>
+          <td>26</td>
+          <td>6</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Super-120B-A12B</td>
+          <td>25</td>
+          <td>10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-2-123B</td>
+          <td>25</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nemotron-3-Nano-30B</td>
+          <td>24</td>
+          <td>7</td>
+          <td>2</td>
+          <td>59</td>
+        </tr>
+        <tr>
+          <td class="model-name">MiniMax-M2.5</td>
+          <td>24</td>
+          <td>0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Kimi-Linear-48B</td>
+          <td>23</td>
+          <td>10</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Magistral-Small-2509</td>
+          <td>21</td>
+          <td class="missing">&mdash;</td>
+          <td>8</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Solar-Open-100B</td>
+          <td>21</td>
+          <td>0</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Mistral-Large-2411</td>
+          <td>20</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+        <tr>
+          <td class="model-name">Devstral-Small-2-24B</td>
+          <td>16</td>
+          <td>2</td>
+          <td class="missing">&mdash;</td>
+          <td class="missing">&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <SortableTable />
 </BaseLayout>
