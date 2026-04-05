@@ -96,7 +96,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. A 2B model solving Median of Two Sorted Arrays and Minimum Window Substring in single-shot. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. For practical use, the 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B still writes the best prose of the group at 26/30. But if you need raw throughput or have limited VRAM, the small Gemma 4 models punch far above their weight.</p>
+    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B still writes the best prose of the group at 26/30. Cassandra adds a new dimension. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested. Both the MoE and dense 31B tie at 30/56 overall, leading the entire field. No Gemma 4 model can write valid CQL (0/10 T1), but their distributed systems reasoning is the strongest I've measured.</p>
   </div>
 
   <div class="divider"></div>
@@ -180,7 +180,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All four models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 32/57 for the MoE), driven entirely by T1 complex SQL where the MoE's 3B active params fall short. T2 optimization and T3 diagnosis are saturated across the whole family (8/10 and 5-6/6 regardless of size). The 9B is the only model in either the Qwen 3.5 or Gemma 4 family to solve the recursive cycle detection challenge. RLS defeats the entire family, same as Gemma. The dense models hit an architecture-level generation bottleneck on this hardware, with the 27B capping at 12 t/s and the 9B at 36 t/s regardless of backend.</p>
+    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 32/57 for the MoE), driven by T1 complex SQL where the MoE's 3B active params fall short. On Cassandra, the 122B leads the family at 26/56 but trails Gemma's 30/56 by a wide margin. The gap comes from T2 anti-pattern detection where Qwen3.5 tops out at 8/10 versus Gemma's 10/10. T3 diagnostics saturate at 6/6 for both families at 27B+. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS and CQL query writing defeat everyone.</p>
   </div>
 
   <div class="divider"></div>
