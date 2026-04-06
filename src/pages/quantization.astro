@@ -46,6 +46,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="divider"></div>
 
+  <h2>Gemma-4-26B-A4B: Q4 vs Q8 <span class="badge new">New</span></h2>
+  <div class="card fade-up">
+    <p>I ran the full 7-benchmark suite on Gemma-4-26B-A4B at both UD-Q4_K_XL (16 GiB) and Q8_0 (25 GiB). The MoE architecture activates 3.8B parameters per token regardless of quant level, so I expected the differences to be negligible. They weren't.</p>
+    <p>Q8 improved creative writing by 5 points (23 to 28 out of 30). The Q4 run produced competent prose with decent character voices but relied on familiar beats. The Q8 run produced richer sensory detail, sharper dialogue, and a more specific emotional arc. The characters felt less like templates and more like people. That gap matters for a writing benchmark.</p>
+    <p>Polyglot coding gained 5 points (10 to 15 out of 65). The Q8 model solved challenges that Q4 couldn't, including two additional bash pipeline tasks. Both quants scored identically on LRU (10/10), FastAPI (8/8), and LeetCode (59/59), confirming that well-saturated coding benchmarks can't tell quants apart.</p>
+    <p>PostgreSQL moved from 44 to 45, a single point from T1 complex SQL. Cassandra dropped from 38 to 29. That 9-point regression came entirely from T4 procedural challenges (14 to 8), where the model writes CQL schemas and executes them against a live cluster. I suspect run-to-run variance rather than a real quality regression. These T4 challenges are sensitive to exact token sequences and a different code path can cascade into multiple test failures. One bad CREATE TABLE propagates through every subsequent test in that challenge.</p>
+    <p>The performance tradeoff is real. Token generation dropped 10% (52.9 to 47.7 t/s on RADV) while prompt processing actually improved 9% (1196 to 1303 t/s). Disk usage went from 16 to 25 GiB. For a model I run interactively, 48 t/s is still fast enough and the writing quality gain justified the switch. I deleted the Q4 from disk.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Benchmark</th>
+          <th>UD-Q4_K_XL (16 GiB)</th>
+          <th>Q8_0 (25 GiB)</th>
+          <th>Delta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">RADV pp/tg (t/s)</td><td>1196 / 52.9</td><td class="best">1303 / 47.7</td><td>pp +9%, tg -10%</td></tr>
+        <tr><td class="model-name">Creative Writing /30</td><td>23</td><td class="best">28</td><td>+5</td></tr>
+        <tr><td class="model-name">LRU Cache /10</td><td>10</td><td>10</td><td>same</td></tr>
+        <tr><td class="model-name">FastAPI /8</td><td>8</td><td>8</td><td>same</td></tr>
+        <tr><td class="model-name">LeetCode /59</td><td>59</td><td>59</td><td>same</td></tr>
+        <tr><td class="model-name">Polyglot /65</td><td>10</td><td class="best">15</td><td>+5</td></tr>
+        <tr><td class="model-name">PostgreSQL /57</td><td>44</td><td class="best">45</td><td>+1</td></tr>
+        <tr><td class="model-name">Cassandra /56</td><td class="best">38</td><td>29</td><td>-9</td></tr>
+        <tr><td class="model-name">Combined /285</td><td>192</td><td class="best">194</td><td>+2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Conventional wisdom says MoE models don't benefit from higher quants because the active parameter count stays the same. This result pushes back on that. The shared expert weights and attention layers run through every token, and they respond to precision. The improvement concentrated in creative writing and multi-language coding, both tasks where subtle weight differences affect output quality more than in structured benchmarks like LRU or LeetCode where the answer space is narrow.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Kimi-Linear-48B: Q4 vs Q8</h2>
+  <div class="card fade-up">
+    <p>I also ran Kimi-Linear-48B-A3B at Q8_0 (49 GiB) against the primary Q4_K_M (28 GiB). The linear attention architecture activates 3B parameters per token. The results were less interesting than Gemma.</p>
+    <p>Writing quality was identical. Both runs scored 30/30 (the maximum). LRU stayed at 10/10. LeetCode improved from 57 to 59 (two more extraction successes, not model quality). Polyglot dropped from 22 to 15, likely from different runtime availability rather than quant regression. PostgreSQL gained 2 (26 to 28). Cassandra gained 1 (24 to 25). FastAPI dropped from 8 to 2, which I attribute to run variance.</p>
+    <p>Token generation took a 26% hit (72 to 53 t/s). Disk usage nearly doubled (28 to 49 GiB). The net Combined difference was zero after accounting for the API regression. I deleted the Q8 and kept Q4_K_M as the primary quant.</p>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Two MoE models, two different outcomes. Gemma's Q8 showed genuine quality gains on creative tasks. Kimi's didn't. The difference might come down to how each architecture distributes work between shared and routed experts. Gemma 4 uses a larger shared expert pool that benefits from higher precision. Kimi's linear attention design may be more robust to quantization noise in its 3B active path.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>MXFP4, QAT vs Post-Hoc</h2>
   <div class="card fade-up">
     <p>MXFP4 (Microscaling FP4) quantization behaves very differently depending on how it was applied.</p>
