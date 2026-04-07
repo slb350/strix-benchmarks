@@ -185,6 +185,15 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
+  <h2>MiniMax-M2.5 <span class="badge new">New</span></h2>
+  <div class="card fade-up">
+    <p>I tested this model back in February with an IQ3_XXS quant and llama.cpp defaults. It scored 0/10 on coding (missing imports), 24/30 on writing, and I shelved it. Unsloth's Dynamic 2.0 UD-Q3_K_XL quant and their recommended sampling params (temp 1.0, top_p 0.95, min_p 0.01, top_k 40) changed everything. Coding went to 10/10, LeetCode to 59/59, writing to 26/30. The previous 0/10 was a quant quality and sampling configuration problem, not a model capability problem.</p>
+    <p>At 229B total and roughly 10B active parameters, it eats 94 GiB. The largest model on disk by a wide margin. AMDVLK is the right backend here, giving 32 t/s generation vs 22 on RADV. That 32 t/s translates to about 8 words/second on writing tasks, which is usable but not fast. PostgreSQL landed at 40/57 with perfect 10/10 on T2 query optimization and 19/31 on T4 procedural. Cassandra scored 30/56, also with perfect 10/10 on T2 anti-pattern detection. Only the second model to ace Cassandra T2 after Gemma-4-26B-A4B. Combined 185/285 puts it 6th overall.</p>
+    <p>The model has a quirk that cost me several hours to track down. Its chat template hardcodes a <code>&lt;think&gt;</code> token in the generation prompt with no toggle to disable it. The <code>--reasoning-budget 0</code> flag has no effect. I built a custom Jinja template that strips the thinking prefix, but it turns out the model is equally verbose without it. For the polyglot gauntlet I had to bump context from 32K to 64K because the thinking block was eating half the token budget and truncating code output. That got the polyglot score from 6/65 to 13/65, mostly by rescuing the bash log analyzer (0/8 to 6/8). The Ruby and Go challenges still truncate even at 64K.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>PostgreSQL Benchmark <span class="badge new">New</span></h2>
   <div class="card fade-up">
     <p>I added a database benchmark that tests real PostgreSQL skills against a live Postgres 18 instance. A fresh container spins up per run with 2.7 million rows of seeded e-commerce data. 28 challenges across four tiers, 57 test points total. Tier 1 tests complex SQL writing (window functions, recursive CTEs, LATERAL JOINs, JSONB aggregation). Tier 2 tests query optimization where the model receives a slow query and its EXPLAIN plan, then has to produce a fix that actually reduces cost against the live data. Tier 3 tests DBA diagnosis from simulated pg_stat_activity and EXPLAIN output. Tier 4 is the hard one. Models write PL/pgSQL functions, triggers, exclusion constraints, RLS policies, and batch procedures with savepoint error handling. Their code gets executed and validated through behavioral test cases.</p>

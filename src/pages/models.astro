@@ -195,6 +195,15 @@ import SortableTable from '../components/SortableTable.astro';
           <td>21.9</td>
         </tr>
         <tr>
+          <td class="model-name">MiniMax-M2.5 <span class="badge new">New</span></td>
+          <td>Unsloth UD-Q3_K_XL</td>
+          <td>94 GiB</td>
+          <td class="group-start">179</td>
+          <td>22</td>
+          <td class="group-start">164</td>
+          <td>32</td>
+        </tr>
+        <tr>
           <td class="model-name">Gemma-4-31B</td>
           <td>Unsloth UD-Q4_K_XL</td>
           <td>17.5 GiB</td>
@@ -247,6 +256,17 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">45</td>
           <td>29</td>
           <td class="group-start">194</td>
+        </tr>
+        <tr>
+          <td class="model-name">MiniMax-M2.5 <span class="badge new">New</span></td>
+          <td class="group-start">26</td>
+          <td class="group-start best">10</td>
+          <td>7</td>
+          <td class="best">59</td>
+          <td>13</td>
+          <td class="group-start">40</td>
+          <td>30</td>
+          <td class="group-start">185</td>
         </tr>
         <tr>
           <td class="model-name">GPT-OSS-120B</td>
@@ -460,6 +480,7 @@ import SortableTable from '../components/SortableTable.astro';
     <li>Nemotron-3-Nano collapses without thinking mode. 0/57 Postgres, 0/56 Cassandra, 0/59 LeetCode. The Mamba-2 hybrid architecture appears to need reasoning tokens enabled to produce structured output. Fast (1106 pp, 68 tg) but unusable for coding or database tasks with no-think.</li>
     <li>Magistral-Small has the highest Cassandra score (35/56) of any non-Gemma model, beating Devstral (31) and Kimi (24). But it scores 0/10 LRU, 12/57 Postgres, and leaked its reasoning scaffold into the romance story. A specialist, not a generalist.</li>
     <li>GLM-4.7-Flash can't code. 0/10 LRU, 0/8 FastAPI, 16/59 LeetCode (extraction failures), 0/65 polyglot. But it handles database work (23/57 PG, 27/56 Cass) and generates at 73 t/s. A fast model with a very narrow skill set.</li>
+    <li>MiniMax-M2.5 went from 0/10 coding to 10/10 after switching to Unsloth's UD-Q3_K_XL quant and their recommended sampling params (temp 1.0, top_p 0.95, min_p 0.01, top_k 40). At 94 GiB it's the largest model on disk, but 185/285 Combined puts it 6th overall. Perfect 10/10 on both PostgreSQL T2 optimization and Cassandra T2 anti-pattern detection. AMDVLK is its best backend at 32 t/s (vs 22 on RADV).</li>
     <li>Sampling params transform quality results. Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
     <li>T2 (cron), T5 (FastAPI), and T6 (Sinatra) remain unsolved at 0/10 across all model runs. These single-shot challenges exceed current local model capability.</li>
     <li>Gemma 4 leads both database benchmarks. Dense 31B tops PostgreSQL (46/57) and Cassandra (39/56). The 26B MoE follows closely. No other model family breaks 35/57 PG or 35/56 Cass.</li>
@@ -491,15 +512,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td>76 GiB</td>
           <td class="group-start">237</td>
           <td>32</td>
-          <td class="group-start missing">&mdash;</td>
-          <td class="missing">&mdash;</td>
-        </tr>
-        <tr>
-          <td class="model-name">MiniMax-M2.5</td>
-          <td>IQ3_XXS</td>
-          <td>87 GiB</td>
-          <td class="group-start">203</td>
-          <td>37</td>
           <td class="group-start missing">&mdash;</td>
           <td class="missing">&mdash;</td>
         </tr>
@@ -541,11 +553,6 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="model-name">Devstral-2-123B</td>
           <td>25</td>
           <td>2</td>
-        </tr>
-        <tr>
-          <td class="model-name">MiniMax-M2.5</td>
-          <td>24</td>
-          <td>0</td>
         </tr>
         <tr>
           <td class="model-name">Solar-Open-100B</td>
