@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b8638</div>
+      <div class="value">b8763</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -84,19 +84,19 @@ const base = import.meta.env.BASE_URL;
           <td class="model-name">Gemma-4-31B</td>
           <td>Dense</td>
           <td>17.5 GiB</td>
-          <td>247</td>
+          <td>261</td>
           <td>11.1</td>
-          <td class="best">26</td>
-          <td class="best">14</td>
-          <td class="best">46</td>
-          <td class="best">39</td>
+          <td class="best">27</td>
+          <td class="best">15</td>
+          <td class="best">44</td>
+          <td>38</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B still writes the best prose of the group at 26/30. On Cassandra, Gemma 4 leads the entire field. The dense 31B tops the leaderboard at 39/56 with 9/10 on CQL query writing. The E4B also scores 9/10 on T1, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
+    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B writes the best prose of the group at 27/30 after a re-test on Unsloth's April 11 GGUF (Google's latest chat template baked in). The re-test moved scores by 1-2 points in both directions across benchmarks with identical raw performance. The 31B now leads polyglot at 15/65 with a new partial solve on the structured log parser. On Cassandra, the 31B and 26B-A4B tie at 38/56. The E4B scores 9/10 on T1 CQL writing, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
   </div>
 
   <div class="divider"></div>
@@ -197,7 +197,7 @@ const base = import.meta.env.BASE_URL;
   <h2>PostgreSQL Benchmark <span class="badge new">New</span></h2>
   <div class="card fade-up">
     <p>I added a database benchmark that tests real PostgreSQL skills against a live Postgres 18 instance. A fresh container spins up per run with 2.7 million rows of seeded e-commerce data. 28 challenges across four tiers, 57 test points total. Tier 1 tests complex SQL writing (window functions, recursive CTEs, LATERAL JOINs, JSONB aggregation). Tier 2 tests query optimization where the model receives a slow query and its EXPLAIN plan, then has to produce a fix that actually reduces cost against the live data. Tier 3 tests DBA diagnosis from simulated pg_stat_activity and EXPLAIN output. Tier 4 is the hard one. Models write PL/pgSQL functions, triggers, exclusion constraints, RLS policies, and batch procedures with savepoint error handling. Their code gets executed and validated through behavioral test cases.</p>
-    <p>I ran the full Gemma 4 family through it. The dense 31B leads at 46/57, followed closely by the 26B-A4B MoE at 44/57. The E2B and E4B small models land at 27 and 26 respectively. Query optimization (T2) turned out to be the great equalizer. Even the 2B model scores 8/10, correctly suggesting GIN indexes, partial indexes, and covering indexes. Tier 4 is where model size actually matters. The 31B and 26B both score 22/31, acing exclusion constraints, audit triggers, partition management, and batch savepoints. The small models collapse to 7-10/31 on the same challenges. Row-level security and recursive cycle detection defeated the entire family at 0/5 and 0/4.</p>
+    <p>I ran the full Gemma 4 family through it. The dense 31B and the 26B-A4B MoE both score 44/57. The E2B and E4B small models land at 27 and 26 respectively. Query optimization (T2) turned out to be the great equalizer. Even the 2B model scores 8/10, correctly suggesting GIN indexes, partial indexes, and covering indexes. Tier 4 is where model size actually matters. The 31B and 26B both score 22/31, acing exclusion constraints, audit triggers, partition management, and batch savepoints. The small models collapse to 7-10/31 on the same challenges. Row-level security and recursive cycle detection defeated the entire family at 0/5 and 0/4.</p>
   </div>
 
   <div class="divider"></div>
@@ -207,7 +207,7 @@ const base = import.meta.env.BASE_URL;
     <p>I built a Cassandra benchmark to test whether models that handle PostgreSQL can also reason about distributed databases. A 3-node Cassandra 5.0 cluster spins up on Strix per run, seeded with 1.5 million rows of IoT sensor data across 8 tables. 32 challenges across four tiers, 56 test points total. The fundamental question is whether the model understands that Cassandra is not SQL with different syntax. Every partition key must be in the WHERE clause. There are no JOINs. ORDER BY only works on clustering columns. Deletes create tombstones. Consistency is per-operation. A model trained on relational patterns will fail even if it knows CQL keywords.</p>
     <p>Tier 2 is the most interesting tier and the hardest departure from PostgreSQL. Cassandra has no EXPLAIN, so there is no query optimizer to reason about. Instead, the model receives a broken schema with symptoms and has to identify the anti-pattern. Unbounded partition growth, hot partitions, secondary index scatter-gather, tombstone accumulation from queue patterns, ALLOW FILTERING abuse, compaction strategy mismatches, consistency level math, batch misuse, materialized view pitfalls, and collection size limits. Gemma-4-E2B scored 7/10 here. A 2B model explaining why a logged multi-partition batch is slower than individual async inserts, or why a secondary index on email causes fan-out to all 12 nodes. These concepts need distributed systems understanding, not coding ability.</p>
     <p>Tier 4 executes model code against the live cluster. Time-bucketed schema design with TWCS compaction, distributed locks via lightweight transactions, materialized views, counter-based rate limiters, batch denormalization, and Storage-Attached Indexes. The 26B-A4B and 31B both score 14-15/30, acing LWT locks and counters but failing materialized views and batch denormalization. The E2B actually outperforms the E4B here (10 vs 4), perfectly solving both the LWT lock and counter challenges while the 4B model can't produce valid CQL for any of them.</p>
-    <p>T1 CQL writing scores range from 2/10 (Qwen3.5-4B) to 9/10 (Gemma-4-31B and E4B). The E4B result stands out: a 7.5B dense model matching the 31B on CQL syntax while most MoE models with more total parameters score 7-8/10. TOKEN() range scans, GROUP BY semantics, and PER PARTITION LIMIT with multi-column clustering keys are the remaining unsolved patterns. The dense 31B leads the overall leaderboard at 39/56, edging the 26B MoE (38/56) by one point, breaking the tie that exists on PostgreSQL.</p>
+    <p>T1 CQL writing scores range from 2/10 (Qwen3.5-4B) to 9/10 (Gemma-4-31B and E4B). The E4B result stands out: a 7.5B dense model matching the 31B on CQL syntax while most MoE models with more total parameters score 7-8/10. TOKEN() range scans, GROUP BY semantics, and PER PARTITION LIMIT with multi-column clustering keys are the remaining unsolved patterns. The dense 31B and 26B MoE tie at 38/56, matching the tie on PostgreSQL.</p>
   </div>
 
   <div class="divider"></div>
@@ -215,7 +215,7 @@ const base = import.meta.env.BASE_URL;
   <h2>Polyglot Coding Gauntlet</h2>
   <div class="card fade-up">
     <p>The LRU cache benchmark ran its course. 15 models score a perfect 10/10, making it useless for differentiation. I built a new polyglot coding gauntlet with seven challenges across Python, Bash, Ruby/Sinatra, and Go, totalling 65 auto-graded tests at LeetCode medium/hard difficulty. The challenges test real-world skills like parsing structured logs with nested JSON, matching cron expressions, building awk pipelines, implementing FastAPI rate-limiting middleware, writing HMAC-verified Sinatra webhook handlers, and building recursive Go rule engines.</p>
-    <p>I ran every model on disk through the gauntlet. <strong>Nobody breaks 22%.</strong> A three-way tie leads at 14/65 (GPT-OSS-120B, GPT-OSS-20B, and Gemma-4-31B), all winning on bash pipelines. The 20B matches its 120B sibling identically in 3 minutes vs 8, proving the extra 100B parameters add zero value here. Qwen3-30B is right behind at 13/65 and is the only model to score on the Go rule engine (3/10), finishing in 90 seconds. Three challenges remain completely unsolved across all 14 model runs. The cron matcher, the FastAPI rate limiter, and the Sinatra webhook processor all sit at 0/10.</p>
+    <p>I ran every model on disk through the gauntlet. <strong>Nobody breaks 22%.</strong> Gemma-4-31B leads at 15/65, pulling ahead of GPT-OSS-120B and GPT-OSS-20B (14/65) with a partial solve on the structured log parser. The 20B matches its 120B sibling identically in 3 minutes vs 8, proving the extra 100B parameters add zero value here. Qwen3-30B is right behind at 13/65 and is the only model to score on the Go rule engine (3/10), finishing in 90 seconds. Three challenges remain completely unsolved across all 14 model runs. The cron matcher, the FastAPI rate limiter, and the Sinatra webhook processor all sit at 0/10.</p>
     <p>Two clear capability profiles emerged. The Qwen3 family (30B, Coder-Next, 27B dense) excels at Python regex, scoring 9-10/10 on the structured log parser, but completely fails bash extraction. GPT-OSS, Gemma, and the Qwen3.5 MoE family handle bash pipelines well but are weak on regex. Dense models outperform their MoE siblings on structured output. Gemma-4-31B (dense, 14/65) beats the 26B-A4B MoE (10/65) despite being 5x slower. Thinking mode actively hurts. Qwen3.5-9B jumped from 1 to 5 points when thinking was disabled. Model size doesn't correlate with score. The 30B outperforms the 122B, and Nemotron-Cascade-2's IMO gold medal reasoning scored just 1/65.</p>
     <p>I also tested whether quantization precision matters by running Gemma-4-26B-A4B at both Q4_K_XL and Q8_0. It doesn't. Run-to-run variance exceeds the quant quality difference when you only have 3.8B active parameters. The benchmark measures model capability ceilings, not quant artifacts.</p>
   </div>
@@ -232,7 +232,7 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
         <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
         <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
-        <tr><td class="model-name">llama.cpp</td><td>b8638 (2026-04-02)</td></tr>
+        <tr><td class="model-name">llama.cpp</td><td>b8763 (2026-04-11)</td></tr>
       </tbody>
     </table>
   </div>
