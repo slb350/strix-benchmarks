@@ -150,7 +150,7 @@ const base = import.meta.env.BASE_URL;
           <td>12</td>
           <td>25</td>
           <td>10</td>
-          <td class="best">34</td>
+          <td>34</td>
           <td>29</td>
         </tr>
         <tr>
@@ -159,8 +159,8 @@ const base = import.meta.env.BASE_URL;
           <td>21 GiB</td>
           <td class="best">1017</td>
           <td class="best">60</td>
-          <td class="best">28</td>
-          <td class="best">11</td>
+          <td>28</td>
+          <td>11</td>
           <td>29</td>
           <td class="best">38</td>
         </tr>
@@ -170,17 +170,17 @@ const base = import.meta.env.BASE_URL;
           <td>72 GiB</td>
           <td>129</td>
           <td>21</td>
-          <td>29</td>
-          <td>7</td>
-          <td>33</td>
-          <td class="best">33</td>
+          <td class="best">29</td>
+          <td class="best">13</td>
+          <td class="best">36</td>
+          <td>34</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The dense 27B leads the family on PostgreSQL (34/57 vs 29/57 for the MoE), driven by T1 complex SQL where the MoE's 3B active params fall short. On Cassandra, the 35B MoE and 122B tie at 33/56. The MoE gets there on T1 CQL writing (8/10) and T4 procedural (13/30), while the 122B compensates with stronger T2 anti-pattern detection (8/10 vs 6/10). Both trail Gemma's 39/56 at the top. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS defeats everyone.</p>
+    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The 122B-A10B leads the family on PostgreSQL (36/57), Polyglot (13/65), and writing (29/30), but at 21 t/s it's 3x slower than the 35B MoE. On Cassandra the 35B leads at 38/56, tying Gemma-4-31B for the overall top score. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS defeats everyone.</p>
   </div>
 
   <div class="divider"></div>
