@@ -76,8 +76,8 @@ const base = import.meta.env.BASE_URL;
           <td>1196</td>
           <td>52.9</td>
           <td>23</td>
-          <td>10</td>
-          <td>44</td>
+          <td>22</td>
+          <td>49</td>
           <td>38</td>
         </tr>
         <tr>
@@ -96,7 +96,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE remains the best balance of speed and quality, and the dense 31B writes the best prose of the group at 27/30 after a re-test on Unsloth's April 11 GGUF (Google's latest chat template baked in). The re-test moved scores by 1-2 points in both directions across benchmarks with identical raw performance. The 31B now leads polyglot at 15/65 with a new partial solve on the structured log parser. On Cassandra, the 31B and 26B-A4B tie at 38/56. The E4B scores 9/10 on T1 CQL writing, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
+    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE jumped significantly after re-testing via the server API. It now holds the highest PostgreSQL score of any model (49/57) and leads polyglot at 22/65, more than doubling its llama-cli result of 10/65. The gains come from cleaner output extraction through the chat API rather than any model change. The dense 31B writes the best prose of the group at 27/30. On Cassandra, the 31B and 26B-A4B tie at 38/56. The E4B scores 9/10 on T1 CQL writing, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
   </div>
 
   <div class="divider"></div>
@@ -173,14 +173,14 @@ const base = import.meta.env.BASE_URL;
           <td class="best">29</td>
           <td class="best">13</td>
           <td class="best">36</td>
-          <td>34</td>
+          <td>37</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="insight fade-up">
-    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The 122B-A10B leads the family on PostgreSQL (36/57), Polyglot (13/65), and writing (29/30), but at 21 t/s it's 3x slower than the 35B MoE. On Cassandra the 35B leads at 38/56, tying Gemma-4-31B for the overall top score. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS defeats everyone.</p>
+    <p>The 35B-A3B MoE is the standout for speed and creative writing. At 60 t/s it runs 5x faster than the dense 27B while scoring higher on writing (28/30 vs 25/30). All models require Unsloth's recommended sampling params or they produce garbage. The 122B-A10B leads the family on PostgreSQL (36/57), Polyglot (13/65), and writing (29/30), but at 21 t/s it's 3x slower than the 35B MoE. On Cassandra the 122B improved to 37/56 via the server API, close to the 35B's 38/56. The 9B is the only model in either family to solve PostgreSQL recursive cycle detection. RLS defeats everyone.</p>
   </div>
 
   <div class="divider"></div>
