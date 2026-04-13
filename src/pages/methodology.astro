@@ -16,8 +16,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td class="model-name">Memory</td><td>128GB unified (120GB soft VRAM cap)</td></tr>
         <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
         <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
-        <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
-        <tr><td class="model-name">llama.cpp</td><td>b8638 (2026-04-02)</td></tr>
+        <tr><td class="model-name">ROCm</td><td>TheRock 7.13.0a20260408 nightly</td></tr>
+        <tr><td class="model-name">llama.cpp</td><td>b8721 (2026-04-08)</td></tr>
       </tbody>
     </table>
   </div>
@@ -153,4 +153,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <li><code>--reasoning-budget 0</code> does not work for disabling Qwen3.5 thinking. Use <code>--chat-template-kwargs '&#123;"enable_thinking":false&#125;'</code> instead.</li>
     <li>Qwen3.5-27B went from 0/10 to 10/10 on coding just by switching from default params to Unsloth-recommended sampling.</li>
   </ul>
+
+  <div class="divider"></div>
+
+  <h2>llama-cli vs llama-server</h2>
+  <div class="card fade-up">
+    <p>Most benchmarks on this site run challenges through <code>llama-cli</code> in single-shot mode via SSH. The prompt is uploaded to the server, <code>llama-cli</code> loads the model, processes the prompt, generates a response, and exits. This means each challenge pays the full model load cost, and the raw output includes chat template framing that the extraction code has to strip.</p>
+    <p>I ran an experiment using <code>llama-server</code> with the OpenAI-compatible <code>/v1/chat/completions</code> endpoint instead. The model stays loaded between challenges, and responses come back as clean JSON with just the assistant message content. No SSH wrapping, no chat template artifacts in the output.</p>
+    <p>On the Cassandra benchmark with Qwen3.5-35B-A3B, the server approach scored 38/56 compared to 33/56 with <code>llama-cli</code>. The improvement came almost entirely from cleaner output extraction. T2 (anti-pattern detection) jumped from 6 to 9 and T3 (diagnosis) went from 5 to 6, both tiers where the model returns JSON that the extraction code was mangling. T4 (procedural) also improved from 13 to 16. The 32 challenges finished in about 2 minutes total compared to 40 minutes with <code>llama-cli</code>, since the model was already loaded.</p>
+    <p>I also tested whether giving the model access to a Cassandra reference wiki as tools (search + read) would improve scores. With tools available but optional, the model never used them. It was confident enough to answer every challenge directly. Forcing wiki consultation before every answer dropped the score to 24/56 because the multi-turn tool-call conversation disrupted the output format. For comparison, prepending wiki content directly into every prompt (RAG-style) scored 15/56, the worst of all approaches.</p>
+    <p>Database benchmark scores on this site now use the server approach where it produced higher scores. The model's knowledge did not change between runs. The improvement is purely from avoiding extraction artifacts in the <code>llama-cli</code> output pipeline.</p>
+  </div>
 </BaseLayout>
