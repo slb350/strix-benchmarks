@@ -185,7 +185,16 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>MiniMax-M2.5 <span class="badge new">New</span></h2>
+  <h2>MiniMax-M2.7 <span class="badge new">New</span></h2>
+  <div class="card fade-up">
+    <p>M2.7 is the successor to M2.5, same 229B MoE architecture with 256 experts and 8 active at roughly 10B active parameters. I first tried the UD-Q3_K_XL quant at 95 GiB, then found UD-IQ4_XS at 101 GiB also fits within the 120 GiB VRAM cap. Better quant quality for only 6 GiB more. Writing improved from M2.5's 26/30 to 28/30, and all coding benchmarks max out (10/10 LRU, 59/59 LeetCode, 8/8 FastAPI). Combined score 179/285.</p>
+    <p>M2.5 required a custom Jinja template to suppress thinking because <code>--reasoning-budget 0</code> had no effect. M2.7 is the exact opposite. <code>--reasoning-budget 0</code> works perfectly, producing clean concise output. But the custom no-think template (which removes the <code>&lt;think&gt;</code> tag from the generation prompt) causes the model to reason inline in plain text. It writes meta-commentary about its own thought process, burns through the entire token budget, and never produces any code. I lost an entire overnight bench run to this before figuring it out. Without the fix, LRU Cache scored 0/10 (600s timeout) and polyglot was 0/65. With <code>--reasoning-budget 0</code>, LRU went to 10/10 and polyglot recovered to 8/65.</p>
+    <p>PostgreSQL scored 38/57 with T2 optimization at 9/10 and T3 diagnosis at 6/6. Cassandra revealed a tradeoff. T1-T3 work better with no-think (faster, no timeouts), but T4 procedural challenges need thinking to self-correct CQL syntax mistakes. With thinking, T4 scores 7/30 vs 2/30 without. The model understands TWCS, LWT locks, counters, and SAI indexes but gets clause ordering wrong without time to self-correct. RADV is the right backend at 27 t/s, unlike M2.5 which preferred AMDVLK.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>MiniMax-M2.5</h2>
   <div class="card fade-up">
     <p>I tested this model back in February with an IQ3_XXS quant and llama.cpp defaults. It scored 0/10 on coding (missing imports), 24/30 on writing, and I shelved it. Unsloth's Dynamic 2.0 UD-Q3_K_XL quant and their recommended sampling params (temp 1.0, top_p 0.95, min_p 0.01, top_k 40) changed everything. Coding went to 10/10, LeetCode to 59/59, writing to 26/30. The previous 0/10 was a quant quality and sampling configuration problem, not a model capability problem.</p>
     <p>At 229B total and roughly 10B active parameters, it eats 94 GiB. The largest model on disk by a wide margin. AMDVLK is the right backend here, giving 32 t/s generation vs 22 on RADV. That 32 t/s translates to about 8 words/second on writing tasks, which is usable but not fast. PostgreSQL landed at 40/57 with perfect 10/10 on T2 query optimization and 19/31 on T4 procedural. Cassandra scored 30/56, also with perfect 10/10 on T2 anti-pattern detection. Only the second model to ace Cassandra T2 after Gemma-4-26B-A4B. Combined 185/285 puts it 6th overall.</p>
