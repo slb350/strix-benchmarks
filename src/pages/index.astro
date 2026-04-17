@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b8763</div>
+      <div class="value">b8783</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -97,6 +97,48 @@ const base = import.meta.env.BASE_URL;
 
   <div class="insight fade-up">
     <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE jumped significantly after re-testing via the server API. It now holds the highest PostgreSQL score of any model (49/57) and leads polyglot at 22/65, more than doubling its llama-cli result of 10/65. The gains come from cleaner output extraction through the chat API rather than any model change. The dense 31B writes the best prose of the group at 27/30. On Cassandra, the 31B and 26B-A4B tie at 38/56. The E4B scores 9/10 on T1 CQL writing, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across all 14 tested.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Qwen 3.6 Family <span class="badge new">New</span></h2>
+  <p>Alibaba's 3.6 generation brings a hybrid attention architecture. Each of the 40 layers runs three Gated DeltaNet (linear attention) blocks followed by one standard gated attention block. The MoE expert pool expands to 256 with 8 routed plus 1 shared active, and a vision encoder is built in. Sampling params match 3.5 (temp 0.6 for code, 0.7 for creative, top_p 0.95, top_k 20, presence_penalty 1.5, thinking via chat-template-kwargs).</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Qwen3.6-35B-A3B</td>
+          <td>Hybrid MoE (3B active, 256 experts)</td>
+          <td>20.8 GiB</td>
+          <td>1029</td>
+          <td>60</td>
+          <td>29</td>
+          <td>35</td>
+          <td>31</td>
+          <td>33</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>At the same quant and size as Qwen3.5-35B-A3B, the 3.6 sibling moves Combined from 192 to 205, landing 3rd overall behind Gemma-4-31B (238) and Gemma-4-26B-A4B (215). Writing improves one point to 29/30. LRU, LeetCode, FastAPI all max out the same. Polyglot jumps from 17 to 35 on a best-of-5 basis, which needs context. I ran five identical back-to-back polyglot passes and got 19, 26, 6, 17, and 35 out of 65. Same sampling params, same prompts, same model weights. On the 35 run the model cleanly solves cron matching (10/10) and Go rule engines (10/10), two challenges that were previously unsolved across the Qwen 3.5 lineup. On the 6 run it produces almost nothing usable. I suspect the hybrid DeltaNet layers are amplifying sampler noise, though I have not isolated it further.</p>
+    <p>Both database benchmarks regress a few points relative to the 3.5 generation. Postgres drops 32 to 31, Cassandra drops 38 to 33. The regressions come entirely from Tier 4 procedural challenges where the model generates syntactically broken PL/pgSQL and CQL DDL. T1 through T3 hold up. Postgres T2 and T3 are perfect (10/10 and 6/6). Cassandra T1 through T3 land at 8/10, 9/10, 6/6. The model understands the queries and the diagnosis, but assembling a valid CREATE TRIGGER or CREATE MATERIALIZED VIEW is where it breaks.</p>
+    <p>The creative writing output has a prose hygiene issue worth flagging. With <code>enable_thinking:false</code> set through chat-template-kwargs, the model produces a clean 2260-word story that I scored 29/30 (all five beats hit, 5/5 sensory immersion), and then dumps its own internal planning notes after the final sentence. Self-correction remarks, word-count checks, structural bullet points. The story itself is clean. The raw generation is not directly usable without post-processing. I think this pattern is embedded in training rather than fixable through sampling params alone.</p>
   </div>
 
   <div class="divider"></div>
