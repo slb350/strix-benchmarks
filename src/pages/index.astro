@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b8783</div>
+      <div class="value">b8827</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">26+</div>
+      <div class="value">27+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
@@ -27,6 +27,50 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Benchmark suites</div>
     </div>
   </div>
+
+  <h2>Qwen3.6-27B <span class="badge new">New</span></h2>
+  <p>The dense companion to Qwen3.6-35B-A3B, released the same week. Same hybrid attention pattern, three Gated DeltaNet linear-attention layers per gated attention block, 262K native context, vision encoder built in. No expert routing. Every token activates the full 27B parameter set. Sampling params follow the family convention (temp 0.6 for code, 0.7 for creative, top_p 0.95, top_k 20, presence_penalty 1.5 for creative, thinking disabled through chat-template-kwargs).</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Qwen3.6-27B</td>
+          <td>Dense (27B)</td>
+          <td>16.4 GiB</td>
+          <td>322</td>
+          <td>12.0</td>
+          <td class="best">30</td>
+          <td>30</td>
+          <td>44</td>
+          <td>32</td>
+          <td class="best">213</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Qwen3.6-27B lands 2nd place on the Combined leaderboard at 213/285, behind Gemma-4-31B at 238 and ahead of Gemma-4-26B-A4B at 215. At this size class MoE usually wins, but the 27B dense beats its 35B-A3B MoE sibling at 205. The dense version takes around five times longer per token (12 tg vs 60 tg) in exchange for one writing point and a much stronger Tier 4 procedural Postgres score.</p>
+    <p>Writing scores 30/30, the joint highest result I've recorded on this benchmark, tying Qwen3-30B-Instruct-2507 as champion. All five beats hit cleanly. Two character voices stay distinct throughout (a burned-out ER nurse with medical deadpan dialogue, a marine biologist with a quieter cadence). Two named griefs land hard. Em dash count is 2 across roughly 2150 words of prose. Sensory layering covers four senses. The chemistry builds organically through small physical beats rather than declarative sentences. The same prose hygiene issue from the 35B-A3B sibling shows up here as well. Even with enable_thinking:false set through chat-template-kwargs, the model leaks a planning outline above the story and an end-thinking tag below it. The story itself (everything after the planning preamble) is clean and that's what got scored.</p>
+    <p>Polyglot averages 30/65 across three runs (24, 31, 34). The variance traces almost entirely to T7 Go, which scored 0/10, 10/10, 10/10. T1 regex parsing was perfect 10/10 every pass, T4 CSV aggregation perfect 7/7 every pass. The T2 cron matcher that the 35B-A3B sibling cracked on 4 of 5 runs stayed at 0/10 here. Cassandra averages 32/56 across three runs (30, 32, 33). T1 climbed each pass (6, 7, 8), T3 saturated at 6/6 every run, T4 stuck at exactly 10/30 every run with the same failure signature on LWT distributed lock, materialized view, and batch denormalization. Postgres came in at 44/57 on a single run. T2 and T3 were perfect (10/10 and 6/6), T4 procedural hit 23/31, the second-strongest result on disk after Gemma-4-31B's 22/31.</p>
+  </div>
+
+  <div class="divider"></div>
 
   <h2>Gemma 4 Family <span class="badge new">New</span></h2>
   <p>Google's full Gemma 4 lineup, all tested as Unsloth UD-Q4_K_XL on RADV.</p>
@@ -136,7 +180,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>At the same quant and size as Qwen3.5-35B-A3B, the 3.6 sibling moves Combined from 192 to 205, landing 3rd overall behind Gemma-4-31B (238) and Gemma-4-26B-A4B (215). Writing improves one point to 29/30. LRU, LeetCode, FastAPI all max out the same. Polyglot jumps from 17 to 35 on a best-of-5 basis, which needs context. I ran five identical back-to-back polyglot passes and got 19, 26, 6, 17, and 35 out of 65. Same sampling params, same prompts, same model weights. On the 35 run the model cleanly solves cron matching (10/10) and Go rule engines (10/10), two challenges that were previously unsolved across the Qwen 3.5 lineup. On the 6 run it produces almost nothing usable. I suspect the hybrid DeltaNet layers are amplifying sampler noise, though I have not isolated it further.</p>
+    <p>At the same quant and size as Qwen3.5-35B-A3B, the 3.6 sibling moves Combined from 192 to 205, now 4th overall behind Gemma-4-31B (238), the dense Qwen3.6-27B (213), and Gemma-4-26B-A4B (215). Writing improves one point to 29/30. LRU, LeetCode, FastAPI all max out the same. Polyglot jumps from 17 to 35 on a best-of-5 basis, which needs context. I ran five identical back-to-back polyglot passes and got 19, 26, 6, 17, and 35 out of 65. Same sampling params, same prompts, same model weights. On the 35 run the model cleanly solves cron matching (10/10) and Go rule engines (10/10), two challenges that were previously unsolved across the Qwen 3.5 lineup. On the 6 run it produces almost nothing usable. I suspect the hybrid DeltaNet layers are amplifying sampler noise, though I have not isolated it further.</p>
     <p>Both database benchmarks regress a few points relative to the 3.5 generation. Postgres drops 32 to 31, Cassandra drops 38 to 33. The regressions come entirely from Tier 4 procedural challenges where the model generates syntactically broken PL/pgSQL and CQL DDL. T1 through T3 hold up. Postgres T2 and T3 are perfect (10/10 and 6/6). Cassandra T1 through T3 land at 8/10, 9/10, 6/6. The model understands the queries and the diagnosis, but assembling a valid CREATE TRIGGER or CREATE MATERIALIZED VIEW is where it breaks.</p>
     <p>The creative writing output has a prose hygiene issue worth flagging. With <code>enable_thinking:false</code> set through chat-template-kwargs, the model produces a clean 2260-word story that I scored 29/30 (all five beats hit, 5/5 sensory immersion), and then dumps its own internal planning notes after the final sentence. Self-correction remarks, word-count checks, structural bullet points. The story itself is clean. The raw generation is not directly usable without post-processing. I think this pattern is embedded in training rather than fixable through sampling params alone.</p>
   </div>
