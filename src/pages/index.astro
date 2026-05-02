@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b8967</div>
+      <div class="value">b9002</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">28+</div>
+      <div class="value">31+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,75 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Nemotron-3-Nano-Omni-30B-A3B-Reasoning <span class="badge new">New</span></h2>
+  <h2>Granite 4.1 Family <span class="badge new">New</span></h2>
+  <p>IBM released Granite 4.1 on April 29 in three plain dense sizes (3.4B, 8.8B, 28.9B), all Apache 2.0 with 131K native context. Architecture is unchanged from Granite 4.0. Decoder-only dense transformer with GQA, RoPE, MLP plus SwiGLU, RMSNorm, shared input and output embeddings. The 4.1 jump is post-training only. Improved supervised finetuning and reinforcement learning targeting tool calling, instruction following, and chat. No special sampling profile from IBM or Unsloth, so I ran the bench suite at llama.cpp defaults (temp 0.7, top_p 0.9, repeat_penalty 1.1) with the chat template enabled through <code>--jinja</code>. All three pulled from Unsloth UD-Q4_K_XL.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Granite-4.1-30B</td>
+          <td>Dense (28.9B)</td>
+          <td>16.5 GiB</td>
+          <td>275</td>
+          <td>11.8</td>
+          <td class="best">28</td>
+          <td>10</td>
+          <td class="best">32</td>
+          <td class="best">31</td>
+          <td class="best">172</td>
+        </tr>
+        <tr>
+          <td class="model-name">Granite-4.1-8B</td>
+          <td>Dense (8.8B)</td>
+          <td>5.1 GiB</td>
+          <td>936</td>
+          <td>38.6</td>
+          <td>18</td>
+          <td>6</td>
+          <td>26</td>
+          <td>24</td>
+          <td>141</td>
+        </tr>
+        <tr>
+          <td class="model-name">Granite-4.1-3B</td>
+          <td>Dense (3.4B)</td>
+          <td>2.0 GiB</td>
+          <td class="best">2278</td>
+          <td class="best">88.7</td>
+          <td>17</td>
+          <td>4</td>
+          <td>11</td>
+          <td>13</td>
+          <td>98</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Granite-30B's writing score of 28/30 ties MiniMax-M2.7 for the highest non-Qwen result on the writing bench. Combined 172/285 ties Qwen3-30B-Instruct-2507 exactly. The writing benchmark is a 2000-word contemporary love story between two strangers, an ER nurse and a marine biologist, meeting at dawn on a North Carolina beach. Granite-30B hit all five required beats. Maya's wry voice ("Glad I could be your personal sand excavator") and Jack's deflective grief ("Close enough", thumb on the scar at his jaw) stay distinct throughout. Two named griefs land hard. The patient she held through that January night, the late wife implicit in his deflection. Sensory detail layers across mildew and salt, the "gray ribbon" beach, molten gold sunrise. One mild meta closer at the end ("The story ends here, but the question lingers...") cost a quality point. The model also EOS's at 1244 words against the 2000-word target. Both look like training tics rather than capability ceilings, since the same closer pattern shows up at all three sizes.</p>
+    <p>Granite-4.1-8B is the first model on this benchmark to score a perfect 22/22 on the hallucination calibration test. All ten factual answers correct, all eight false-premise traps caught, all four unanswerable questions answered with appropriate uncertainty, in 12.9 seconds. Qwen3.5-35B-A3B took 76.7 seconds for 21/22. The 8B also scores 59/59 LeetCode at 38.6 tg. Combined 141 sits within margin of Qwen3.5-9B at 146. Granite-4.1-3B (Combined 98) scores 53/59 LeetCode at 88.7 tg, the fastest tg of any sub-100 Combined model, but landed 0/10 on LRU and 0/8 on FastAPI. Both are genuine generation failures. The LRU code stores TTL as a single float in <code>ttl_thresholds[key]</code> and then unpacks it as <code>(value, ttl)</code> in <code>_evict_expired</code>, throwing TypeError on every test. The FastAPI code uses <code>Body(&#123;"title": ...&#125;)</code>, which is invalid Python syntax, and <code>Body</code> was never imported. Server crashed on startup.</p>
+    <p>Granite-30B trades throughput for quality. At 11.76 tg the dense model runs roughly five times slower than the Qwen3-30B MoE that ties it on Combined. Postgres T2 query optimization scored a perfect 10/10. FastAPI scored 2/8 across all three sizes, with HTTP 422 on POST and PUT. The Pydantic body schema is the failure mode and sampling does not fix it. The IBM RL push on tool calling did not transfer to FastAPI body schema generation. ROCm wins prompt processing on every size (3b 2323 vs 2278, 8b 1211 vs 936, 30b 303 vs 275). RADV wins token generation everywhere. Pick RADV for writing, ROCm for long-prompt server workloads on the 30b.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Nemotron-3-Nano-Omni-30B-A3B-Reasoning</h2>
   <p>NVIDIA's multimodal hybrid Mamba2-Transformer MoE, released April 28. 31B total parameters, 3B active, 256K native context. The training adds video, audio, image, and text input on top of the older text-only Nemotron-3-Nano-30B-A3B. Server build b8967 already supports the architecture (<code>nemotron_h_moe</code>). I tested only the text path through llama-server. Multimodal capability needs <code>llama-mtmd-cli</code> and is outside this benchmark suite.</p>
 
   <div class="table-wrap fade-up">
@@ -371,7 +439,7 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">Kernel</td><td>6.17.0-8-generic</td></tr>
         <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
         <tr><td class="model-name">ROCm</td><td>TheRock 7.11.0a20260121 nightly</td></tr>
-        <tr><td class="model-name">llama.cpp</td><td>b8967 (2026-04-28)</td></tr>
+        <tr><td class="model-name">llama.cpp</td><td>b9002 (Vulkan), b8721 (ROCm)</td></tr>
       </tbody>
     </table>
   </div>
