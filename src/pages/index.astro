@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">31+</div>
+      <div class="value">32+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,54 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Granite 4.1 Family <span class="badge new">New</span></h2>
+  <h2>Mistral-Medium-3.5-128B <span class="badge new">New</span></h2>
+  <p>Mistral's 128B dense flagship, released March 31. Two upstream blockers cleared in late April. Unsloth uploaded the full GGUF quant set (UD-Q3_K_XL through Q8_0) and the YaRN parser bug that mangled long-context behavior was fixed by setting <code>mscale_all_dim</code> from 1 to 0 in the model config. Architecture is <code>mistral3</code>, the same family as the Mistral-Small-3.1 and 3.2 24B models llama.cpp already supports. Native 256K context, multimodal text and image input through the vision encoder, though I tested only the text path through llama-server. The Unsloth UD-Q4_K_XL split is 75.7 GB across three files and fits comfortably inside the 120 GB soft cap on Strix.</p>
+
+  <p>The reasoning interface differs from every other model on this bench. Mistral 3.5 reads a <code>reasoning_effort</code> chat-template kwarg with two settings, "none" and "high". The default "none" produces a direct response. The default <code>enable_thinking: false</code> kwarg the bench passes for Qwen and Gemma is silently ignored here. That detail matters for the LRU result. I ran the standard tracked battery once with default sampling (temp 0.6, top_p 0.95, repeat_penalty 1.0, presence_penalty 0.0) and re-ran the LRU prompt with <code>reasoning_effort: high</code> to get the proper coding score.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Mistral-Medium-3.5-128B</td>
+          <td>Dense (125B)</td>
+          <td>70.5 GiB</td>
+          <td>78</td>
+          <td>3.0</td>
+          <td class="best">30</td>
+          <td>30</td>
+          <td>39</td>
+          <td>34</td>
+          <td>207</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Combined 207/285 lands the model 4th overall on the leaderboard, behind Gemma-4-31B (238), Qwen3.6-27B (213), and Qwen3.6-35B-A3B (205 narrowly below at the same line). Writing scores 30/30, joint top with Qwen3-30B-Instruct-2507 and Qwen3.6-27B. The story output runs 2082 words against the 2000-word target, reaches all five required beats, and carries a structural payoff that earns the score on craft rather than padding. The hatchling rescue at the heart of the scene parallels the patient grief introduced in the opening, and the model lands the parallel through dialogue (a flat "wasn't meant to" delivered over a struggling baby turtle) rather than narration. Em dash count stays inside budget, sensory layering covers salt, sand texture, light, and skin warmth without any of the AI-prose tells the bench scorecard treats as deductions. Generation cost was 1090.8 seconds (1.9 words per second on ROCm).</p>
+    <p>The LRU coding score requires explanation. The standard server bench scored 2/10 because the default no-reasoning path generated a put method that does <code>time.time() + (ttl if ttl is not None else self.default_ttl)</code>, which TypeErrors when both arguments are None. Re-running the same prompt with <code>reasoning_effort: high</code> through chat-template-kwargs produced 18,606 characters of reasoning across 28 minutes and a different implementation that scores 7/10. The new failures are all the same conceptual bug in a different place. The eviction path runs <code>del self.expiry[oldest_key]</code> unconditionally, which KeyErrors when the evicted key was stored without an expiry entry. Two attempts, two different bugs, both centered on None handling in the expiry map. The 7/10 with reasoning is the recorded score because that mode is the model's intended high-effort coding profile per the Unsloth docs.</p>
+    <p>Polyglot scored 30/65 on a single run, which puts the model 3rd on this benchmark behind Gemma-4-31B (44) and the Qwen3.6 pair (35 and 30). T7 Go and T4 CSV both perfect (10/10 and 7/7). T2 cron, T5 rate limiter, T6 Sinatra all 0/10, the same three challenges that have stayed unsolved across nearly every tested model. Polyglot variance on this bench is well-documented (one earlier model produced 6, 17, 19, 26, 35 across five identical runs), so 30/65 carries a single-run asterisk pending re-bench. Postgres came in at 39/57. T3 diagnosis was perfect 6/6, T2 query optimization 9/10, T1 SQL writing 5/10, T4 procedural 19/31. The pattern is consistent. The model fixes broken queries and identifies operational problems with surgical accuracy and writes original complex SQL less reliably. Cassandra 34/56 with T2 anti-pattern detection at 9/10, the strongest non-Gemma result on that tier, plus T1 query writing 8/10. T4 procedural collapsed to 12/30 with broken CQL DDL on time-bucketed schema, materialized view, batch denormalization, and SAI index challenges.</p>
+    <p>ROCm is the right backend here. pp512 runs 78 on ROCm, 62 on RADV, 17 on AMDVLK. Token generation is essentially identical across all three (2.92, 2.90, 2.99) because at 125B dense the workload is pure memory bandwidth. Build 9029 for Vulkan, 8721 for ROCm.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Granite 4.1 Family</h2>
   <p>IBM released Granite 4.1 on April 29 in three plain dense sizes (3.4B, 8.8B, 28.9B), all Apache 2.0 with 131K native context. Architecture is unchanged from Granite 4.0. Decoder-only dense transformer with GQA, RoPE, MLP plus SwiGLU, RMSNorm, shared input and output embeddings. The 4.1 jump is post-training only. Improved supervised finetuning and reinforcement learning targeting tool calling, instruction following, and chat. No special sampling profile from IBM or Unsloth, so I ran the bench suite at llama.cpp defaults (temp 0.7, top_p 0.9, repeat_penalty 1.1) with the chat template enabled through <code>--jinja</code>. All three pulled from Unsloth UD-Q4_K_XL.</p>
 
   <div class="table-wrap fade-up">
