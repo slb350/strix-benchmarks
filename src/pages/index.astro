@@ -103,6 +103,44 @@ const base = import.meta.env.BASE_URL;
     <p>Setup is <code>llama-server -m Qwen3.6-27B-UD-Q4_K_XL.gguf -ngl 999 -b 2048 -t 32 -fa 1 -c 8192 --spec-type draft-mtp --spec-draft-n-max 3</code>. RADV throughout, mainline llama.cpp at <code>4f13cb742</code> (build 9191). For the 27B this becomes my default writing config going forward. For the 35B-A3B it stays on by default since the model is loaded anyway, but the dense 27B with MTP is now the throughput-quality sweet spot on Strix.</p>
   </div>
 
+  <h3>Real-world workloads on Strix Halo</h3>
+  <p>The 1.84x spec-bench number is the peak case across short prompts averaging 192 tokens. I ran two benchmarks where the gap actually shows up for users (long-form writing and the polyglot coding suite) to check how MTP holds up under realistic Strix Halo workloads with proper Qwen3.6 sampling.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Workload</th>
+          <th data-type="number">Wall</th>
+          <th data-type="number">tok/s</th>
+          <th>Quality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Creative writing (2K-word story)</td>
+          <td>186s</td>
+          <td>16.4 (1.37x baseline)</td>
+          <td>~28/30, all five required beats</td>
+        </tr>
+        <tr>
+          <td>Polyglot (7 challenges, mixed languages)</td>
+          <td>254s total</td>
+          <td>varies per challenge</td>
+          <td class="best">43/65 (new high, +8 vs prior)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Creative writing is where MTP gives back the least, and that is exactly the workload most Strix Halo users care about. High-entropy prose has the lowest draft acceptance rate because every plausible next token breaks a draft, and the <code>presence_penalty=1.5</code> that the Qwen3.6 family needs to avoid prose loops further depresses acceptance since the MTP head trained on the unmodified distribution. The 1.37x speedup falls well below the 1.84x peak, but on a 2294-word generation that is the difference between 186 seconds and 254 seconds. Quality held, with all five required beats landed in order and no looping.</p>
+
+    <p>Polyglot is where MTP gets out of its own way. Code has predictable continuations like function signatures, common idioms, and well-known boilerplate, so per-challenge draft acceptance lands above 70 percent. The bench scored 43/65 in 4.2 minutes wall time, eight points above the previous Qwen3.6-27B best. T2 Cron solved 10/10, which is unusual since T2 plus T5 Rate Limiter plus T6 Sinatra have been the three universal fails across nearly every model on this bench. The Cron win likely came from the corrected <code>repeat_penalty=1.0</code> (Qwen3.6 Unsloth default) instead of the prior <code>1.1</code> (Qwen3 family default), not from MTP itself. Polyglot has documented single-run variance so 43 carries a one-run asterisk.</p>
+
+    <p>The practical impact for Strix Halo. Dense Qwen3.6-27B is the model that benefits most from MTP on this hardware because gfx1151 decode is memory-bandwidth-bound and the MTP head's extra forward pass is cheap relative to the bandwidth wait. The MoE 35B-A3B sees a smaller 1.22x gain because 3B-active decode is already compute-light and leaves no slack for MTP to absorb. For users whose primary workload is long-form writing or daily-driver coding, the configuration is Qwen3.6-27B + MTP n=3 + the Unsloth Qwen3.5-family sampling profile (<code>presence_penalty=1.5</code> for writing, <code>repeat_penalty=1.0</code> across the board). Expect 16 to 21 tok/s depending on workload, with no quality regression.</p>
+  </div>
+
   <div class="divider"></div>
 
   <h2>Mistral-Medium-3.5-128B</h2>
