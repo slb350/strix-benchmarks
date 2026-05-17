@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b9002</div>
+      <div class="value">b9191</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,84 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Mistral-Medium-3.5-128B <span class="badge new">New</span></h2>
+  <h2>Mainline MTP for Qwen3.6 <span class="badge new">New</span></h2>
+  <p>am17an's Multi-Token Prediction PR (#22673) merged into mainline llama.cpp on May 16, build 9191. Mainline now ships MTP support for the Qwen3.5 and Qwen3.6 families. The Gemma-4 MTP work (PR #22738) was closed without merging and is not coming back, so Qwen is the only family this matters for today. I pulled the new build, downloaded the Unsloth MTP-enabled GGUFs for both the 27B dense and the 35B-A3B MoE, and ran a baseline pass plus draft-mtp at n=2 and n=3 across the same nine-prompt suite the PR author used for the published numbers.</p>
+
+  <p>MTP loads the draft head from the same single GGUF file. There is no separate drafter to manage. Activate it with <code>--spec-type draft-mtp --spec-draft-n-max N</code> at server start. The model must be an MTP variant. The regular Unsloth GGUF loads fine but the spec flag silently does nothing because the nextn tensors are not present.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Config</th>
+          <th data-type="number">tok/s</th>
+          <th data-type="number">Speedup</th>
+          <th data-type="number">Draft accept</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Qwen3.6-27B (dense)</td>
+          <td>baseline</td>
+          <td>11.58</td>
+          <td>1.00x</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.6-27B (dense)</td>
+          <td>MTP n=2</td>
+          <td>20.37</td>
+          <td>1.76x</td>
+          <td>79.7%</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.6-27B (dense)</td>
+          <td>MTP n=3</td>
+          <td class="best">21.32</td>
+          <td class="best">1.84x</td>
+          <td>72.3%</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.6-35B-A3B (MoE)</td>
+          <td>baseline</td>
+          <td>54.85</td>
+          <td>1.00x</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.6-35B-A3B (MoE)</td>
+          <td>MTP n=2</td>
+          <td>65.85</td>
+          <td>1.20x</td>
+          <td>77.7%</td>
+        </tr>
+        <tr>
+          <td class="model-name">Qwen3.6-35B-A3B (MoE)</td>
+          <td>MTP n=3</td>
+          <td class="best">66.95</td>
+          <td class="best">1.22x</td>
+          <td>71.4%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The dense 27B is the story here. 1.84x token generation at n=3 with zero quality cost, because MTP is lossless draft-and-verify rejection sampling at the target distribution. The server-side baseline of 11.58 tok/s matches the 12.03 llama-bench reference within chat-template overhead. The win on the dense model comes from being memory-bandwidth-bound during decode. The MTP head's extra forward pass is cheap relative to the wait on weight bandwidth, and most drafts get accepted, so the saved verifies are nearly free wall time.</p>
+
+    <p>The MoE 35B-A3B gains only 1.22x. With 3B active parameters decode is already compute-light, MTP overhead eats most of the would-be savings, and the absolute baseline of 54.85 tok/s leaves less room to grow. The acceptance rate is still healthy at 71 to 78 percent. The mechanism works fine, the headroom is just smaller. If memory is tight the regular Unsloth GGUF (without the extra 0.42B MTP layer) is the cleaner choice. If the model is loaded anyway, leave MTP on.</p>
+
+    <p>Acceptance rate tracks prompt determinism, not model. Both models accept above 80 percent on summarize, code_python, and translation. Both drop below 55 percent on creative_short, which is a four-line poem about a lighthouse. High-entropy generation kills draft acceptance because every plausible continuation breaks the draft. The 27B holds 1.60x speedup even at 54 percent acceptance because the dense model has so much bandwidth slack to absorb the failed drafts. The MoE collapses to 1.05x on the same prompt. Per-prompt best at n=3 on the 27B is summarize at 25.58 tok/s (2.13x), on the 35B-A3B is summarize at 87.79 tok/s (1.48x).</p>
+
+    <p>n=3 beats n=2 in aggregate for both models. The wider draft window catches more tokens per accepted cycle, which more than compensates for the lower per-draft acceptance rate. Prompt processing was not measurably degraded at the standard <code>-b 2048</code> server config across this nine-prompt suite. The PR warns of a D2H embedding-transfer penalty on PP, but the prompts are short enough that PP is not the bottleneck. ROCm with MTP is the open question. The ROCm build was last refreshed before the MTP merge, so a rebuild and rerun is the next step there.</p>
+
+    <p>Setup is <code>llama-server -m Qwen3.6-27B-UD-Q4_K_XL.gguf -ngl 999 -b 2048 -t 32 -fa 1 -c 8192 --spec-type draft-mtp --spec-draft-n-max 3</code>. RADV throughout, mainline llama.cpp at <code>4f13cb742</code> (build 9191). For the 27B this becomes my default writing config going forward. For the 35B-A3B it stays on by default since the model is loaded anyway, but the dense 27B with MTP is now the throughput-quality sweet spot on Strix.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Mistral-Medium-3.5-128B</h2>
   <p>Mistral's 128B dense flagship, released March 31. Two upstream blockers cleared in late April. Unsloth uploaded the full GGUF quant set (UD-Q3_K_XL through Q8_0) and the YaRN parser bug that mangled long-context behavior was fixed by setting <code>mscale_all_dim</code> from 1 to 0 in the model config. Architecture is <code>mistral3</code>, the same family as the Mistral-Small-3.1 and 3.2 24B models llama.cpp already supports. Native 256K context, multimodal text and image input through the vision encoder, though I tested only the text path through llama-server. The Unsloth UD-Q4_K_XL split is 75.7 GB across three files and fits comfortably inside the 120 GB soft cap on Strix.</p>
 
   <p>The reasoning interface differs from every other model on this bench. Mistral 3.5 reads a <code>reasoning_effort</code> chat-template kwarg with two settings, "none" and "high". The default "none" produces a direct response. The default <code>enable_thinking: false</code> kwarg the bench passes for Qwen and Gemma is silently ignored here. That detail matters for the LRU result. I ran the standard tracked battery once with default sampling (temp 0.6, top_p 0.95, repeat_penalty 1.0, presence_penalty 0.0) and re-ran the LRU prompt with <code>reasoning_effort: high</code> to get the proper coding score.</p>
