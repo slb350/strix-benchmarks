@@ -28,7 +28,7 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Mainline MTP for Qwen3.6 <span class="badge new">New</span></h2>
+  <h2>Mainline MTP for Qwen3.6</h2>
   <p>am17an's Multi-Token Prediction PR (#22673) merged into mainline llama.cpp on May 16, build 9191. Mainline now ships MTP support for the Qwen3.5 and Qwen3.6 families. The Gemma-4 MTP work (PR #22738) was closed without merging and is not coming back, so Qwen is the only family this matters for today. I pulled the new build, downloaded the Unsloth MTP-enabled GGUFs for both the 27B dense and the 35B-A3B MoE, and ran a baseline pass plus draft-mtp at n=2 and n=3 across the same nine-prompt suite the PR author used for the published numbers.</p>
 
   <p>MTP loads the draft head from the same single GGUF file. There is no separate drafter to manage. Activate it with <code>--spec-type draft-mtp --spec-draft-n-max N</code> at server start. The model must be an MTP variant. The regular Unsloth GGUF loads fine but the spec flag silently does nothing because the nextn tensors are not present.</p>

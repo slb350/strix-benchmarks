@@ -46,7 +46,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="divider"></div>
 
-  <h2>Gemma-4-26B-A4B: Q4 vs Q8 <span class="badge new">New</span></h2>
+  <h2>Gemma-4-26B-A4B: Q4 vs Q8</h2>
   <div class="card fade-up">
     <p>I ran the full 7-benchmark suite on Gemma-4-26B-A4B at both UD-Q4_K_XL (16 GiB) and Q8_0 (25 GiB). The MoE architecture activates 3.8B parameters per token regardless of quant level, so I expected the differences to be negligible. They weren't.</p>
     <p>Q8 improved creative writing by 5 points (23 to 28 out of 30). The Q4 run produced competent prose with decent character voices but relied on familiar beats. The Q8 run produced richer sensory detail, sharper dialogue, and a more specific emotional arc. The characters felt less like templates and more like people. That gap matters for a writing benchmark.</p>

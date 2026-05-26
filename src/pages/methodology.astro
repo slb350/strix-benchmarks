@@ -62,7 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <h2>Coding Benchmarks</h2>
   <p>All coding benchmarks are single-shot. The model receives one prompt and its output is automatically validated against a test suite. No retries, no iterative refinement.</p>
 
-  <h3>PostgreSQL (57 tests, 4 tiers) <span class="badge new">New</span></h3>
+  <h3>PostgreSQL (57 tests, 4 tiers)</h3>
   <div class="card fade-up">
     <p>I built a PostgreSQL benchmark that spins up a fresh Postgres 18 container per run, seeds it with 2.7 million rows of deterministic e-commerce data (customers, orders, products, inventory, sessions, audit logs), and throws 28 challenges at the model across four tiers. The model talks to <code>llama-cli</code> on the Strix server. Its output gets extracted, executed against the live database, and validated automatically. Every run starts clean. The seed uses <code>SELECT setseed(0.42)</code> so the data is identical across runs.</p>
     <p>Tier 1 tests whether a model can write complex SQL. Ten challenges covering window functions with monthly resets, recursive CTEs for category trees, gap detection with LAG/LEAD, top-N-per-group via ROW_NUMBER, LATERAL JOINs for recommendation queries, nested JSONB aggregation, GROUPING SETS reports, percentile analysis, array operations, and date range overlap detection. The model gets a schema description and a natural language requirement. Its SQL runs against the seeded database and the result set is compared row-by-row against a known-good query.</p>
@@ -82,7 +82,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </table>
   </div>
 
-  <h3>Cassandra (56 tests, 4 tiers) <span class="badge new">New</span></h3>
+  <h3>Cassandra (56 tests, 4 tiers)</h3>
   <div class="card fade-up">
     <p>I wanted to know whether models that handle PostgreSQL can also reason about distributed databases where the fundamental rules are different. So I built a Cassandra benchmark. A fresh 3-node Cassandra 5.0 cluster spins up on Strix per run, seeds 1.5 million rows of deterministic IoT sensor data across 8 tables, and throws 32 challenges at the model. The schema models a sensor platform with time-bucketed readings, denormalized query tables, counter tables, UDTs, static columns, and a deliberately broken table with unbounded partition growth. The seeder uses Python's <code>random.seed(42)</code> for reproducibility.</p>
     <p>The core question is whether the model understands that Cassandra is not SQL with different syntax. Every partition key must appear in a WHERE clause. There are no JOINs. ORDER BY only works on clustering columns. GROUP BY only works on primary key prefixes in order. Deletes create tombstones that slow reads. Consistency is tunable per operation. INSERT and UPDATE are the same thing. A model trained on relational patterns will fail hard on these constraints even if it knows the CQL keyword syntax.</p>

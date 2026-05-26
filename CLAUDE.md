@@ -9,6 +9,7 @@ Personal benchmarking site. First person ("I") throughout, never "we".
 - No em dashes
 - Hyphens are fine (compound words, model names)
 - Never use the word "romance" on site. The writing benchmarks are "creative writing" or just "writing".
+- This is because I author that genre separately. Site copy must describe benchmark output as capability testing, not model-assisted authorship.
 - Keep copy direct and factual. This is a data site, not a blog post.
 
 ## AI Slop Prevention

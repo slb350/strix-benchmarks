@@ -397,11 +397,6 @@ td.model-name {
   background: var(--bg-warm);
 }
 
-.badge.new {
-  color: var(--accent);
-  background: var(--accent-light);
-}
-
 /* ===== SECTION DIVIDERS ===== */
 .divider {
   height: 1px;
