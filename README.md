@@ -6,8 +6,8 @@ Local LLM benchmark results on AMD Strix Halo (Ryzen AI MAX+ 395, Radeon 8060S, 
 
 The site includes:
 
-- **Models** — per-model performance (prompt processing, token generation) and quality scores across all benchmark suites
-- **Methodology** — how each benchmark suite works, scoring criteria, and test conditions
-- **Quantization** — comparison of quantization formats and their effect on speed and quality
+- Models, per-model performance (prompt processing, token generation) and quality scores across all benchmark suites
+- Methodology, how each benchmark suite works, scoring criteria, and test conditions
+- Quantization, comparison of quantization formats and their effect on speed and quality
 
 Built with [Astro](https://astro.build) and deployed to GitHub Pages.
