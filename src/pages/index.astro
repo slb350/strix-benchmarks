@@ -276,6 +276,51 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
+  <h2>Mistral-Small-4-119B</h2>
+  <p>Mistral's first open mixture of experts, released March 16. 119B total parameters, 6B active, 128 experts with 4 routed per token, Apache 2.0. The design folds the old Magistral reasoning, Pixtral vision, and Devstral coding models into one set of weights. Architecture is <code>mistral4</code>, new to llama.cpp but already recognized by build 9518. The Unsloth UD-Q4_K_XL split is three files at 70 GB and fits well inside the 120 GB soft cap. I tested the text path through llama-server on RADV.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Mistral-Small-4-119B</td>
+          <td>MoE (6B active, 128 experts)</td>
+          <td>69 GiB</td>
+          <td>363</td>
+          <td>40.3</td>
+          <td>21</td>
+          <td>24</td>
+          <td>27</td>
+          <td>26</td>
+          <td>174</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The reasoning interface matches Mistral-Medium-3.5. The template reads a <code>reasoning_effort</code> kwarg with two settings, none and high, and the bench's default <code>enable_thinking: false</code> is ignored. I set <code>reasoning_effort: high</code> at the server for the coding and database suites, and that choice exposed a sharp edge. The first LRU run scored 0/10 with an empty response. At high effort the model wrote 18,000 characters of reasoning into the separate <code>reasoning_content</code> field and hit the 4096-token cap before a single line of code reached the answer. Raising the limit to 20480 tokens fixed it and LRU recovered to 10/10. Anyone benching this model at high effort needs the larger budget or the code never lands.</p>
+    <p>Pure coding is the strong suit. 10/10 LRU, a clean 59/59 LeetCode, and 24/65 polyglot, which clears the Gemma 26B MoE and sits in the upper middle of the field. The Go rule engine missed by one line, an unused loop variable that Go treats as a compile error and that zeroed all ten tests. Postgres reached 27/57 with Tier 2 optimization at 9/10 and Tier 3 diagnosis at 5/6, while Tier 1 lost points to careless slips like a <code>numeric</code> typed as <code>numic</code> and an interval compared against an integer. Cassandra came in at 26/56 after I made the JSON extractor lenient. The model identified every Tier 2 anti-pattern correctly but pretty-printed its CQL fixes as multi-line strings with raw newlines, which strict JSON parsing rejected. Switching to <code>strict=False</code> moved Tier 2 from 5 to 7.</p>
+    <p>Creative writing is the weak spot at 21/30. The story hits all five required beats and the sensory work is good, with sand clinging like ghosts and the gritty cold of the dawn beach. The prose leans hard on telling, naming emotions in italics rather than showing them, and Jack stays flat next to Maya's sharper voice. Two things drag the score below the competent low twenties. The model breaks character at the end with a full assistant sign-off that offers to revise the story, and it prints a fabricated 2,000-word count when the actual text runs 2,364. It also reworks the brief, making Jack's late wife the very patient Maya lost, a coincidence the two-strangers setup never asked for.</p>
+    <p>RADV is the backend here. It leads token generation at 40 tg and trails ROCm only on prompt processing (363 against 441 pp), and tg is what matters for writing. At 6B active the model decodes more than ten times faster than the dense Mistral-Medium-3.5 at 3 tg, which is the whole point of the MoE. Build 9518 for Vulkan, 9172 for ROCm.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>Granite 4.1 Family</h2>
   <p>IBM released Granite 4.1 on April 29 in three plain dense sizes (3.4B, 8.8B, 28.9B), all Apache 2.0 with 131K native context. Architecture is unchanged from Granite 4.0. Decoder-only dense transformer with GQA, RoPE, MLP plus SwiGLU, RMSNorm, shared input and output embeddings. The 4.1 jump is post-training only. Improved supervised finetuning and reinforcement learning targeting tool calling, instruction following, and chat. No special sampling profile from IBM or Unsloth, so I ran the bench suite at llama.cpp defaults (temp 0.7, top_p 0.9, repeat_penalty 1.1) with the chat template enabled through <code>--jinja</code>. All three pulled from Unsloth UD-Q4_K_XL.</p>
 

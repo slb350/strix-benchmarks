@@ -222,6 +222,15 @@ import SortableTable from '../components/SortableTable.astro';
           <td>15</td>
         </tr>
         <tr>
+          <td class="model-name">Mistral-Small-4-119B</td>
+          <td>Unsloth UD-Q4_K_XL</td>
+          <td>69 GiB</td>
+          <td class="group-start">363</td>
+          <td>40.3</td>
+          <td class="group-start">313</td>
+          <td>39.2</td>
+        </tr>
+        <tr>
           <td class="model-name">Qwen3.6-27B</td>
           <td>Unsloth UD-Q4_K_XL</td>
           <td>16.4 GiB</td>
@@ -471,6 +480,17 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="group-start">179</td>
         </tr>
         <tr>
+          <td class="model-name">Mistral-Small-4-119B</td>
+          <td class="group-start">21</td>
+          <td class="group-start best">10</td>
+          <td>7</td>
+          <td class="best">59</td>
+          <td>24</td>
+          <td class="group-start">27</td>
+          <td>26</td>
+          <td class="group-start">174</td>
+        </tr>
+        <tr>
           <td class="model-name">Qwen3-30B-Instruct-2507</td>
           <td class="group-start best">30</td>
           <td class="group-start best">10</td>
@@ -670,6 +690,8 @@ import SortableTable from '../components/SortableTable.astro';
     <li>Sampling params transform quality results. Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
     <li>T2 (cron), T5 (FastAPI), and T6 (Sinatra) remain unsolved at 0/10 across all model runs. These single-shot challenges exceed current local model capability.</li>
     <li>Gemma 4 leads both database benchmarks. Dense 31B tops PostgreSQL (46/57) and Cassandra (39/56). The 26B MoE follows closely. No other model family breaks 35/57 PG or 35/56 Cass.</li>
+    <li>Mistral-Small-4-119B is the first Mistral mixture of experts on the board, 119B total with 6B active. At RADV it runs 363 pp and 40 tg, A6B-class generation for a 119B model and far quicker than the dense Mistral-Medium-3.5 at 3 tg. Combined 174/285 rests on strong pure coding (10/10 LRU, 59/59 LeetCode, 24/65 polyglot) against a mid-pack 21/30 on creative writing. Reasoning is binary, either none or high, and high is token-hungry. The first LRU run scored 0/10 because the reasoning trace filled the entire 4096-token budget before any code reached the response, so the suite runs at --max-tokens 20480. The creative-writing output ends with an assistant sign-off offering to revise the story, which the scorecard treats as a deduction.</li>
+    <li>The Cassandra JSON extractor now parses with strict=False, so anti-pattern answers that pretty-print multi-line CQL inside a JSON string value still count. Models often write a CREATE TABLE across several lines with literal newlines, which strict JSON rejects even when the answer is correct. The change raised Mistral-Small-4 Tier 2 from 5/10 to 7/10. Cassandra scores recorded before 2026-06-05 predate it and may understate any model that emitted the same multi-line JSON.</li>
   </ul>
 
   <div class="divider"></div>
