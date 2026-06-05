@@ -146,6 +146,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="divider"></div>
 
+  <h2>Tooling / Automation Reliability (65 calls, 4 tiers)</h2>
+  <div class="card fade-up">
+    <p>Every other suite on this site asks how good a model's best answer is. This one asks how often the output is usable by a machine. I run local models inside unattended pipelines, a news digest that summarizes articles into strict JSON, scripts that categorize transactions against a fixed label list, extraction jobs that pull dates and amounts out of messy text. Those pipelines parse model output with code, never retry, and silently drop whatever fails to parse. A model that produces clean JSON 95 percent of the time still drops articles every night, and none of the quality benchmarks above would ever show it.</p>
+    <p>The benchmark runs 19 challenges as 65 separate calls. Each challenge runs three to five independent trials at temperature 0.7 with fixed seeds, so scores reflect repeated behavior rather than one lucky sample. Scoring is faithful to the consuming code. The JSON summarization challenges use the exact prompts from my own pipeline and parse responses the way the pipeline does, with a raw <code>json.loads</code> and no cleanup, so a response wrapped in markdown fences fails because the consuming code would drop it. One discovery-style challenge does get fence stripping, because its real parser has that recovery path. A trial scores 1.0, 0.5, or 0 depending on whether the output satisfies the full contract, only what the consumer would accept, or neither.</p>
+    <p>Tier 1 covers strict JSON envelopes. Clean articles, articles engineered to break JSON escaping (nested quotes in dialogue, literal braces in code excerpts, an embedded fenced block inside the article text, smart quotes and unicode, Windows paths full of backslashes), a 4,500-token long-input test repeated across five seeds, and a structured discovery task scored only on the fields a parser would consume. Tier 2 covers extraction and classification against exact ground truth. Log triage where WARN lines mention errors but only ERROR lines count, transaction categorization against ten fixed labels, entity extraction with date normalization, intent routing to a six-handler set, and receipt parsing where the line items have to add up to the printed total. Tier 3 covers plain-text format contracts. An email format checked by an exact port of the parser that consumes it, one-to-two sentence chat messages with no preamble, a 40-to-60 word paragraph budget, single-value outputs (a cron expression, a sed substitution, a semver bump), and an exact three-line status template. Tier 4 covers robustness. Summaries checked against curated fact lists so imported outside knowledge fails, articles with deliberately altered facts the model must report rather than correct, persona consistency under a heavy system prompt, harmless inputs that look alarming (a ransomware news story, security logs, a book blurb to classify by genre), and prompt injection embedded in the article text itself.</p>
+    <p>Each run reports the point score out of 65 plus reliability rates. Overall reliability is the share of calls the consuming parser would accept. Strict reliability is the share that parse with zero recovery. Tier 1 reliability is broken out separately because JSON summarization is the high-frequency workload in practice. Latency is reported per call but only comparable within a run. Every verifier has its own test suite, every fixture ships machine-checked ground truth, and every challenge has a round-trip test proving a perfect answer scores full marks. The tooling score is tracked in its own column and does not count toward the Combined total.</p>
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>Focus</th><th>Challenges</th><th>Calls</th><th>Verification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T1</td><td>Strict JSON Envelopes</td><td>4</td><td>20</td><td>Production parser behavior, schema, constraints</td></tr>
+        <tr><td>T2</td><td>Extraction &amp; Classification</td><td>5</td><td>15</td><td>Exact match against ground truth</td></tr>
+        <tr><td>T3</td><td>Format Contracts</td><td>5</td><td>15</td><td>Exact parser ports, templates, semantic value checks</td></tr>
+        <tr><td>T4</td><td>Grounding &amp; Robustness</td><td>5</td><td>15</td><td>Curated fact lists, banned phrases, injection markers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>Sampling &amp; Configuration Notes</h2>
   <ul class="findings fade-up">
     <li>Unsloth-recommended params transformed results for Qwen3.5 models. Use <code>presence_penalty=1.5</code>, <code>top_k=20</code>, and thinking mode via <code>--chat-template-kwargs '&#123;"enable_thinking":true&#125;'</code> with 64k context.</li>

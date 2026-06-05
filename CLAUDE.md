@@ -27,5 +27,9 @@ Read `tropes.md` before writing or editing any prose on this site. It catalogs t
 
 ## Homepage Feature Notes
 
-- Current lead feature is Gemma-4-12B with the existing `.badge.new` treatment.
+- Current lead feature is the tooling benchmark announcement, with Gemma-4-12B as the second section, both using the `.badge.new` treatment.
 - When promoting a new benchmark result to the top of `src/pages/index.astro`, move the prior lead down rather than duplicating full sections.
+
+## Tooling Column
+
+- The models page Quality table has a Tooling /65 column. It is scored separately and excluded from Combined /285. Untested models show a hyphen. Update the hyphen to a score as models run the suite.

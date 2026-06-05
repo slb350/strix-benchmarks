@@ -23,10 +23,17 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">9</div>
+      <div class="value">10</div>
       <div class="label">Benchmark suites</div>
     </div>
   </div>
+
+  <h2>Tooling benchmark <span class="badge new">New</span></h2>
+  <p>I added a tenth suite that answers a question the other nine do not. Most of my actual local model usage is unattended automation, scripts that summarize articles into strict JSON, sort transactions into fixed categories, and pull dates and amounts out of messy text. Those pipelines call a model dozens of times per run, parse the output with code, never retry, and silently drop anything that fails to parse. For that kind of work, peak quality matters less than whether call 47 of 65 comes back machine-readable.</p>
+  <p>The tooling benchmark runs 19 challenges as 65 separate calls across four tiers. Strict JSON output against real pipeline prompts, extraction and classification with exact ground truth, plain-text format contracts, and a robustness tier covering prompt injection, deliberately altered facts, and refusals on harmless input. Every challenge runs multiple trials at temperature 0.7, and the headline numbers are reliability rates and per-call latency rather than a single best answer.</p>
+  <p>Gemma-4-12B is the first model through it and scored 54/65 with 93.8 percent of calls machine-usable. It parsed cleanly on 19 of 20 strict JSON calls, swept the extraction tier 15/15, ignored every embedded injection attempt, and repeated deliberately wrong facts from a source without correcting them, which is exactly what a summarization pipeline needs. The misses were summaries that ran short of a stated word minimum, one invalid escape sequence on a backslash-heavy article, and an email format contract it failed three times out of three. Full details on the <a href={`${base}methodology/`}>methodology page</a>, scores in a new column on the <a href={`${base}models/`}>models page</a>.</p>
+
+  <div class="divider"></div>
 
   <h2>Gemma-4-12B <span class="badge new">New</span></h2>
   <p>Gemma-4-12B is the newest result on the board. Released 2026-06-03 and run at Unsloth UD-Q8_K_XL, it lands Combined 222/285, second overall behind Gemma-4-31B at 238. It uses 13.6 GiB and posts the strongest score per parameter I have measured on this hardware.</p>
