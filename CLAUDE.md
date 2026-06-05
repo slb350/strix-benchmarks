@@ -24,3 +24,8 @@ Read `tropes.md` before writing or editing any prose on this site. It catalogs t
 - Rhetorical questions answered immediately ("The result? Devastating.")
 - "Serves as" and other copula dodges
 - Tricolon/anaphora abuse (three-part parallel structures repeated back to back)
+
+## Homepage Feature Notes
+
+- Current lead feature is Gemma-4-12B with the existing `.badge.new` treatment.
+- When promoting a new benchmark result to the top of `src/pages/index.astro`, move the prior lead down rather than duplicating full sections.

@@ -28,6 +28,92 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
+  <h2>Gemma-4-12B <span class="badge new">New</span></h2>
+  <p>Gemma-4-12B is the newest result on the board. Released 2026-06-03 and run at Unsloth UD-Q8_K_XL, it lands Combined 222/285, second overall behind Gemma-4-31B at 238. It uses 13.6 GiB and posts the strongest score per parameter I have measured on this hardware.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Arch</th>
+          <th>Size</th>
+          <th data-type="number">pp512 (t/s)</th>
+          <th data-type="number">tg128 (t/s)</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Gemma-4-E2B</td>
+          <td>Dense (4.6B)</td>
+          <td>2.9 GiB</td>
+          <td class="best">3382</td>
+          <td class="best">109</td>
+          <td>18</td>
+          <td>10</td>
+          <td>27</td>
+          <td>27</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-E4B</td>
+          <td>Dense (7.5B)</td>
+          <td>4.7 GiB</td>
+          <td>1828</td>
+          <td>59</td>
+          <td>23</td>
+          <td>13</td>
+          <td>35</td>
+          <td>34</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-26B-A4B</td>
+          <td>MoE (4B active)</td>
+          <td>16 GiB</td>
+          <td>1196</td>
+          <td>52.9</td>
+          <td>23</td>
+          <td>22</td>
+          <td>49</td>
+          <td>39</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-12B <span class="badge new">New</span></td>
+          <td>Dense (12B)</td>
+          <td>13.6 GiB</td>
+          <td>716</td>
+          <td>14.0</td>
+          <td class="best">28</td>
+          <td>32</td>
+          <td>47</td>
+          <td>38</td>
+        </tr>
+        <tr>
+          <td class="model-name">Gemma-4-31B</td>
+          <td>Dense</td>
+          <td>17.5 GiB</td>
+          <td>261</td>
+          <td>11.1</td>
+          <td>27</td>
+          <td class="best">44</td>
+          <td class="best">51</td>
+          <td class="best">39</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The 12B result changes the Gemma lineup. It writes 28/30, one point above the 31B, with all five required beats, distinct character voices, and a clean opening. Postgres is 47/57, third best on the board, with perfect diagnosis and 26/31 on procedural tasks. Cassandra is 38/56, tied with the 26B-A4B and one behind the 31B. Polyglot is 32/65 with a perfect Go rule engine and a partial cron solve at 6/10.</p>
+    <p>Speed is the only weak point. At Q8 a dense 12B is memory-bandwidth-bound here, so generation stays around 14 to 15 tokens per second across all three backends. ROCm leads prompt processing at 928 against RADV's 716, but generation barely moves. A Q4 build would roughly double throughput at some quality cost, so Q8 stays the quality reference until a lower-precision run proves itself.</p>
+    <p>The rest of the family still matters. The E2B is the fastest model I have tested at 109 tokens/second and under 3 GiB. The 26B-A4B MoE leads Gemma on Cassandra tie-breaks and posts 49/57 on PostgreSQL. The dense 31B still owns the top combined score at 238/285, but the new 12B is close enough to be the practical default for quality testing.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>Mainline MTP for Qwen3.6</h2>
   <p>am17an's Multi-Token Prediction PR (#22673) merged into mainline llama.cpp on May 16, build 9191. Mainline now ships MTP support for the Qwen3.5 and Qwen3.6 families. The Gemma-4 MTP work (PR #22738) was closed without merging and is not coming back, so Qwen is the only family this matters for today. I pulled the new build, downloaded the Unsloth MTP-enabled GGUFs for both the 27B dense and the 35B-A3B MoE, and ran a baseline pass plus draft-mtp at n=2 and n=3 across the same nine-prompt suite the PR author used for the published numbers.</p>
 
@@ -343,93 +429,6 @@ const base = import.meta.env.BASE_URL;
     <p>Writing scores 30/30, the joint highest result I've recorded on this benchmark, tying Qwen3-30B-Instruct-2507 as champion. Em dash count is 2 across roughly 2150 words. The same prose hygiene issue from the 35B-A3B sibling shows up here. Even with <code>enable_thinking:false</code> set through chat-template-kwargs, the model leaks a planning outline above the output and an end-thinking tag below it. The generation itself (everything after the planning preamble) is clean and that's what got scored.</p>
     <p>Polyglot averages 30/65 across three runs (24, 31, 34). The variance traces almost entirely to T7 Go, which scored 0/10, 10/10, 10/10. T1 regex parsing was perfect 10/10 every pass, T4 CSV aggregation perfect 7/7 every pass. The T2 cron matcher that the 35B-A3B sibling cracked on 4 of 5 runs stayed at 0/10 here. Cassandra averages 32/56 across three runs (30, 32, 33). T1 climbed each pass (6, 7, 8), T3 saturated at 6/6 every run, T4 stuck at exactly 10/30 every run with the same failure signature on LWT distributed lock, materialized view, and batch denormalization. Postgres came in at 44/57 on a single run. T2 and T3 were perfect (10/10 and 6/6), T4 procedural hit 23/31, the second-strongest result on disk after Gemma-4-31B's 22/31.</p>
   </div>
-
-  <div class="divider"></div>
-
-  <h2>Gemma 4 Family</h2>
-  <p>Google's full Gemma 4 lineup. The new dense 12B runs as Unsloth UD-Q8_K_XL, the rest as UD-Q4_K_XL. All pp and tg figures are RADV.</p>
-
-  <div class="table-wrap fade-up">
-    <table>
-      <thead>
-        <tr>
-          <th>Model</th>
-          <th>Arch</th>
-          <th>Size</th>
-          <th data-type="number">pp512 (t/s)</th>
-          <th data-type="number">tg128 (t/s)</th>
-          <th data-type="number">Writing /30</th>
-          <th data-type="number">Polyglot /65</th>
-          <th data-type="number">Postgres /57</th>
-          <th data-type="number">Cassandra /56</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="model-name">Gemma-4-E2B</td>
-          <td>Dense (4.6B)</td>
-          <td>2.9 GiB</td>
-          <td class="best">3382</td>
-          <td class="best">109</td>
-          <td>18</td>
-          <td>10</td>
-          <td>27</td>
-          <td>27</td>
-        </tr>
-        <tr>
-          <td class="model-name">Gemma-4-E4B</td>
-          <td>Dense (7.5B)</td>
-          <td>4.7 GiB</td>
-          <td>1828</td>
-          <td>59</td>
-          <td>23</td>
-          <td>13</td>
-          <td>35</td>
-          <td>34</td>
-        </tr>
-        <tr>
-          <td class="model-name">Gemma-4-26B-A4B</td>
-          <td>MoE (4B active)</td>
-          <td>16 GiB</td>
-          <td>1196</td>
-          <td>52.9</td>
-          <td>23</td>
-          <td>22</td>
-          <td>49</td>
-          <td>39</td>
-        </tr>
-        <tr>
-          <td class="model-name">Gemma-4-12B</td>
-          <td>Dense (12B)</td>
-          <td>13.6 GiB</td>
-          <td>716</td>
-          <td>14.0</td>
-          <td class="best">28</td>
-          <td>32</td>
-          <td>47</td>
-          <td>38</td>
-        </tr>
-        <tr>
-          <td class="model-name">Gemma-4-31B</td>
-          <td>Dense</td>
-          <td>17.5 GiB</td>
-          <td>261</td>
-          <td>11.1</td>
-          <td>27</td>
-          <td class="best">44</td>
-          <td class="best">51</td>
-          <td class="best">39</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="insight fade-up">
-    <p>The E2B is the fastest model I've tested on this hardware. At 109 tokens/second and under 3 GiB, it scores a perfect 59/59 on LeetCode hard problems. The E4B matches the much larger 26B-A4B MoE on creative writing (23/30) while fitting in 4.7 GiB. The 26B-A4B MoE jumped significantly after re-testing via the server API, posting 49/57 on PostgreSQL and 22/65 on polyglot, more than doubling its llama-cli result of 10/65. The gains come from cleaner output extraction through the chat API rather than any model change. The dense 31B writes 27/30 and posts the group's top database scores, 51/57 on PostgreSQL and a Cassandra tie with the 26B-A4B at 39/56. The E4B scores 9/10 on T1 CQL writing, matching the 31B despite being a 7.5B model. The 26B MoE gets a perfect 10/10 on anti-pattern detection, the only model to do so across every model tested.</p>
-    <p>The new dense 12B is the standout of the family. Released 2026-06-03 and run at UD-Q8_K_XL, it lands Combined 222/285, second overall behind only the 31B at 238 and ahead of everything else on the board. That is the strongest result per parameter I have measured on this hardware. It writes the best prose of the Gemma group at 28/30, one point above the 31B, hitting all five beats with distinct character voices and a genuinely funny opening. Postgres is 47/57, third best on the whole board, with perfect diagnosis and 26/31 on the procedural tier where only row-level security defeats it. Cassandra is 38/56, tied with the 26B-A4B and one behind the 31B, again perfect on diagnosis. Polyglot is 32/65 with a perfect Go rule engine and a partial cron solve at 6/10, one of the very few models to score on cron at all. The one soft spot is speed. At Q8 a dense 12B is memory-bandwidth bound here, so generation holds around 14 to 15 tokens per second across all three backends. ROCm leads prompt processing at 928 against RADV's 716, but generation barely moves. A Q4 build would roughly double throughput at some quality cost.</p>
-  </div>
-
-  <div class="divider"></div>
 
   <h2>Qwen 3.6 Family</h2>
   <p>Alibaba's 3.6 generation brings a hybrid attention architecture. Each of the 40 layers runs three Gated DeltaNet (linear attention) blocks followed by one standard gated attention block. The MoE expert pool expands to 256 with 8 routed plus 1 shared active, and a vision encoder is built in. Sampling params match 3.5 (temp 0.6 for code, 0.7 for creative, top_p 0.95, top_k 20, presence_penalty 1.5, thinking via chat-template-kwargs).</p>
