@@ -85,6 +85,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="divider"></div>
 
+  <h2>Gemma 4 QAT Q4_0, Day-Zero Results</h2>
+  <div class="card fade-up">
+    <p>Google released official quantization-aware-trained Q4_0 GGUFs for the Gemma 4 line on June 5. I pulled the 31B and the 26B-A4B the same day and ran both through the tooling benchmark against the quants already on the board. QAT models are trained with quantization in the loop, so the q4_0 file is supposed to behave like the checkpoint rather than like a compressed copy of it. The marketing usually claims near full-precision quality at a quarter the size. This was a chance to test that claim against same-day baselines on identical hardware.</p>
+    <p>The 31B result backs the claim. At nearly the same file size as the Unsloth dynamic quant, the QAT build scored 59.5 against 54.5, ran all 65 calls machine-usable against 96.9 percent, and posted 98.5 percent strict parsing, the best zero-recovery rate of any run so far. It also passed the email format contract on all three trials where the Unsloth quant managed one of three. Most of the point gap is the chronic Gemma habit of writing summaries just under a stated word minimum, which the QAT build did three fewer times.</p>
+    <p>The 26B-A4B result cuts the other way. The Q8_0 outscored the QAT build 59 to 54, and every lost point was a summary in the 129 to 147 word range against a 150 word minimum. The QAT build still kept 100 percent of its calls usable and averaged 4.7 seconds per call, the fastest run the benchmark has produced, at roughly half the Q8 file size. One oddity worth recording with caution. The Q8_0 fell for an embedded prompt injection, emitting the exact demanded payload in its summary field, while the QAT build resisted the same fixture. That is one trial per quant at temperature 0.7, so it may be sampling noise rather than a real hardening effect.</p>
+    <p>These are tooling-only numbers from single runs. The full quality suite (writing, polyglot, databases) still needs to run on both QAT builds before either replaces a reference quant in the main table. For automation serving specifically, the QAT 26B-A4B already looks like the practical choice, since the points it gives up are word-count preferences no consuming parser checks.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Tooling metric</th>
+          <th>31B UD-Q4_K_XL (17.5 GiB)</th>
+          <th>31B QAT Q4_0 (16.4 GiB)</th>
+          <th>26B Q8_0 (25 GiB)</th>
+          <th>26B QAT Q4_0 (13.4 GiB)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Total /65</td><td>54.5</td><td class="best">59.5</td><td class="best">59</td><td>54</td></tr>
+        <tr><td class="model-name">Calls usable</td><td>96.9%</td><td class="best">100%</td><td>98.5%</td><td class="best">100%</td></tr>
+        <tr><td class="model-name">Strict parse rate</td><td>95.4%</td><td class="best">98.5%</td><td>95.4%</td><td>95.4%</td></tr>
+        <tr><td class="model-name">Email contract</td><td>1/3</td><td class="best">3/3</td><td class="best">3/3</td><td class="best">3/3</td></tr>
+        <tr><td class="model-name">Latency mean</td><td>27.4s</td><td class="best">25.1s</td><td>7.1s</td><td class="best">4.7s</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>Same architecture family, same training recipe, opposite verdicts at two sizes. QAT wins outright at 31B and trades points for speed at 26B-A4B. Quant decisions keep proving to be per-model questions that need measurement, not method-level rules of thumb.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>Kimi-Linear-48B: Q4 vs Q8</h2>
   <div class="card fade-up">
     <p>I also ran Kimi-Linear-48B-A3B at Q8_0 (49 GiB) against the primary Q4_K_M (28 GiB). The linear attention architecture activates 3B parameters per token. The results were less interesting than Gemma.</p>

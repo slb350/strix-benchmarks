@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SortableTable from '../components/SortableTable.astro';
+const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout title="Models" activePage="models" description="Consolidated LLM benchmark results across performance, creative writing, and coding on AMD Strix Halo gfx1151">
   <div class="page-header fade-up">
@@ -309,7 +310,7 @@ import SortableTable from '../components/SortableTable.astro';
   <div class="divider"></div>
 
   <h2>Quality</h2>
-  <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet.</p>
+  <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet. Scores here are for each model's reference quant. The Google QAT Q4_0 comparison runs live on the <a href={`${base}quantization/`}>quantization page</a>.</p>
   <div class="table-wrap fade-up">
     <table class="sortable table-sticky">
       <thead>
@@ -336,7 +337,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td class="best">44</td>
           <td class="group-start best">51</td>
           <td class="best">39</td>
-          <td class="group-start">-</td>
+          <td class="group-start">54.5</td>
           <td class="group-start best">238</td>
         </tr>
         <tr>
@@ -360,7 +361,7 @@ import SortableTable from '../components/SortableTable.astro';
           <td>22</td>
           <td class="group-start best">49</td>
           <td class="best">39</td>
-          <td class="group-start">-</td>
+          <td class="group-start">59</td>
           <td class="group-start best">215</td>
         </tr>
         <tr>
