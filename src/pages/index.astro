@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b9518</div>
+      <div class="value">b9553</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -27,6 +27,68 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Benchmark suites</div>
     </div>
   </div>
+
+  <h2>Gemma 4 MTP <span class="badge new">New</span></h2>
+  <p>Multi-Token Prediction landed for Gemma 4 in mainline llama.cpp on June 7 (PR #23398), and it works differently from the Qwen3.6 version I covered earlier. Qwen ships the draft head inside the main GGUF. Gemma 4 uses a separate assistant drafter file of about 0.45 GiB that you load alongside the model with <code>--model-draft assistant.gguf --spec-type draft-mtp</code>. The drafter shares the main model's KV cache. I added support for it to my launcher, downloaded drafters for all five Gemma 4 variants on disk, and ran the numbers.</p>
+
+  <p>The question that matters for speculative decoding is whether it costs anything. To answer it cleanly I ran the full tracked suite twice on the same build 9553, once against the plain 31B and once with the drafter at n=4, so the only variable between the two runs is MTP itself. The plain run reproduced my earlier tooling score and per-call latency almost exactly, which rules out build drift. The whole suite finished in 36 minutes with the drafter against 72 minutes without it, and the scores did not move.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Benchmark</th>
+          <th data-type="number">Plain</th>
+          <th data-type="number">MTP</th>
+          <th data-type="number">Quality shift</th>
+          <th>Speed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">FastAPI</td><td>8/8</td><td>8/8</td><td>0</td><td class="best">3.19x</td></tr>
+        <tr><td class="model-name">LeetCode</td><td>59/59</td><td>59/59</td><td>0</td><td class="best">2.93x</td></tr>
+        <tr><td class="model-name">Polyglot</td><td>54/65</td><td>49/65</td><td>-5 (noise)</td><td>2.50x</td></tr>
+        <tr><td class="model-name">PostgreSQL</td><td>49/57</td><td>47/57</td><td>-2 (noise)</td><td>2.18x</td></tr>
+        <tr><td class="model-name">Coding (LRU)</td><td>10/10</td><td>10/10</td><td>0</td><td>2.13x</td></tr>
+        <tr><td class="model-name">Tooling</td><td>54.5/65</td><td>53.5/65</td><td>-1 (noise)</td><td>2.07x</td></tr>
+        <tr><td class="model-name">Cassandra</td><td>38/56</td><td>38/56</td><td>0</td><td>1.63x</td></tr>
+        <tr><td class="model-name">Creative writing</td><td>~27/30</td><td>~27/30</td><td>0</td><td>1.55x</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The scores hold because MTP cannot change them, and I read the acceptance code to be sure. Every token that gets emitted is sampled from the main model's own distribution with its full temperature and top-p and top-k chain. The drafter only proposes candidates, and a proposal is kept only when it matches what the main model would have drawn anyway. On any mismatch the loop stops and uses the main model's token. The output is the same distribution you get without a drafter, so a run with MTP and a run without it differ only in their random draws, the way two seeds differ. The three deterministic benchmarks come back identical and tooling reliability matches to the decimal. PostgreSQL and Polyglot are the two highest-variance partial-credit benchmarks on the board, and Polyglot alone has swung 19 to 35 across repeat runs of one model, so a single-run drop of a few points there is its own noise rather than anything the drafter did.</p>
+
+    <p>The speedup depends entirely on what the model is generating. Structured output with predictable continuations wins biggest, with FastAPI at 3.19x and LeetCode at 2.93x, because code idioms and signatures are easy to draft and most drafts get accepted. Creative writing at temperature 1.0 wins least at 1.55x, because high-entropy prose breaks almost every draft. Tooling sits in the middle at 2.07x for a different reason. Those calls feed long articles in and ask for short summaries out, and MTP only accelerates generation, so the prompt-processing half of each call sees no benefit. The headline is workload-shaped rather than a single number.</p>
+
+    <p>I swept all five Gemma 4 variants to find the right draft depth per model.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th data-type="number">Baseline tok/s</th>
+            <th data-type="number">Best tok/s</th>
+            <th data-type="number">Speedup</th>
+            <th data-type="number">Best n</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="model-name">Gemma-4-12B (dense)</td><td>13.74</td><td class="best">33.49</td><td class="best">2.44x</td><td>4</td></tr>
+          <tr><td class="model-name">Gemma-4-31B (dense)</td><td>10.35</td><td>24.50</td><td>2.37x</td><td>4</td></tr>
+          <tr><td class="model-name">Gemma-4-31B QAT (dense)</td><td>10.95</td><td>25.08</td><td>2.29x</td><td>4</td></tr>
+          <tr><td class="model-name">Gemma-4-26B-A4B (MoE)</td><td>42.33</td><td>59.36</td><td>1.40x</td><td>2</td></tr>
+          <tr><td class="model-name">Gemma-4-26B-A4B QAT (MoE)</td><td>61.22</td><td>83.18</td><td>1.36x</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The dense models gain 2.3 to 2.4x and want a draft window of n=4. The MoE pairs gain about 1.4x and peak at n=2, declining with deeper drafts. That MoE gain stands out because the PR author and several CUDA users reported no MoE speedup at all. On gfx1151 the decode step is memory-bandwidth-bound, and the drafter's extra forward pass is cheap against the wait on weight bandwidth, so even the compute-light MoE has slack for MTP to fill. The QAT drafters accept a few points lower than the others because they were trained against unquantized weights, though it does not dent the speedup. Every Gemma 4 model on Strix now runs with its drafter on by default, the dense ones at n=4 and the MoE ones at n=2.</p>
+  </div>
+
+  <div class="divider"></div>
 
   <h2>Tooling benchmark <span class="badge new">New</span></h2>
   <p>I added a tenth suite that answers a question the other nine do not. Most of my actual local model usage is unattended automation, scripts that summarize articles into strict JSON, sort transactions into fixed categories, and pull dates and amounts out of messy text. Those pipelines call a model dozens of times per run, parse the output with code, never retry, and silently drop anything that fails to parse. For that kind of work, peak quality matters less than whether call 47 of 65 comes back machine-readable.</p>
