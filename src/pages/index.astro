@@ -86,6 +86,8 @@ const base = import.meta.env.BASE_URL;
     </div>
 
     <p>The dense models gain 2.3 to 2.4x and want a draft window of n=4. The MoE pairs gain about 1.4x and peak at n=2, declining with deeper drafts. That MoE gain stands out because the PR author and several CUDA users reported no MoE speedup at all. On gfx1151 the decode step is memory-bandwidth-bound, and the drafter's extra forward pass is cheap against the wait on weight bandwidth, so even the compute-light MoE has slack for MTP to fill. The QAT drafters accept a few points lower than the others because they were trained against unquantized weights, though it does not dent the speedup. Every Gemma 4 model on Strix now runs with its drafter on by default, the dense ones at n=4 and the MoE ones at n=2.</p>
+
+    <p>Google pushed a Gemma 4 chat-template fix the morning after these runs. I re-ran tooling and creative writing with that template overriding the one baked into the GGUF, and the tooling result came back byte for byte identical at 53.5/65 and 13.23 seconds per call. The fix only touches tool-call handling and multi-turn continuation, neither of which a single-turn run exercises, so the numbers above stand. It will matter once I add a tool-use or multi-turn benchmark.</p>
   </div>
 
   <div class="divider"></div>
