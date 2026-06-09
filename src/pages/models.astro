@@ -106,6 +106,15 @@ const base = import.meta.env.BASE_URL;
           <td>58.7</td>
         </tr>
         <tr>
+          <td class="model-name">Nex-N2-mini</td>
+          <td>s-batman Q8_0</td>
+          <td>34.4 GiB</td>
+          <td class="group-start">1083</td>
+          <td>54.5</td>
+          <td class="group-start">-</td>
+          <td>-</td>
+        </tr>
+        <tr>
           <td class="model-name">Qwen3.6-35B-A3B</td>
           <td>Unsloth UD-Q4_K_XL</td>
           <td>20.8 GiB</td>
@@ -461,6 +470,18 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">185</td>
         </tr>
         <tr>
+          <td class="model-name">Nex-N2-mini</td>
+          <td class="group-start">28</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td>53</td>
+          <td>17</td>
+          <td class="group-start">38</td>
+          <td>29</td>
+          <td class="group-start">57</td>
+          <td class="group-start">183</td>
+        </tr>
+        <tr>
           <td class="model-name">GPT-OSS-120B</td>
           <td class="group-start">20</td>
           <td class="group-start best">10</td>
@@ -725,6 +746,7 @@ const base = import.meta.env.BASE_URL;
     <li>T2 (cron), T5 (FastAPI), and T6 (Sinatra) remain unsolved at 0/10 across all model runs. These single-shot challenges exceed current local model capability.</li>
     <li>Gemma 4 leads both database benchmarks. Dense 31B tops PostgreSQL (46/57) and Cassandra (39/56). The 26B MoE follows closely. No other model family breaks 35/57 PG or 35/56 Cass.</li>
     <li>Mistral-Small-4-119B is the first Mistral mixture of experts on the board, 119B total with 6B active. At RADV it runs 363 pp and 40 tg, A6B-class generation for a 119B model and far quicker than the dense Mistral-Medium-3.5 at 3 tg. Combined 174/285 rests on strong pure coding (10/10 LRU, 59/59 LeetCode, 24/65 polyglot) against a mid-pack 21/30 on creative writing. Reasoning is binary, either none or high, and high is token-hungry. The first LRU run scored 0/10 because the reasoning trace filled the entire 4096-token budget before any code reached the response, so the suite runs at --max-tokens 20480. The creative-writing output ends with an assistant sign-off offering to revise the story, which the scorecard treats as a deduction.</li>
+    <li>Nex-N2-mini is an agentic fine-tune of Qwen3.5-35B-A3B that tracks its base closely. Combined 183/285 sits 9 points under the 192 the base records. Writing, LRU, FastAPI, and polyglot match cell for cell. Postgres climbs 6 to 38/57, but Cassandra drops 9 to 29/56 on Tier 4 CQL syntax errors, and LeetCode loses the heap-merge problem. The agentic training only really shows in the one column the base never ran, automation reliability, where it scores 57/65 at 98.5% usable across the 65 calls with a perfect 100% on the JSON-envelope tier. I left thinking on for the whole suite because the server used the model's own template, so these numbers reflect its native reasoning mode rather than a suppressed one. The disk quant is s-batman's Q8_0 at 34.4 GiB, the best documented of the community GGUFs since no Unsloth build exists.</li>
     <li>The Cassandra JSON extractor now parses with strict=False, so anti-pattern answers that pretty-print multi-line CQL inside a JSON string value still count. Models often write a CREATE TABLE across several lines with literal newlines, which strict JSON rejects even when the answer is correct. The change raised Mistral-Small-4 Tier 2 from 5/10 to 7/10. Cassandra scores recorded before 2026-06-05 predate it and may understate any model that emitted the same multi-line JSON.</li>
   </ul>
 
