@@ -28,6 +28,11 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
+  <h2>Agentic coding <span class="badge new">New</span></h2>
+  <p>Every other benchmark here is single-shot. I wanted to know something a single prompt can't tell me, whether a model can actually drive a coding agent through a long chain of tool calls. So I had <a href={`${base}agentic/`}>pi build a terminal Sokoban game</a> phase by phase, five accreting phases, scored two ways, across six models including gpt-5.5 as the frontier line. The result surprised me. The hard algorithm I built as the wall, a Sokoban solver, was the easy part. Every model wrote a working search. What separated them was keeping their own growing code coherent across the whole build. The first pass put the local Gemma-4-31B ahead of gpt-5.5, so I ran the top three models three times each, and the ranking came apart. The most consistent agent was the local Qwen3.6-27B, clean in every trial, while the 31B's flawless run turned out to be one draw of three. The <a href={`${base}agentic/`}>full writeup</a> covers the harness, the multi-tool-calling setup, MTP under an agentic load, and why a single agentic run can't rank the top models.</p>
+
+  <div class="divider"></div>
+
   <h2>Gemma 4 MTP <span class="badge new">New</span></h2>
   <p>Multi-Token Prediction landed for Gemma 4 in mainline llama.cpp on June 7 (PR #23398), and it works differently from the Qwen3.6 version I covered earlier. Qwen ships the draft head inside the main GGUF. Gemma 4 uses a separate assistant drafter file of about 0.45 GiB that you load alongside the model with <code>--model-draft assistant.gguf --spec-type draft-mtp</code>. The drafter shares the main model's KV cache. I added support for it to my launcher, downloaded drafters for all five Gemma 4 variants on disk, and ran the numbers.</p>
 

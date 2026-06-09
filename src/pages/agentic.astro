@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Agentic Coding" activePage="agentic" description="Building a terminal game through a local coding agent. Tool-calling, multi-turn benchmarks on Strix Halo with pi, llama.cpp MTP, and Gemma 4">
+  <div class="page-header fade-up">
+    <h1>Agentic coding</h1>
+    <p class="description">Single-shot benchmarks tell me whether a model writes correct code in one pass. They tell me nothing about whether it can drive a coding agent, where the real work is dozens of tool calls deep and each step depends on reading back what the last one did. So I built a benchmark that runs the whole loop, and the results weren't what I expected.</p>
+  </div>
+
+  <h2>The setup</h2>
+  <div class="card fade-up">
+    <p>The agent is <a href="https://github.com/earendil-works/pi">pi</a>, a terminal coding agent with a small four-tool core, read, write, edit, and bash. I point it at a model and give it a task. The model decides which tool to call, the agent runs it, feeds the result back, and the model decides what to do next. A single task is a long chain of these turns. Write a file, run it with bash, read the error, edit the file, run it again. This is multi-tool calling, and it's the thing the single-shot benchmarks can't reach.</p>
+    <p>The models run locally on the Strix server through <code>llama-server</code>, the same way I serve everything else here, with one addition. Tool calling needs the chat template to render the tool definitions and parse the model's tool calls, so the server runs with the jinja template engine on. From pi's side it looks like any OpenAI endpoint.</p>
+    <p>The first question was whether a local Gemma 4 would emit clean tool calls at all. The pi documentation is blunt that local models often understand the tool format only partially. Gemma 4 handled it without trouble. Given a tool definition for running bash, it returned a properly formed call with the right arguments and a <code>tool_calls</code> finish reason on the first try. Qwen3.6-27B did the same. This is the thing the entire benchmark depends on, and I half expected it to fail.</p>
+  </div>
+
+  <h2>The benchmark</h2>
+  <div class="card fade-up">
+    <p>The task is to build a terminal Sokoban game, the box-pushing puzzle, in five phases of rising difficulty. Phase 1 parses a level and renders it back. Phase 2 adds player movement with wall collision. Phase 3 adds box pushing and win detection. Phase 4 adds undo, move and push counters, and multi-level files. Phase 5 adds an automatic solver that searches for a winning sequence of moves. The ladder climbs from trivial parsing to a real search problem, since solving Sokoban is PSPACE-complete in the general case.</p>
+    <p>The whole thing hangs on a pinned contract. Exact glyphs for walls, floors, targets, boxes, and the player. Exact command-line flags. Exact output strings for the status line and the solver result. I learned this discipline from the tooling benchmark, where a model that produces a correct answer in the wrong format scores the same as one that produces garbage. A model could write a perfect Sokoban and fail every test on a stray trailing space, so the contract removes that ambiguity and the test levels are bordered to avoid ragged rows.</p>
+    <p>Verification is deterministic. For phases 1 through 4 the model's program runs against golden levels and its output is compared byte for byte against the reference. Phase 5 is different, because a solver can find any valid winning sequence, not one specific answer. So the verifier replays whatever solution the model emits through a known-correct engine and checks that it actually reaches a win, with a wall-clock cap so a naive solver that explodes the search space fails by timing out.</p>
+    <p>I run each model two ways. Scaffolded mode starts each phase from a correct reference of the previous phase, so an early stumble doesn't cascade, and it isolates capability one phase at a time. Cumulative mode builds the whole game in one session with the model extending its own code, which tests the harder thing, whether a model keeps its own growing codebase coherent.</p>
+  </div>
+
+  <h2>What scaffolded mode showed</h2>
+  <div class="card fade-up">
+    <p>Every model cleared all five phases scaffolded, including the solver. A 4B-active mixture-of-experts model built a working breadth-first search with deadlock pruning, found valid solutions on the graded levels, and correctly reported that a cornered box was unsolvable. The dense 31B did it in 188 seconds. Even the 12B got there. Given a clean base for each phase, the algorithm ladder didn't separate these models at all.</p>
+    <p>I designed phase 5 to be the wall, where local models would break and a frontier model would pull ahead. Every capable model cleared it instead, because they have all seen breadth-first search a thousand times. The difficulty lived somewhere I didn't plan it.</p>
+  </div>
+
+  <h2>What cumulative mode showed</h2>
+  <div class="card fade-up">
+    <p>Building the whole game in one session, extending its own code, is where the models came apart. The grid below is one run of each at temperature 1.0, and it cleanly splits the strong models from the weak ones. The fine ordering among the strong three turned out to be noise once I repeated the run, but the gap between the top and the bottom is real. A clean pass means the phase passed inside the time budget. A timeout means the model churned past the cap, usually stuck in its own buggy code. A wrong-code fail means the model declared the phase done and the code was incorrect.</p>
+    <table>
+      <thead>
+        <tr><th>Model</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>Cumulative result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Gemma-4-31B</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">all clean</td></tr>
+        <tr><td class="model-name">Gemma-4-31B QAT</td><td>pass</td><td>pass</td><td>slow</td><td>pass</td><td>pass</td><td>clean, one slow phase</td></tr>
+        <tr><td class="model-name">Qwen3.6-27B</td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>missed the solver</td></tr>
+        <tr><td class="model-name">gpt-5.5</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>pass</td><td>missed P4</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B</td><td>pass</td><td>stuck</td><td>slow</td><td>slow</td><td>slow</td><td>capable but thrashes</td></tr>
+        <tr><td class="model-name">Gemma-4-12B</td><td>pass</td><td>wrong</td><td>pass</td><td>stuck</td><td>wrong</td><td>real wall at P2</td></tr>
+      </tbody>
+    </table>
+    <p>In this run the dense Gemma-4-31B built the entire game cumulatively with zero stumbles. It extended every feature from its own code, movement through solver, without needing a reset. Its QAT sibling came within one slow phase of the same result. That looked like a clean win for the 31B until I ran it again.</p>
+    <p>The 12B is the clearest failure and the most informative one. It produced wrong code it believed was finished, twice, on movement and again on the solver, with no timeout to excuse it. Yet the same 12B built a working solver in scaffolded mode. The 12B fails because it can't keep its own growing codebase coherent, even though each algorithm on its own is within reach.</p>
+  </div>
+
+  <h2>P4 is the wall, not P5</h2>
+  <div class="card fade-up">
+    <p>The phase that actually separated the strong models was phase 4, the one I considered mid-difficulty. Undo, move and push counters, and multi-level loading. It tripped the QAT quant, the 12B, and gpt-5.5. The reason is structural. Phase 5 is one well-known algorithm. Phase 4 is a pile of small exact contracts at once. Undo has to restore the board and the box that was pushed and the counters. A push increments two counters, a plain move increments one, a blocked move increments nothing, and an undo has to walk all of that back. Multi-level parsing has its own rules. Models nail the textbook algorithm and slip on the heap of fiddly details.</p>
+    <p>gpt-5.5 and Qwen3.6-27B failed in mirror image. gpt-5.5 nailed the solver and missed a phase 4 case. Qwen nailed phase 4 and missed a solver case. Both were single-case misses with three of four tests passing, and the 31B passed both. The precision phase discriminated where the algorithm phase could not.</p>
+  </div>
+
+  <h2>One flawless run is not enough</h2>
+  <div class="card fade-up">
+    <p>In the first pass the local Gemma-4-31B was the only model of the six to clear all five cumulative phases with no slow, wrong, or stuck outcomes, gpt-5.5 included. It also finished the scaffolded suite in 620 seconds against gpt-5.5's 749, converging in fewer direct turns despite generating at 24 tokens per second against a fast hosted endpoint. A local 31B beating a frontier model is the kind of result I don't trust on one sample, so I ran each of the top three through the full cumulative build three more times.</p>
+    <p>The repeat trials took the headline apart. The 31B cleared all five phases cleanly in only one of three runs. The other two it dropped a boundary phase, P4 once and P5 once. Its flawless first pass was the lucky draw. gpt-5.5 came back clean in two of three, missing P4 once. The model that held up was Qwen3.6-27B, which ran flawless in all three trials, local, no-think, on its native embedded MTP. The first run had me ranking the 31B at the top and Qwen near the bottom of the tier. Three runs in, that order is gone.</p>
+    <table>
+      <thead>
+        <tr><th>Model</th><th data-type="number">Flawless cumulative runs</th><th>Where it slipped</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Qwen3.6-27B</td><td class="best">3 of 3</td><td>nowhere</td></tr>
+        <tr><td class="model-name">gpt-5.5</td><td>2 of 3</td><td>P4</td></tr>
+        <tr><td class="model-name">Gemma-4-31B</td><td>1 of 3</td><td>P4, P5</td></tr>
+      </tbody>
+    </table>
+    <p>Every miss across all nine trials landed on P4 or P5, the precision phase and the solver. Phases 1 through 3 never failed once. So among the strong models a single agentic run is a coin flip on two phases, and you can't rank them from one sample. With only three trials I won't split gpt-5.5 from the 31B too finely, but Qwen staying clean every time is a signal a single run can't give, and the structural findings hold regardless. Scaffolded capability saturates, and cumulative coherence is what separates the strong models from the 26B and the 12B. The fine ranking inside the top tier does not survive a second trial.</p>
+  </div>
+
+  <h2>MTP under an agentic load</h2>
+  <div class="card fade-up">
+    <p>Every local model here ran with Multi-Token Prediction on, the speculative decoding that this hardware leans on hard. The Gemma 4 models use a separate drafter file. Qwen3.6-27B uses the native version baked into the model. I wanted to know whether MTP holds up when the workload is a long agentic loop rather than a single generation, and it does. Qwen's native MTP ran the whole benchmark with no timeouts and no thrashing, mid-pack on speed, behind the 31B's separate-drafter setup but well ahead of the smaller and quantized Gemmas. Both styles of MTP are fine for driving an agent, though the separate-drafter 31B was a little faster here.</p>
+    <p>Qwen3.6-27B was the most consistent agent in the set, clean through every cumulative phase in all three of its trials, ahead of both gpt-5.5 and the 31B on repeats. It did that with reasoning suppressed to match the Gemma family, so this is its instruct-mode floor, not its ceiling. A reasoning-on rerun is the obvious next step.</p>
+  </div>
+
+  <h2>Coherence over capability</h2>
+  <div class="card fade-up">
+    <p>A single-shot score hides all of this. The strong dense models kept their code coherent across a dozen tool calls and five accreting phases, the QAT quant stalled more often, the mixture-of-experts model burned turns thrashing, and at 12B the failure mode was wrong code the model believed was finished. None of that shows up when you score one prompt in isolation.</p>
+  </div>
+</BaseLayout>
