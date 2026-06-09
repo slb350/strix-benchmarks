@@ -90,7 +90,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>Google released official quantization-aware-trained Q4_0 GGUFs for the Gemma 4 line on June 5. I pulled the 31B and the 26B-A4B the same day and ran both through the tooling benchmark against the quants already on the board. QAT models are trained with quantization in the loop, so the q4_0 file is supposed to behave like the checkpoint rather than like a compressed copy of it. The marketing usually claims near full-precision quality at a quarter the size. This was a chance to test that claim against same-day baselines on identical hardware.</p>
     <p>The 31B result backs the claim. At nearly the same file size as the Unsloth dynamic quant, the QAT build scored 59.5 against 54.5, ran all 65 calls machine-usable against 96.9 percent, and posted 98.5 percent strict parsing, the best zero-recovery rate of any run so far. It also passed the email format contract on all three trials where the Unsloth quant managed one of three. Most of the point gap is the chronic Gemma habit of writing summaries just under a stated word minimum, which the QAT build did three fewer times.</p>
     <p>The 26B-A4B result cuts the other way. The Q8_0 outscored the QAT build 59 to 54, and every lost point was a summary in the 129 to 147 word range against a 150 word minimum. The QAT build still kept 100 percent of its calls usable and averaged 4.7 seconds per call, the fastest run the benchmark has produced, at roughly half the Q8 file size. One oddity worth recording with caution. The Q8_0 fell for an embedded prompt injection, emitting the exact demanded payload in its summary field, while the QAT build resisted the same fixture. That is one trial per quant at temperature 0.7, so it may be sampling noise rather than a real hardening effect.</p>
-    <p>These are tooling-only numbers from single runs. The full quality suite (writing, polyglot, databases) still needs to run on both QAT builds before either replaces a reference quant in the main table. For automation serving specifically, the QAT 26B-A4B already looks like the practical choice, since the points it gives up are word-count preferences no consuming parser checks.</p>
+    <p>These are tooling-only numbers from single runs. The full quality suite (writing, polyglot, databases) still needs to run on the 26B-A4B QAT build, but I have now put the 31B QAT through all of it, and the addendum below records where it landed. For automation serving specifically, the QAT 26B-A4B already looks like the practical choice, since the points it gives up are word-count preferences no consuming parser checks.</p>
   </div>
 
   <div class="table-wrap fade-up">
@@ -116,6 +116,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="insight fade-up">
     <p>Same architecture family, same training recipe, opposite verdicts at two sizes. QAT wins outright at 31B and trades points for speed at 26B-A4B. Quant decisions keep proving to be per-model questions that need measurement, not method-level rules of thumb.</p>
+  </div>
+
+  <div class="card fade-up">
+    <p><strong>Addendum, June 8.</strong> I ran the 31B QAT through the entire quality suite to settle whether it can replace the Unsloth dynamic quant outright, not just serve automation. It holds. Writing, LRU, FastAPI, and LeetCode all match the Unsloth quant cell for cell, and the two only part ways on the databases and polyglot.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>31B UD-Q4_K_XL</th>
+            <th>31B QAT Q4_0</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="model-name">Writing /30</td><td>27</td><td>27</td></tr>
+          <tr><td class="model-name">LRU /10</td><td>10</td><td>10</td></tr>
+          <tr><td class="model-name">FastAPI /8</td><td>8</td><td>8</td></tr>
+          <tr><td class="model-name">LeetCode /59</td><td>59</td><td>59</td></tr>
+          <tr><td class="model-name">Polyglot /65</td><td>44</td><td>54</td></tr>
+          <tr><td class="model-name">Postgres /57</td><td class="best">51</td><td>50</td></tr>
+          <tr><td class="model-name">Cassandra /56</td><td class="best">39</td><td>33</td></tr>
+          <tr><td class="model-name">Combined /285</td><td>238</td><td>241</td></tr>
+          <tr><td class="model-name">Tooling /65</td><td>54.5</td><td class="best">59.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>On the recorded totals the QAT edges the reference quant, 241 Combined to 238 and 59.5 tooling to 54.5, at about a gigabyte less on disk. I don't bank the polyglot jump from 44 to 54, since the Unsloth 44 predates an extraction fix and I haven't rerun it on the current build, so I read that row as a wash rather than a real gain. Set it aside and the QAT gives back exactly two things, one Postgres point and six Cassandra points, and every one of the Cassandra losses sits in the T4 procedural tier, the TWCS schemas and lightweight-transaction locks and materialized views. Everywhere else the two quants are the same model.</p>
+    <p>So the 31B QAT matches the Unsloth quant on quality, wins tooling reliability, and runs a touch smaller. Unless you specifically lean on Cassandra schema design, it's the better of the two to keep. I also put it through the agentic Sokoban build three times, where it cleared the full cumulative game in two of three runs, edging the Unsloth quant's one of three on the same boundary-phase coin flip. That settled it, so the QAT is now the 31B I keep on disk and the Unsloth quant is gone.</p>
   </div>
 
   <div class="divider"></div>

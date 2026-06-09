@@ -310,7 +310,7 @@ const base = import.meta.env.BASE_URL;
   <div class="divider"></div>
 
   <h2>Quality</h2>
-  <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet. Scores here are for each model's reference quant. The Google QAT Q4_0 comparison runs live on the <a href={`${base}quantization/`}>quantization page</a>.</p>
+  <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet. Scores here are for each model's reference quant. The 31B row keeps its Unsloth quant numbers as the stable reference, but the quant I actually keep on disk now is Google's QAT Q4_0, which matches these within noise on quality and pulls ahead on tooling, disk, and speed. Its full-suite breakdown and the whole QAT comparison run live on the <a href={`${base}quantization/`}>quantization page</a>.</p>
   <div class="table-wrap fade-up">
     <table class="sortable table-sticky">
       <thead>
