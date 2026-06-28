@@ -124,6 +124,15 @@ const base = import.meta.env.BASE_URL;
           <td>57.6</td>
         </tr>
         <tr>
+          <td class="model-name">Ornith-1.0-35B</td>
+          <td>Q8_0</td>
+          <td>34.36 GiB</td>
+          <td class="group-start">1027</td>
+          <td>53.2</td>
+          <td class="group-start">725</td>
+          <td>52.5</td>
+        </tr>
+        <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
           <td>Unsloth UD-Q4_K_XL</td>
           <td>21 GiB</td>
@@ -343,11 +352,23 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start best">10</td>
           <td class="best">8</td>
           <td class="best">59</td>
-          <td class="best">44</td>
+          <td>44</td>
           <td class="group-start best">51</td>
           <td class="best">39</td>
           <td class="group-start">54.5</td>
           <td class="group-start best">238</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ornith-1.0-35B <span class="badge new">New</span></td>
+          <td class="group-start">28</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td class="best">59</td>
+          <td class="best">48</td>
+          <td class="group-start">46</td>
+          <td>28</td>
+          <td class="group-start">-</td>
+          <td class="group-start">227</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-12B</td>
@@ -735,6 +756,7 @@ const base = import.meta.env.BASE_URL;
     <li>Nemotron-3-Nano collapses without thinking mode. 0/57 Postgres, 0/56 Cassandra, 0/59 LeetCode. The Mamba-2 hybrid architecture appears to need reasoning tokens enabled to produce structured output. Fast (1106 pp, 68 tg) but unusable for coding or database tasks with no-think.</li>
     <li>Magistral-Small has the highest Cassandra score (35/56) of any non-Gemma model, beating Devstral (31) and Kimi (24). But it scores 0/10 LRU, 12/57 Postgres, and leaked its reasoning scaffold into the creative-writing test output. A specialist, not a generalist.</li>
     <li>GLM-4.7-Flash can't code. 0/10 LRU, 0/8 FastAPI, 16/59 LeetCode (extraction failures), 0/65 polyglot. But it handles database work (23/57 PG, 27/56 Cass) and generates at 73 t/s. A fast model with a very narrow skill set.</li>
+    <li>Ornith-1.0-35B is DeepReinforce's agentic-coding RL fine-tune of Qwen3.5-35B-A3B, and it is the strongest result that base has produced on this board. Combined 227/285 puts it second overall behind Gemma-4-31B at 238, clearing its own base by 35 points and the other agentic tune Nex-N2-mini by 44. I ran it thinking-on, its native reasoning mode, the same way I ran Nex, so the 44-point gap reads cleanly as what the reinforcement training bought. The headline is polyglot, where 48/65 is the best local score on the board, four ahead of Gemma-4-31B. It got there by solving two challenges nothing local had cracked, the cron matcher at 10/10 and the sliding-window rate limiter at 9/10, with a perfect Go rule engine alongside. Only the Ruby Sinatra webhook stays at zero, where it writes real code with real logic bugs. Cassandra is the soft spot at 28/56, almost all of it in Tier 4 procedural CQL, the same syntax failures the Nex tune had. It also returned a perfect 22/22 on the hallucination calibration set, matching the base rather than beating it, and a board-topping 77/80 on the prose constraint test where it held first-person present tense with no stray colons, semicolons, or dashes. I added a --think flag to the bench harness to drive its always-on reasoning properly, and ran the suite at a 32k token budget so the long reasoning trace had room to finish before the answer.</li>
     <li>MiniMax-M2.5 went from 0/10 coding to 10/10 after switching to Unsloth's UD-Q3_K_XL quant and their recommended sampling params (temp 1.0, top_p 0.95, min_p 0.01, top_k 40). At 94 GiB it's the largest model on disk, but 185/285 Combined puts it 6th overall. Perfect 10/10 on both PostgreSQL T2 optimization and Cassandra T2 anti-pattern detection. AMDVLK is its best backend at 32 t/s (vs 22 on RADV).</li>
     <li>MiniMax-M2.7 is the 229B successor with an UD-IQ4_XS quant that squeezes into 101 GiB. Writing improved to 28/30 and all coding benchmarks max out (10/10 LRU, 59/59 LeetCode, 8/8 FastAPI). The model has an unusual no-think quirk. Its M2.5 predecessor required a custom Jinja template to suppress thinking. M2.7 reverses this entirely. The standard --reasoning-budget 0 flag works, but the custom template causes the model to reason inline in plain text without ever producing code. Combined 179/285 puts it just behind M2.5 at 185. PostgreSQL T2 optimization and T3 diagnosis are both perfect (9/10 and 6/6). Cassandra T4 procedural challenges benefit from leaving thinking on (7/30 vs 2/30 without). RADV is the right backend here, unlike M2.5 which preferred AMDVLK.</li>
     <li>Qwen3.6-35B-A3B is the hybrid-attention successor to the 3.5 MoE. Combined 205/285, writing 29/30, and polyglot 35/65 put it near the top, but the 35 polyglot score is best-of-5 rather than stable single-run behavior. Database regressions come from Tier 4 procedural SQL and CQL, while raw writing output appends internal planning notes even with <code>enable_thinking:false</code>.</li>

@@ -28,6 +28,46 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
+  <h2>Ornith-1.0-35B <span class="badge new">New</span></h2>
+  <p>Ornith-1.0-35B is the newest result on the board and the most interesting one in a while. It is DeepReinforce's reinforcement-learning fine-tune of Qwen3.5-35B-A3B aimed squarely at agentic coding, released late June 2026 under an MIT license. At Q8_0 it lands Combined 227/285, second overall behind Gemma-4-31B at 238, and it is an always-on reasoning model so I ran the whole suite thinking-on. What makes it worth a spotlight is the comparison built into its own family. I have the base Qwen3.5-35B-A3B on record at 192 and a different agentic fine-tune, Nex-N2-mini, at 183. Ornith clears both by a wide margin, and because I ran it the same thinking-on way I ran Nex, the 44-point gap between them is a clean measure of what good reinforcement training does to a base.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">LeetCode /59</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Halluc. /22</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Qwen3.5-35B-A3B (base)</td>
+          <td>28</td><td>59</td><td>17</td><td>32</td><td>38</td><td>21</td><td>192</td>
+        </tr>
+        <tr>
+          <td class="model-name">Nex-N2-mini (agentic)</td>
+          <td>28</td><td>53</td><td>17</td><td>38</td><td>29</td><td>12</td><td>183</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ornith-1.0-35B <span class="badge new">New</span></td>
+          <td>28</td><td>59</td><td class="best">48</td><td>46</td><td>28</td><td class="best">22</td><td class="best">227</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The whole story is in the coding columns. Polyglot jumps from 17 on both the base and the Nex tune to 48 here, the best local score on the board and four clear of Gemma-4-31B. Ornith is the first local model to solve the cron matcher at a full 10/10 and the first to handle the sliding-window rate limiter at 9/10, two challenges that had defeated every model before it. Postgres climbs to 46/57 on perfect query optimization and 25 of 31 procedural points. The gains do not reach everywhere. Cassandra slips to 28/56 with Tier 4 procedural CQL collapsing to 7 of 30, the same dialect-specific syntax errors the Nex tune made, so the reinforcement training that taught it Python and Go did nothing for Cassandra DDL. It also returned a perfect 22/22 on the hallucination calibration set, matching the base rather than beating it, and a board-topping 77/80 on the prose constraint test where it held first-person present tense across the whole chapter without a single stray colon or dash.</p>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>Agentic coding <span class="badge new">New</span></h2>
   <p>Every other benchmark here is single-shot. I wanted to know something a single prompt can't tell me, whether a model can actually drive a coding agent through a long chain of tool calls. So I had <a href={`${base}agentic/`}>pi build a terminal Sokoban game</a> phase by phase, five accreting phases, scored two ways, across six models including gpt-5.5 as the frontier line. The result surprised me. The hard algorithm I built as the wall, a Sokoban solver, was the easy part. Every model wrote a working search. What separated them was keeping their own growing code coherent across the whole build. The first pass put the local Gemma-4-31B ahead of gpt-5.5, so I ran the top three models three times each, and the ranking came apart. The most consistent agent was the local Qwen3.6-27B, clean in every trial, while the 31B's flawless run turned out to be one draw of three. The <a href={`${base}agentic/`}>full writeup</a> covers the harness, the multi-tool-calling setup, MTP under an agentic load, and why a single agentic run can't rank the top models.</p>
 
@@ -105,8 +145,8 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>Gemma-4-12B <span class="badge new">New</span></h2>
-  <p>Gemma-4-12B is the newest result on the board. Released 2026-06-03 and run at Unsloth UD-Q8_K_XL, it lands Combined 222/285, second overall behind Gemma-4-31B at 238. It uses 13.6 GiB and posts the strongest score per parameter I have measured on this hardware.</p>
+  <h2>Gemma-4-12B</h2>
+  <p>Gemma-4-12B was the newest result on the board until Ornith arrived. Released 2026-06-03 and run at Unsloth UD-Q8_K_XL, it lands Combined 222/285, third overall behind Gemma-4-31B at 238 and Ornith-1.0-35B at 227. It uses 13.6 GiB and posts the strongest score per parameter I have measured on this hardware.</p>
 
   <div class="table-wrap fade-up">
     <table>
@@ -345,7 +385,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>Combined 207/285 lands the model 5th overall on the leaderboard, behind Gemma-4-31B (238), Gemma-4-12B (222), Gemma-4-26B-A4B (215), and Qwen3.6-27B (213), with Qwen3.6-35B-A3B (205) just below. Writing scores 30/30, joint top with Qwen3-30B-Instruct-2507 and Qwen3.6-27B. The story output runs 2082 words against the 2000-word target, reaches all five required beats, and carries a structural payoff that earns the score on craft rather than padding. The hatchling rescue at the heart of the scene parallels the patient grief introduced in the opening, and the model lands the parallel through dialogue (a flat "wasn't meant to" delivered over a struggling baby turtle) rather than narration. Em dash count stays inside budget, sensory layering covers salt, sand texture, light, and skin warmth without any of the AI-prose tells the bench scorecard treats as deductions. Generation cost was 1090.8 seconds (1.9 words per second on ROCm).</p>
+    <p>Combined 207/285 lands the model 6th overall on the leaderboard, behind Gemma-4-31B (238), Ornith-1.0-35B (227), Gemma-4-12B (222), Gemma-4-26B-A4B (215), and Qwen3.6-27B (213), with Qwen3.6-35B-A3B (205) just below. Writing scores 30/30, joint top with Qwen3-30B-Instruct-2507 and Qwen3.6-27B. The story output runs 2082 words against the 2000-word target, reaches all five required beats, and carries a structural payoff that earns the score on craft rather than padding. The hatchling rescue at the heart of the scene parallels the patient grief introduced in the opening, and the model lands the parallel through dialogue (a flat "wasn't meant to" delivered over a struggling baby turtle) rather than narration. Em dash count stays inside budget, sensory layering covers salt, sand texture, light, and skin warmth without any of the AI-prose tells the bench scorecard treats as deductions. Generation cost was 1090.8 seconds (1.9 words per second on ROCm).</p>
     <p>The LRU coding score requires explanation. The standard server bench scored 2/10 because the default no-reasoning path generated a put method that does <code>time.time() + (ttl if ttl is not None else self.default_ttl)</code>, which TypeErrors when both arguments are None. Re-running the same prompt with <code>reasoning_effort: high</code> through chat-template-kwargs produced 18,606 characters of reasoning across 28 minutes and a different implementation that scores 7/10. The new failures are all the same conceptual bug in a different place. The eviction path runs <code>del self.expiry[oldest_key]</code> unconditionally, which KeyErrors when the evicted key was stored without an expiry entry. Two attempts, two different bugs, both centered on None handling in the expiry map. The 7/10 with reasoning is the recorded score because that mode is the model's intended high-effort coding profile per the Unsloth docs.</p>
     <p>Polyglot scored 30/65 on a single run, which puts the model 3rd on this benchmark behind Gemma-4-31B (44) and the Qwen3.6 pair (35 and 30). T7 Go and T4 CSV both perfect (10/10 and 7/7). T2 cron, T5 rate limiter, T6 Sinatra all 0/10, the same three challenges that have stayed unsolved across nearly every tested model. Polyglot variance on this bench is well-documented (one earlier model produced 6, 17, 19, 26, 35 across five identical runs), so 30/65 carries a single-run asterisk pending re-bench. Postgres came in at 39/57. T3 diagnosis was perfect 6/6, T2 query optimization 9/10, T1 SQL writing 5/10, T4 procedural 19/31. The pattern is consistent. The model fixes broken queries and identifies operational problems with surgical accuracy and writes original complex SQL less reliably. Cassandra 34/56 with T2 anti-pattern detection at 9/10, the strongest non-Gemma result on that tier, plus T1 query writing 8/10. T4 procedural collapsed to 12/30 with broken CQL DDL on time-bucketed schema, materialized view, batch denormalization, and SAI index challenges.</p>
     <p>ROCm is the right backend here. pp512 runs 78 on ROCm, 62 on RADV, 17 on AMDVLK. Token generation is essentially identical across all three (2.92, 2.90, 2.99) because at 125B dense the workload is pure memory bandwidth. Build 9029 for Vulkan, 8721 for ROCm.</p>
@@ -547,7 +587,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>Qwen3.6-27B lands 4th place on the Combined leaderboard at 213/285, behind Gemma-4-31B at 238, the new dense Gemma-4-12B at 222, and Gemma-4-26B-A4B at 215. At this size class MoE usually wins, but the 27B dense beats its 35B-A3B MoE sibling at 205. The dense version takes around five times longer per token (12 tg vs 60 tg) in exchange for one writing point and a much stronger Tier 4 procedural Postgres score.</p>
+    <p>Qwen3.6-27B lands 5th place on the Combined leaderboard at 213/285, behind Gemma-4-31B at 238, Ornith-1.0-35B at 227, the dense Gemma-4-12B at 222, and Gemma-4-26B-A4B at 215. At this size class MoE usually wins, but the 27B dense beats its 35B-A3B MoE sibling at 205. The dense version takes around five times longer per token (12 tg vs 60 tg) in exchange for one writing point and a much stronger Tier 4 procedural Postgres score.</p>
     <p>Writing scores 30/30, the joint highest result I've recorded on this benchmark, tying Qwen3-30B-Instruct-2507 as champion. Em dash count is 2 across roughly 2150 words. The same prose hygiene issue from the 35B-A3B sibling shows up here. Even with <code>enable_thinking:false</code> set through chat-template-kwargs, the model leaks a planning outline above the output and an end-thinking tag below it. The generation itself (everything after the planning preamble) is clean and that's what got scored.</p>
     <p>Polyglot averages 30/65 across three runs (24, 31, 34). The variance traces almost entirely to T7 Go, which scored 0/10, 10/10, 10/10. T1 regex parsing was perfect 10/10 every pass, T4 CSV aggregation perfect 7/7 every pass. The T2 cron matcher that the 35B-A3B sibling cracked on 4 of 5 runs stayed at 0/10 here. Cassandra averages 32/56 across three runs (30, 32, 33). T1 climbed each pass (6, 7, 8), T3 saturated at 6/6 every run, T4 stuck at exactly 10/30 every run with the same failure signature on LWT distributed lock, materialized view, and batch denormalization. Postgres came in at 44/57 on a single run. T2 and T3 were perfect (10/10 and 6/6), T4 procedural hit 23/31, the second-strongest result on disk after Gemma-4-31B's 22/31.</p>
   </div>
@@ -587,7 +627,7 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <div class="insight fade-up">
-    <p>At the same quant and size as Qwen3.5-35B-A3B, the 3.6 sibling moves Combined from 192 to 205, now 5th overall behind Gemma-4-31B (238), Gemma-4-12B (222), Gemma-4-26B-A4B (215), and the dense Qwen3.6-27B (213). Writing improves one point to 29/30. LRU, LeetCode, FastAPI all max out the same. Polyglot jumps from 17 to 35 on a best-of-5 basis, which needs context. I ran five identical back-to-back polyglot passes and got 19, 26, 6, 17, and 35 out of 65. Same sampling params, same prompts, same model weights. On the 35 run the model cleanly solves cron matching (10/10) and Go rule engines (10/10), two challenges that were previously unsolved across the Qwen 3.5 lineup. On the 6 run it produces almost nothing usable. I suspect the hybrid DeltaNet layers are amplifying sampler noise, though I have not isolated it further.</p>
+    <p>At the same quant and size as Qwen3.5-35B-A3B, the 3.6 sibling moves Combined from 192 to 205, now 6th overall behind Gemma-4-31B (238), Ornith-1.0-35B (227), Gemma-4-12B (222), Gemma-4-26B-A4B (215), and the dense Qwen3.6-27B (213). Writing improves one point to 29/30. LRU, LeetCode, FastAPI all max out the same. Polyglot jumps from 17 to 35 on a best-of-5 basis, which needs context. I ran five identical back-to-back polyglot passes and got 19, 26, 6, 17, and 35 out of 65. Same sampling params, same prompts, same model weights. On the 35 run the model cleanly solves cron matching (10/10) and Go rule engines (10/10), two challenges that were previously unsolved across the Qwen 3.5 lineup. On the 6 run it produces almost nothing usable. I suspect the hybrid DeltaNet layers are amplifying sampler noise, though I have not isolated it further.</p>
     <p>Both database benchmarks regress a few points relative to the 3.5 generation. Postgres drops 32 to 31, Cassandra drops 38 to 33. The regressions come entirely from Tier 4 procedural challenges where the model generates syntactically broken PL/pgSQL and CQL DDL. T1 through T3 hold up. Postgres T2 and T3 are perfect (10/10 and 6/6). Cassandra T1 through T3 land at 8/10, 9/10, 6/6. The model understands the queries and the diagnosis, but assembling a valid CREATE TRIGGER or CREATE MATERIALIZED VIEW is where it breaks.</p>
     <p>The creative writing output has a prose hygiene issue worth flagging. With <code>enable_thinking:false</code> set through chat-template-kwargs, the model produces a clean 2260-word story that I scored 29/30 (all five beats hit, 5/5 sensory immersion), and then dumps its own internal planning notes after the final sentence. Self-correction remarks, word-count checks, structural bullet points. The story itself is clean. The raw generation is not directly usable without post-processing. I think this pattern is embedded in training rather than fixable through sampling params alone.</p>
   </div>
