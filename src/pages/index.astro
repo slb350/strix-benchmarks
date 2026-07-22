@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b9553</div>
+      <div class="value">b10015</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">32+</div>
+      <div class="value">33+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,40 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Ornith-1.0-35B <span class="badge new">New</span></h2>
+  <h2>Laguna S 2.1 <span class="badge new">New</span></h2>
+  <p>Laguna S 2.1 is Poolside's 118B mixture of experts with roughly 8B active parameters. I ran the official Q4_K_M through the complete local suite using Poolside's llama.cpp fork because upstream support has not landed. It finishes at Combined 198/285. That puts it below Qwen3.6-35B-A3B at 205 and above the Qwen3.5 models at 192. The result is sharply split. Code and factual calibration are strong, while the manually reviewed fiction is not.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th data-type="number">Writing /30</th>
+          <th data-type="number">LRU /10</th>
+          <th data-type="number">FastAPI /8</th>
+          <th data-type="number">LeetCode /59</th>
+          <th data-type="number">Polyglot /65</th>
+          <th data-type="number">Postgres /57</th>
+          <th data-type="number">Cassandra /56</th>
+          <th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Laguna S 2.1</td>
+          <td>21</td><td class="best">10</td><td class="best">8</td><td class="best">59</td><td>35</td><td>29</td><td>36</td><td>198</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight fade-up">
+    <p>The perfect LRU, FastAPI, and LeetCode scores show that Laguna can produce strong conventional code. Polyglot reaches 35/65 and the hallucination set is a perfect 22/22. The writing sample drops to 21/30 after manual review because the character voices flatten together, the chemistry develops too quickly, and a dead spouse is described as facing an imminent death. The separate prose sample scores 53/80 after missing two required beats and introducing several continuity errors. RADV is the practical backend at 263 pp and 21.63 tg. I also tested Poolside's official DFlash draft model. Its low draft acceptance slows the fixed prompt set from 18.95 to 7.24 tokens per second, so I am keeping it disabled.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Ornith-1.0-35B</h2>
   <p>Ornith-1.0-35B is the newest result on the board and the most interesting one in a while. It is DeepReinforce's reinforcement-learning fine-tune of Qwen3.5-35B-A3B aimed squarely at agentic coding, released late June 2026 under an MIT license. At Q8_0 it lands Combined 227/285, second overall behind Gemma-4-31B at 238, and it is an always-on reasoning model so I ran the whole suite thinking-on. What makes it worth a spotlight is the comparison built into its own family. I have the base Qwen3.5-35B-A3B on record at 192 and a different agentic fine-tune, Nex-N2-mini, at 183. Ornith clears both by a wide margin, and because I ran it the same thinking-on way I ran Nex, the 44-point gap between them is a clean measure of what good reinforcement training does to a base.</p>
 
   <div class="table-wrap fade-up">
@@ -55,7 +88,7 @@ const base = import.meta.env.BASE_URL;
           <td>28</td><td>53</td><td>17</td><td>38</td><td>29</td><td>12</td><td>183</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.0-35B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.0-35B</td>
           <td>28</td><td>59</td><td class="best">48</td><td>46</td><td>28</td><td class="best">22</td><td class="best">227</td>
         </tr>
       </tbody>
@@ -140,7 +173,7 @@ const base = import.meta.env.BASE_URL;
   <h2>Tooling benchmark <span class="badge new">New</span></h2>
   <p>I added a tenth suite that answers a question the other nine do not. Most of my actual local model usage is unattended automation, scripts that summarize articles into strict JSON, sort transactions into fixed categories, and pull dates and amounts out of messy text. Those pipelines call a model dozens of times per run, parse the output with code, never retry, and silently drop anything that fails to parse. For that kind of work, peak quality matters less than whether call 47 of 65 comes back machine-readable.</p>
   <p>The tooling benchmark runs 19 challenges as 65 separate calls across four tiers. Strict JSON output against real pipeline prompts, extraction and classification with exact ground truth, plain-text format contracts, and a robustness tier covering prompt injection, deliberately altered facts, and refusals on harmless input. Every challenge runs multiple trials at temperature 0.7, and the headline numbers are reliability rates and per-call latency rather than a single best answer.</p>
-  <p>Eight runs are on the board now. Ornith-1.0-35B holds the highest raw total at 61/65, but it ran thinking-on at 43 seconds per call, roughly eight times slower than anything else here, with strict parsing down at 87.7 percent, so the point total oversells it for unattended work. Among the models you would actually wire into a pipeline, Qwen3.6-27B leads at 60.5/65 with every one of its 65 calls machine-usable and 96.9 percent parsing with zero recovery. Google's day-zero Gemma-4-31B QAT Q4_0 sits second at 59.5, beating the Unsloth quant of the same model by five points at the same file size and posting the best strict parse rate measured so far at 98.5 percent. Gemma-4-26B-A4B at Q8_0 takes third at 59, and its QAT sibling trades five points for half the footprint and the fastest pace on the bench at 4.7 seconds per call. The recurring point sink across every model is the same, summaries that run just short of a stated word minimum while still parsing cleanly, which is why the reliability column and the score column disagree.</p>
+  <p>Nine runs are on the board now. Ornith-1.0-35B holds the highest raw total at 61/65, but it ran thinking-on at 43 seconds per call, roughly eight times slower than anything else here, with strict parsing down at 87.7 percent, so the point total oversells it for unattended work. Among the models you would actually wire into a pipeline, Qwen3.6-27B leads at 60.5/65 with every one of its 65 calls machine-usable and 96.9 percent parsing with zero recovery. Google's day-zero Gemma-4-31B QAT Q4_0 sits second at 59.5, beating the Unsloth quant of the same model by five points at the same file size and posting the best strict parse rate measured so far at 98.5 percent. Gemma-4-26B-A4B at Q8_0 takes third at 59. Laguna S 2.1 joins at 57.5 with 90.8 percent usable output and a much slower 19.2 seconds per call. The QAT 26B sibling trades five points for half the footprint and the fastest pace on the bench at 4.7 seconds per call. The recurring point sink across every model is the same, summaries that run just short of a stated word minimum while still parsing cleanly, which is why the reliability column and the score column disagree.</p>
   <p>The robustness tier keeps producing the best findings. The 26B-A4B at Q8_0 fell for an embedded injection outright, returning a summary field containing exactly the payload a fake system message inside the article demanded while writing correct key points about the real story in the same response. The 35B-A3B bent a different way, keeping its summary clean but assigning exactly the importance score the injection asked for. Both Qwen models imported the word diesel into a ferry story whose source never mentions fuel, and no Gemma did. Full details on the <a href={`${base}methodology/`}>methodology page</a>, reference-quant scores on the <a href={`${base}models/`}>models page</a>, and the QAT comparison on the <a href={`${base}quantization/`}>quantization page</a>.</p>
 
   <div class="divider"></div>
