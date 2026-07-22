@@ -29,7 +29,15 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <h2>Laguna S 2.1 <span class="badge new">New</span></h2>
-  <p>Laguna S 2.1 is Poolside's 118B mixture of experts with roughly 8B active parameters. I ran the official Q4_K_M through the complete local suite using Poolside's llama.cpp fork because upstream support has not landed. It finishes at Combined 198/285. That puts it below Qwen3.6-35B-A3B at 205 and above the Qwen3.5 models at 192. The result is sharply split. Code and factual calibration are strong, while the manually reviewed fiction is not.</p>
+  <p>Laguna S 2.1 is Poolside's coding model with 118B total parameters and roughly 8B active for each token. I ran the official Q4_K_M through the complete local suite. It finishes at Combined 198/285, below Qwen3.6-35B-A3B at 205 and above the Qwen3.5 models at 192. The total hides a wide capability spread. Conventional code and factual calibration are strong. Procedural database work is inconsistent, long reasoning traces are expensive, and the manually reviewed fiction needs substantial editing.</p>
+
+  <h3>Model and runtime</h3>
+  <p>The architecture has 48 layers, 256 routed experts with ten selected per token, and one shared expert. Poolside publishes four <a href="https://huggingface.co/poolside/Laguna-S-2.1-GGUF">official GGUF artifacts</a>. F16 is 235.2 GB, Q8_0 is 127.7 GB, the imatrix Q4_K_M is 75.17 GB, and the separate BF16 DFlash drafter is 2.23 GB. Q8_0 leaves no safe operating margin on a 128 GB unified-memory machine, so Q4_K_M is the only practical official main quant for Strix. It occupies 70.01 GiB on disk. The weights support a native one-million-token context while the GGUF metadata recommends 256K. I used 64K for the suite, enough for the prompts and the 32K reasoning budget.</p>
+
+  <p>Upstream llama.cpp support had not landed when I tested the model. I built <a href="https://github.com/poolsideai/llama.cpp/tree/laguna">Poolside's laguna branch</a> at build 10006 in a separate tree and left the mainline build untouched. Both Vulkan backends work. ROCm loads the model only with flash attention disabled because the fork's flash-attention kernel has no compatible gfx1151 device code.</p>
+
+  <h3>How I ran it</h3>
+  <p>This result uses two generation modes. Poolside recommends preserved reasoning for agentic work, so LRU, FastAPI, LeetCode, Polyglot, PostgreSQL, Cassandra, and hallucination ran with thinking enabled. Those tests used Poolside's published temperature 1.0, top-p 1.0, and top-k 20 settings. Creative writing and prose ran with thinking suppressed to match the tracked writing methodology. Tooling also ran without thinking because that suite models a production pipeline where latency and machine-usable envelopes matter. The Combined score therefore mixes no-thinking writing with thinking-enabled code and database results. That is the intended operating profile for this model and a comparability caveat against models tested under one mode everywhere.</p>
 
   <div class="table-wrap fade-up">
     <table>
@@ -55,14 +63,52 @@ const base = import.meta.env.BASE_URL;
     </table>
   </div>
 
+  <h3>Performance</h3>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Backend</th>
+          <th data-type="number">pp512</th>
+          <th data-type="number">tg128</th>
+          <th>Flash attention</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">RADV</td><td>263.00</td><td class="best">21.63</td><td>On</td></tr>
+        <tr><td class="model-name">AMDVLK</td><td>198.10</td><td>20.52</td><td>On</td></tr>
+        <tr><td class="model-name">ROCm</td><td class="best">304.78</td><td>19.08</td><td>Off</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>RADV is the serving backend because generation matters more than prompt processing for the tracked workloads. ROCm wins pp512 but gives up 12 percent on tg128 and cannot use flash attention. Laguna's 21.63 tg is respectable for a 70 GiB file, though it trails smaller MoE models such as Qwen3.6-35B-A3B at 59.6 tg.</p>
+
+  <h3>Code and database work</h3>
+  <p>LRU, FastAPI, and LeetCode all return perfect scores. Polyglot reaches 35/65 on a single run, tied with the best of five Qwen3.6-35B-A3B draw and behind Ornith at 48 and Gemma-4-31B at 44. Laguna earns full points on CSV aggregation, the sliding-window FastAPI limiter, and the Go rule engine. It takes partial credit on both Python tasks and fails the Apache Bash and Sinatra challenges. The Go and rate-limiter solves make the result more useful than the Combined rank alone suggests.</p>
+
+  <p>The database scores show a consistent boundary. PostgreSQL earns 7/10 on SQL, 9/10 on optimization, 5/6 on diagnosis, and 8/31 on procedural work. Cassandra earns 6/10 on CQL, 9/10 on data-model review, 6/6 on diagnosis, and 15/30 on procedural work. Laguna understands faulty plans and schemas better than it writes executable procedures. LeetCode is perfect but sometimes slow. Median of Two Sorted Arrays takes 389.5 seconds and Minimum Window Substring takes 358.9 seconds, with roughly 7.7K reasoning tokens in each trace.</p>
+
+  <p>Hallucination calibration is a clean 22/22 in 16.9 seconds. Tooling scores 57.5/65 and resists all three prompt-injection trials, but four JSON-envelope calls are unusable. That leaves usable reliability at 90.8 percent and makes Qwen3.6-27B the safer unattended-automation model.</p>
+
+  <h3>Writing review</h3>
+  <p>The creative-writing sample reaches all five required beats and runs 2,770 words, but the two leads speak in the same therapeutic register. The narration explains the turtle and healing parallel repeatedly, then moves from strangers to laced fingers without enough resistance. The decisive continuity error comes after establishing that Sarah died two years earlier. Maya later describes Jack as discussing his spouse's imminent death. Manual scoring lands at 21/30.</p>
+
+  <p>The separate prose test runs 2,716 words and triggers all seven automatic beat detectors. Manual review lowers the beat component to 15/20 because the capture never forces Nell to her knees and Morrison never gives the explicit protocol-breaking order. The draft uses 22 em dashes against a target of two, changes Morrison's rank, and reverses who destroyed whose ship in one exchange. The final manual score is 53/80.</p>
+
+  <h3>DFlash</h3>
+  <p>I tested Poolside's official DFlash drafter instead of assuming speculative decoding would help. Across nine fixed prompts, the plain model predicts 1,586 tokens in 83.70 seconds at 18.95 tokens per second. DFlash predicts 1,582 tokens while drafting 8,890 candidates and accepting 955. Acceptance is 10.74 percent, wall time rises to 218.37 seconds, and throughput falls to 7.24 tokens per second.</p>
+
+  <p>The fixed-seed long-form comparison is worse. The plain run produces 3,214 tokens in 149.47 seconds at 21.8 tokens per second. DFlash produces 2,099 tokens in 337.36 seconds at 6.27 tokens per second, accepting 976 of 16,830 drafted tokens. Acceptance falls to 5.8 percent and the output terminates 1,115 tokens earlier, so the speculative path does not preserve the baseline distribution in this test. I am keeping the drafter on disk for future runtime fixes and leaving it disabled for serving.</p>
+
   <div class="insight fade-up">
-    <p>The perfect LRU, FastAPI, and LeetCode scores show that Laguna can produce strong conventional code. Polyglot reaches 35/65 and the hallucination set is a perfect 22/22. The writing sample drops to 21/30 after manual review because the character voices flatten together, the chemistry develops too quickly, and a dead spouse is described as facing an imminent death. The separate prose sample scores 53/80 after missing two required beats and introducing several continuity errors. RADV is the practical backend at 263 pp and 21.63 tg. I also tested Poolside's official DFlash draft model. Its low draft acceptance slows the fixed prompt set from 18.95 to 7.24 tokens per second, so I am keeping it disabled.</p>
+    <p>Laguna earns its place as a coding and diagnosis specialist. The 35/65 Polyglot result, 36/56 Cassandra score, and perfect calibration are credible strengths. Its 70 GiB footprint, expensive reasoning tails, weaker writing, and 90.8 percent tooling reliability keep it from replacing the faster daily drivers. I would serve Qwen3.6-35B-A3B for routine interactive work and reach for Laguna when its Go, rate-limiter, or database-analysis profile matches the task.</p>
   </div>
 
   <div class="divider"></div>
 
   <h2>Ornith-1.0-35B</h2>
-  <p>Ornith-1.0-35B is the newest result on the board and the most interesting one in a while. It is DeepReinforce's reinforcement-learning fine-tune of Qwen3.5-35B-A3B aimed squarely at agentic coding, released late June 2026 under an MIT license. At Q8_0 it lands Combined 227/285, second overall behind Gemma-4-31B at 238, and it is an always-on reasoning model so I ran the whole suite thinking-on. What makes it worth a spotlight is the comparison built into its own family. I have the base Qwen3.5-35B-A3B on record at 192 and a different agentic fine-tune, Nex-N2-mini, at 183. Ornith clears both by a wide margin, and because I ran it the same thinking-on way I ran Nex, the 44-point gap between them is a clean measure of what good reinforcement training does to a base.</p>
+  <p>Ornith-1.0-35B remains one of the most interesting results on the board. It is DeepReinforce's reinforcement-learning fine-tune of Qwen3.5-35B-A3B aimed squarely at agentic coding, released late June 2026 under an MIT license. At Q8_0 it lands Combined 227/285, second overall behind Gemma-4-31B at 238, and it is an always-on reasoning model so I ran the whole suite thinking-on. What makes it worth a spotlight is the comparison built into its own family. I have the base Qwen3.5-35B-A3B on record at 192 and a different agentic fine-tune, Nex-N2-mini, at 183. Ornith clears both by a wide margin, and because I ran it the same thinking-on way I ran Nex, the 44-point gap between them is a clean measure of what good reinforcement training does to a base.</p>
 
   <div class="table-wrap fade-up">
     <table>
