@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
       <div class="label">Backends tested</div>
     </div>
     <div class="stat-card">
-      <div class="value">33+</div>
+      <div class="value">35+</div>
       <div class="label">Models tested</div>
     </div>
     <div class="stat-card">
@@ -28,8 +28,151 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Laguna S 2.1 <span class="badge new">New</span></h2>
-  <p>Laguna S 2.1 is Poolside's coding model with 118B total parameters and roughly 8B active for each token. I ran the official Q4_K_M through the complete local suite. It finishes at Combined 198/285, below Qwen3.6-35B-A3B at 205 and above the Qwen3.5 models at 192. The total hides a wide capability spread. Conventional code and factual calibration are strong. Procedural database work is inconsistent, long reasoning traces are expensive, and the manually reviewed fiction needs substantial editing.</p>
+  <h2>Agents-A1 <span class="badge new">New</span></h2>
+  <p>Agents-A1 is the clear result from my latest Hugging Face search. InternScience published the checkpoint in late June and updated it in mid July. I ran the official Q8_0 through every local suite. It finishes at Combined 224/285, behind Gemma-4-31B and Ornith, and ahead of Gemma-4-12B. More importantly, it sets a new local Polyglot record at 54/65 while generating at almost 54 tokens per second.</p>
+
+  <h3>Model and runtime</h3>
+  <p><a href="https://huggingface.co/InternScience/Agents-A1">Agents-A1</a> uses the Qwen3.5 hybrid mixture architecture with 35B total parameters and roughly 3B active for each token. The text stack has 40 layers, 256 routed experts with eight selected per token, one shared expert, and a 262K context window. The <a href="https://huggingface.co/InternScience/Agents-A1-Q8_0-GGUF">official Q8_0 GGUF</a> occupies 34.37 GiB. I verified the downloaded file against its Hugging Face LFS hash before loading it.</p>
+
+  <p>Mainline llama.cpp already supports the architecture, so Agents-A1 ran from the reference build rather than a model-specific fork. The server used a 64K context and full GPU offload. That leaves enough context for the 32K reasoning allowance used by the code and database suites without creating an artificial memory advantage.</p>
+
+  <h3>Performance</h3>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr><th>Backend</th><th data-type="number">pp512</th><th data-type="number">tg128</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">RADV</td><td>1010.49</td><td class="best">53.79</td></tr>
+        <tr><td class="model-name">AMDVLK</td><td>723.54</td><td>53.48</td></tr>
+        <tr><td class="model-name">ROCm</td><td class="best">1064.77</td><td>38.15</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>RADV is the right backend. ROCm gains about five percent on prompt processing and loses almost 30 percent on generation. AMDVLK nearly matches RADV generation and gives up 28 percent on prompt processing. RADV wins the balance that matters for mixed server work.</p>
+
+  <h3>How I ran it</h3>
+  <p>I used the model's published temperature 0.85, top-p 0.95, top-k 20, presence penalty 1.1, and repeat penalty 1.0 profile. Thinking stayed enabled for LRU, FastAPI, LeetCode, Polyglot, PostgreSQL, Cassandra, and calibration. I suppressed thinking for creative writing, prose, and tooling. That matches the model's intended split between reasoning work and direct production output.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th><th data-type="number">Writing /30</th><th data-type="number">LRU /10</th><th data-type="number">FastAPI /8</th><th data-type="number">LeetCode /59</th><th data-type="number">Polyglot /65</th><th data-type="number">Postgres /57</th><th data-type="number">Cassandra /56</th><th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Agents-A1</td><td>22</td><td class="best">10</td><td class="best">8</td><td class="best">59</td><td class="best">54</td><td>40</td><td>31</td><td class="best">224</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Code and database work</h3>
+  <p>The conventional code sets are perfect. LRU returns 10/10, FastAPI returns 8/8, and LeetCode returns 59/59. The runs are not unusually quick because the model spends time reasoning. LRU takes 161.7 seconds and FastAPI takes 132.6 seconds. The answers are correct and the final content is extracted cleanly.</p>
+
+  <p>Polyglot is the reason to keep this model. Agents-A1 scores 10/10 on both Python tasks, 7/8 on Apache Bash, 7/7 on CSV Bash, 10/10 on the FastAPI rate limiter, and 10/10 on Go. Only the Sinatra webhook remains at zero. The previous local record was Ornith at 48. Agents-A1 reaches 54.</p>
+
+  <p>PostgreSQL reaches 40/57 with 5/10 on SQL writing, 10/10 on optimization, 6/6 on diagnosis, and 19/31 on procedures. Cassandra reaches 31/56 with 6/10 on CQL, 9/10 on data-model review, 6/6 on diagnosis, and 10/30 on procedures. The same boundary appears in both databases. It analyzes plans and incidents better than it writes dialect-specific procedural code.</p>
+
+  <h3>Benchmark audit</h3>
+  <p>The Cassandra run exposed a verifier problem rather than a model problem. The SAI checks queried a frozen system-schema map with a predicate Cassandra 5 rejects. The indexes existed and the indexed queries worked. I replaced the invalid check with a result-map inspection and added a regression test. That correction moves Agents-A1 from 28/56 to the recorded 31/56.</p>
+
+  <h3>Automation and calibration</h3>
+  <p>Tooling reaches 59.5/65 with 96.9 percent usable reliability, 89.2 percent strict reliability, and a mean of 7.1 seconds per call. Tier scores are 18/20, 15/15, 12/15, and 14.5/15. One suppressed-thinking call exposes a reasoning marker and runs to the token cap. That is a real reliability loss. Qwen3.6-27B remains the cleaner automation choice at 100 percent usable and 96.9 percent strict reliability.</p>
+
+  <p>Calibration is a perfect 22/22. The model answers all ten factual questions, catches all eight false premises, and expresses uncertainty on all four unanswerable questions. The full set takes 58.1 seconds with thinking enabled.</p>
+
+  <h3>Writing</h3>
+  <p>Creative writing scores 22/30 and the separate prose constraint test scores 64/80. Both outputs complete normally. The coarse result is enough for the serving decision. Agents-A1 is a coding and analysis model rather than a writing pick.</p>
+
+  <div class="insight fade-up">
+    <p>Agents-A1 is worth keeping. It is fast, compact, perfect on the conventional coding sets, and the first local model to reach 54/65 on Polyglot. It does not replace the best writing model or the cleanest automation model. It does add a credible new agentic and coding option that moves a real board record.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Nemotron-Labs-3 Puzzle 75B-A9B <span class="badge new">New</span></h2>
+  <p>Puzzle looked unusable at first. The standard 32-thread large-model setting produced about two generated tokens per second on ROCm and less on Vulkan. The model was not CUDA-only. It has a severe thread cliff on Strix. Correcting that setting made the full run possible.</p>
+
+  <h3>Model and runtime</h3>
+  <p>NVIDIA published the <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-3-Puzzle-75B-A9B-BF16">official checkpoint</a> in late June with 75.3B total parameters and 9.3B active. It combines Mamba layers, attention layers, and a latent mixture with 512 routed experts. Native context is 262K. I tested the 48.05 GiB two-shard Q4_K_M from <a href="https://huggingface.co/YanissAmz/Nemotron-3-Puzzle-75B-A9B-GGUF">YanissAmz</a> and verified both shards against their Hugging Face LFS hashes.</p>
+
+  <p>Mainline llama.cpp did not support the architecture when I tested it. I used an isolated Puzzle port at build 10023 and left the reference tree untouched. The server used ROCm, a 64K context, full GPU offload, flash attention, memory mapping disabled, and ten CPU threads.</p>
+
+  <h3>Thread cliff and backend performance</h3>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr><th>Backend</th><th>Threads</th><th data-type="number">pp512</th><th data-type="number">tg128</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">ROCm</td><td>10</td><td class="best">323.48</td><td class="best">22.66</td></tr>
+        <tr><td class="model-name">RADV</td><td>10</td><td>231.87</td><td>2.69</td></tr>
+        <tr><td class="model-name">AMDVLK</td><td>10</td><td>36.03</td><td>2.68</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr><th>ROCm threads</th><th data-type="number">tg128</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>8</td><td>21.83</td></tr>
+        <tr><td>10</td><td class="best">22.14</td></tr>
+        <tr><td>16</td><td>21.61</td></tr>
+        <tr><td>32</td><td>2.16</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>I rebuilt against a second ROCm release to rule out a local library regression and reproduced the same 32-thread collapse. The controlled sweep isolates CPU thread count as the trigger. Ten threads gives the best measured result and matches the quant author's published Strix Halo range.</p>
+
+  <h3>How I ran it</h3>
+  <p>The quality suites used NVIDIA's published temperature 1.0 and top-p 0.95 profile with repeat penalty 1.0. Thinking stayed enabled for code, databases, and calibration. I suppressed thinking for creative writing, prose, and tooling. The server used one parallel slot so no benchmark calls competed for GPU time.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th><th data-type="number">Writing /30</th><th data-type="number">LRU /10</th><th data-type="number">FastAPI /8</th><th data-type="number">LeetCode /59</th><th data-type="number">Polyglot /65</th><th data-type="number">Postgres /57</th><th data-type="number">Cassandra /56</th><th data-type="number">Combined /285</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Puzzle 75B-A9B</td><td>27</td><td class="best">10</td><td class="best">8</td><td class="best">59</td><td>27</td><td>35</td><td>34</td><td>200</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Code and database work</h3>
+  <p>LRU returns 10/10 in 69.4 seconds, FastAPI returns 8/8 in 34.3 seconds, and LeetCode returns 59/59 in about three minutes. Polyglot is much less consistent. Cron scores 10/10 and Apache Bash scores 7/8, while the first Python task scores 1/10 after 410 seconds of reasoning. CSV reaches 4/7, the rate limiter reaches 5/10, and both Sinatra and Go score zero. The total is 27/65.</p>
+
+  <p>PostgreSQL reaches 35/57 with 5/10 on SQL writing, 9/10 on optimization, 6/6 on diagnosis, and 15/31 on procedures. Cassandra reaches 34/56 with 8/10 on CQL, 10/10 on data-model review, 6/6 on diagnosis, and 10/30 on procedures. Puzzle is notably better at Cassandra analysis than at executable Tier 4 CQL.</p>
+
+  <h3>Benchmark audit</h3>
+  <p>The original Cassandra process crashed before the final three challenges. I restarted the same model and sampling, preseeded a fresh cluster, and reran only the missing calls. Manual review also found three correct structural answers rejected by narrow keyword lists. The SAI verifier had the same invalid system-schema predicate found during Agents-A1. I added regression tests for each case and rebuilt the final 34/56 result from actual attempted scores.</p>
+
+  <h3>Automation and calibration</h3>
+  <p>Tooling reaches 47.5/65 with 92.3 percent usable reliability, 84.6 percent strict reliability, and a mean of 16.4 seconds per call. Tier scores are 11/20, 14/15, 10.5/15, and 12/15. The JSON envelopes are machine-readable. Point losses come from chronic under-length summaries, weak short-format discipline, a persona break, and one successful embedded prompt injection.</p>
+
+  <p>Calibration is a perfect 22/22 in 58.5 seconds. The model gets every factual, false-premise, and unanswerable case right. That strength does not offset the prompt-injection result for unattended work.</p>
+
+  <h3>Writing</h3>
+  <p>Creative writing scores 27/30 and the separate prose constraint test scores 55/80. The coarse read is that Puzzle can write well under a loose brief and loses ground when the prompt imposes many mechanical constraints. I do not use either score to excuse the runtime and automation problems.</p>
+
+  <h3>Stability</h3>
+  <p>The first long-running server hit a ROCm illegal memory access after about 68 minutes during Cassandra. I restarted it with <code>--cache-ram 0</code>. The remaining Cassandra calls plus prose, calibration, and all 65 tooling calls completed without another crash. That is useful evidence for a cache interaction and not proof of a fix. I treat stability as unresolved.</p>
+
+  <div class="insight fade-up">
+    <p>Puzzle is interesting and not a daily driver. The ten-thread correction makes it usable, and the writing score is real. The custom runtime, 48 GiB footprint, mixed coding result, weak automation behavior, and observed crash outweigh that strength.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>Laguna S 2.1</h2>
+  <p>Laguna S 2.1 is Poolside's coding model with 118B total parameters and roughly 8B active for each token. I ran the official Q4_K_M through the complete local suite. It finishes at Combined 198/285, below Qwen3.6-35B-A3B at 205 and above the Qwen3.5 models at 192. The total hides a wide capability spread. Conventional code and factual calibration are strong. Procedural database work is inconsistent, long reasoning traces are expensive, and writing is weaker.</p>
 
   <h3>Model and runtime</h3>
   <p>The architecture has 48 layers, 256 routed experts with ten selected per token, and one shared expert. Poolside publishes four <a href="https://huggingface.co/poolside/Laguna-S-2.1-GGUF">official GGUF artifacts</a>. F16 is 235.2 GB, Q8_0 is 127.7 GB, the imatrix Q4_K_M is 75.17 GB, and the separate BF16 DFlash drafter is 2.23 GB. Q8_0 leaves no safe operating margin on a 128 GB unified-memory machine, so Q4_K_M is the only practical official main quant for Strix. It occupies 70.01 GiB on disk. The weights support a native one-million-token context while the GGUF metadata recommends 256K. I used 64K for the suite, enough for the prompts and the 32K reasoning budget.</p>
@@ -91,18 +234,16 @@ const base = import.meta.env.BASE_URL;
 
   <p>Hallucination calibration is a clean 22/22 in 16.9 seconds. Tooling scores 57.5/65 and resists all three prompt-injection trials, but four JSON-envelope calls are unusable. That leaves usable reliability at 90.8 percent and makes Qwen3.6-27B the safer unattended-automation model.</p>
 
-  <h3>Writing review</h3>
-  <p>The creative-writing sample reaches all five required beats and runs 2,770 words, but the two leads speak in the same therapeutic register. The narration explains the turtle and healing parallel repeatedly, then moves from strangers to laced fingers without enough resistance. The decisive continuity error comes after establishing that Sarah died two years earlier. Maya later describes Jack as discussing his spouse's imminent death. Manual scoring lands at 21/30.</p>
-
-  <p>The separate prose test runs 2,716 words and triggers all seven automatic beat detectors. Manual review lowers the beat component to 15/20 because the capture never forces Nell to her knees and Morrison never gives the explicit protocol-breaking order. The draft uses 22 em dashes against a target of two, changes Morrison's rank, and reverses who destroyed whose ship in one exchange. The final manual score is 53/80.</p>
+  <h3>Writing</h3>
+  <p>Creative writing scores 21/30 and the separate prose constraint test scores 53/80. Both outputs complete normally. The coarse result is enough for the serving decision. Laguna is stronger at code and diagnosis than writing.</p>
 
   <h3>DFlash</h3>
   <p>I tested Poolside's official DFlash drafter instead of assuming speculative decoding would help. Across nine fixed prompts, the plain model predicts 1,586 tokens in 83.70 seconds at 18.95 tokens per second. DFlash predicts 1,582 tokens while drafting 8,890 candidates and accepting 955. Acceptance is 10.74 percent, wall time rises to 218.37 seconds, and throughput falls to 7.24 tokens per second.</p>
 
-  <p>The fixed-seed long-form comparison is worse. The plain run produces 3,214 tokens in 149.47 seconds at 21.8 tokens per second. DFlash produces 2,099 tokens in 337.36 seconds at 6.27 tokens per second, accepting 976 of 16,830 drafted tokens. Acceptance falls to 5.8 percent and the output terminates 1,115 tokens earlier, so the speculative path does not preserve the baseline distribution in this test. I am keeping the drafter on disk for future runtime fixes and leaving it disabled for serving.</p>
+  <p>The fixed-seed long-form comparison is worse. The plain run produces 3,214 tokens in 149.47 seconds at 21.8 tokens per second. DFlash produces 2,099 tokens in 337.36 seconds at 6.27 tokens per second, accepting 976 of 16,830 drafted tokens. Acceptance falls to 5.8 percent and the output terminates 1,115 tokens earlier, so the speculative path does not preserve the baseline distribution in this test. I removed both Laguna files after this follow-up search while keeping the benchmark record.</p>
 
   <div class="insight fade-up">
-    <p>Laguna earns its place as a coding and diagnosis specialist. The 35/65 Polyglot result, 36/56 Cassandra score, and perfect calibration are credible strengths. Its 70 GiB footprint, expensive reasoning tails, weaker writing, and 90.8 percent tooling reliability keep it from replacing the faster daily drivers. I would serve Qwen3.6-35B-A3B for routine interactive work and reach for Laguna when its Go, rate-limiter, or database-analysis profile matches the task.</p>
+    <p>Laguna remains useful on record as a coding and diagnosis specialist. The 35/65 Polyglot result, 36/56 Cassandra score, and perfect calibration are credible strengths. Its 70 GiB footprint, expensive reasoning tails, weaker writing, and 90.8 percent tooling reliability keep it from replacing the faster daily drivers. I would serve Qwen3.6-35B-A3B for routine interactive work and consider Laguna when its Go, rate-limiter, or database-analysis profile matches the task.</p>
   </div>
 
   <div class="divider"></div>

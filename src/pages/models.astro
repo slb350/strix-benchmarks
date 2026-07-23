@@ -6,7 +6,7 @@ const base = import.meta.env.BASE_URL;
 <BaseLayout title="Models" activePage="models" description="Consolidated LLM benchmark results across performance, creative writing, and coding on AMD Strix Halo gfx1151">
   <div class="page-header fade-up">
     <h1>Model Comparison</h1>
-    <p class="description">Every fully tested model on this hardware, sorted however you like. Click any column header to sort. Performance numbers from llama-bench (pp512/tg128, ngl=999, batch=2048, threads=32, FA=1). Quality scores from automated test suites and human evaluation. Partial results from earlier evaluations are listed separately below.</p>
+    <p class="description">Every fully tested model on this hardware, sorted however you like. Click any column header to sort. Performance numbers come from llama-bench with pp512, tg128, full GPU offload, batch 2048, and flash attention. The standard thread count is 32. Puzzle is the measured exception at 10 threads. Quality scores come from automated test suites and human evaluation. Partial results from earlier evaluations are listed separately below.</p>
   </div>
 
   <h2>Performance</h2>
@@ -131,6 +131,15 @@ const base = import.meta.env.BASE_URL;
           <td>53.2</td>
           <td class="group-start">725</td>
           <td>52.5</td>
+        </tr>
+        <tr>
+          <td class="model-name">Agents-A1 <span class="badge new">New</span></td>
+          <td>Official Q8_0</td>
+          <td>34.37 GiB</td>
+          <td class="group-start">1010.49</td>
+          <td>53.79</td>
+          <td class="group-start">723.54</td>
+          <td>53.48</td>
         </tr>
         <tr>
           <td class="model-name">Qwen3.5-35B-A3B</td>
@@ -286,7 +295,16 @@ const base = import.meta.env.BASE_URL;
           <td>11.9</td>
         </tr>
         <tr>
-          <td class="model-name">Laguna S 2.1 <span class="badge new">New</span></td>
+          <td class="model-name">Puzzle 75B-A9B <span class="badge new">New</span></td>
+          <td>YanissAmz Q4_K_M</td>
+          <td>48.05 GiB</td>
+          <td class="group-start">231.87</td>
+          <td>2.69</td>
+          <td class="group-start">36.03</td>
+          <td>2.68</td>
+        </tr>
+        <tr>
+          <td class="model-name">Laguna S 2.1</td>
           <td>Poolside Q4_K_M</td>
           <td>70.01 GiB</td>
           <td class="group-start">263</td>
@@ -373,11 +391,23 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start best">10</td>
           <td class="best">8</td>
           <td class="best">59</td>
-          <td class="best">48</td>
+          <td>48</td>
           <td class="group-start">46</td>
           <td>28</td>
           <td class="group-start best">61</td>
           <td class="group-start">227</td>
+        </tr>
+        <tr>
+          <td class="model-name">Agents-A1 <span class="badge new">New</span></td>
+          <td class="group-start">22</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td class="best">59</td>
+          <td class="best">54</td>
+          <td class="group-start">40</td>
+          <td>31</td>
+          <td class="group-start">59.5</td>
+          <td class="group-start">224</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-12B</td>
@@ -440,7 +470,19 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">205</td>
         </tr>
         <tr>
-          <td class="model-name">Laguna S 2.1 <span class="badge new">New</span></td>
+          <td class="model-name">Puzzle 75B-A9B <span class="badge new">New</span></td>
+          <td class="group-start">27</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td class="best">59</td>
+          <td>27</td>
+          <td class="group-start">35</td>
+          <td>34</td>
+          <td class="group-start">47.5</td>
+          <td class="group-start">200</td>
+        </tr>
+        <tr>
+          <td class="model-name">Laguna S 2.1</td>
           <td class="group-start">21</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -772,12 +814,14 @@ const base = import.meta.env.BASE_URL;
   <h2>Key Findings</h2>
   <ul class="findings fade-up">
     <li>RADV dominates prompt processing across all model families (50-280% faster than AMDVLK on pp). Token generation is typically tied between drivers since it's bandwidth-bound. AMDVLK only wins on GPT-OSS-120B pp (661 vs 596 RADV).</li>
-    <li>Kimi-Linear-48B was the early polyglot leader at 22/65 before the server-based runs moved the board. Ornith now leads at 48, Gemma-4-31B reaches 44, and Laguna reaches 35. Kimi remains notable for a perfect Go rule engine and 72 t/s generation at 28 GiB.</li>
+    <li>Kimi-Linear-48B was the early Polyglot leader at 22/65 before the server-based runs moved the board. Agents-A1 now leads at 54, Ornith reaches 48, and Gemma-4-31B reaches 44. Kimi remains notable for a perfect Go rule engine and 72 tokens per second at 28 GiB.</li>
     <li>Devstral-Small-2 punches above its weight. A 24B dense coding model hitting 29/57 Postgres and 31/56 Cassandra while scoring 10/10 LRU and 59/59 LeetCode. The 15 t/s generation speed hurts but the quality-per-parameter is impressive.</li>
     <li>Nemotron-3-Nano collapses without thinking mode. 0/57 Postgres, 0/56 Cassandra, 0/59 LeetCode. The Mamba-2 hybrid architecture appears to need reasoning tokens enabled to produce structured output. Fast (1106 pp, 68 tg) but unusable for coding or database tasks with no-think.</li>
     <li>Magistral-Small has the highest Cassandra score (35/56) of any non-Gemma model, beating Devstral (31) and Kimi (24). But it scores 0/10 LRU, 12/57 Postgres, and leaked its reasoning scaffold into the creative-writing test output. A specialist, not a generalist.</li>
     <li>GLM-4.7-Flash can't code. 0/10 LRU, 0/8 FastAPI, 16/59 LeetCode (extraction failures), 0/65 polyglot. But it handles database work (23/57 PG, 27/56 Cass) and generates at 73 t/s. A fast model with a very narrow skill set.</li>
-    <li>Laguna S 2.1 is Poolside's 118B mixture of experts with roughly 8B active parameters. I tested the official Q4_K_M on Poolside's llama.cpp fork because upstream support has not landed. Combined 198/285 puts it between Qwen3.6-35B-A3B and the Qwen3.5 models. The Combined run uses thinking for code and database work, then suppresses it for writing. It is much better at code and diagnosis than fiction. LRU, FastAPI, and LeetCode are perfect, Polyglot reaches 35/65, and the hallucination set is a perfect 22/22. Creative writing lands at 21/30 after manual review, with flattened character voices, rushed chemistry, heavy telling, and a continuity error. The separate prose sample scores 53/80 and misses two required beats. RADV is the practical backend at 263 pp and 21.63 tg. ROCm reaches 305 pp with flash attention disabled but falls to 19.08 tg. Poolside's official DFlash draft is a firm reject on Strix Halo. It accepts only 10.7 percent of drafts on the fixed prompt set and cuts generation from 18.95 to 7.24 tokens per second.</li>
+    <li>Laguna S 2.1 is Poolside's 118B mixture of experts with roughly 8B active parameters. I tested the official Q4_K_M on Poolside's llama.cpp fork because upstream support has not landed. Combined 198/285 puts it between Qwen3.6-35B-A3B and the Qwen3.5 models. The Combined run uses thinking for code and database work, then suppresses it for writing. It is much better at code and diagnosis than writing. LRU, FastAPI, and LeetCode are perfect, Polyglot reaches 35/65, and the hallucination set is a perfect 22/22. Creative writing scores 21/30 and the separate prose constraint test scores 53/80. RADV is the practical backend at 263 pp and 21.63 tg. ROCm reaches 305 pp with flash attention disabled but falls to 19.08 tg. Poolside's official DFlash draft is a firm reject on Strix Halo. It accepts only 10.7 percent of drafts on the fixed prompt set and cuts generation from 18.95 to 7.24 tokens per second.</li>
+    <li>Agents-A1 is the result that moves the board. The official Q8_0 reaches 1010 pp and 53.79 tg on RADV, then scores 224/285 Combined. Its 54/65 Polyglot score is the new local record, six ahead of Ornith. Tooling reaches 59.5/65 at 96.9 percent usable reliability and 7.1 seconds per call. Writing remains mid-pack at 22/30, so I am keeping it for agentic and coding work rather than fiction.</li>
+    <li>Puzzle 75B-A9B has a severe Strix thread cliff. ROCm reaches 22.66 tg at ten threads and only 2.16 at thirty-two. Combined reaches 200/285 with a strong 27/30 writing sample, 34/56 Cassandra, and a perfect 22/22 calibration run. The trade is weak 47.5/65 tooling, one successful prompt injection, a custom llama.cpp port, and one observed ROCm crash after a long server run.</li>
     <li>Ornith-1.0-35B is DeepReinforce's agentic-coding RL fine-tune of Qwen3.5-35B-A3B, and it is the strongest result that base has produced on this board. Combined 227/285 puts it second overall behind Gemma-4-31B at 238, clearing its own base by 35 points and the other agentic tune Nex-N2-mini by 44. I ran it thinking-on, its native reasoning mode, the same way I ran Nex, so the 44-point gap reads cleanly as what the reinforcement training bought. The headline is polyglot, where 48/65 is the best local score on the board, four ahead of Gemma-4-31B. It got there by solving two challenges nothing local had cracked, the cron matcher at 10/10 and the sliding-window rate limiter at 9/10, with a perfect Go rule engine alongside. Only the Ruby Sinatra webhook stays at zero, where it writes real code with real logic bugs. Cassandra is the soft spot at 28/56, almost all of it in Tier 4 procedural CQL, the same syntax failures the Nex tune had. It also returned a perfect 22/22 on the hallucination calibration set, matching the base rather than beating it, and a board-topping 77/80 on the prose constraint test where it held first-person present tense with no stray colons, semicolons, or dashes. I added a --think flag to the bench harness to drive its always-on reasoning properly, and ran the suite at a 32k token budget so the long reasoning trace had room to finish before the answer.</li>
     <li>MiniMax-M2.5 went from 0/10 coding to 10/10 after switching to Unsloth's UD-Q3_K_XL quant and their recommended sampling params (temp 1.0, top_p 0.95, min_p 0.01, top_k 40). At 94 GiB it's the largest model on disk, but 185/285 Combined puts it 6th overall. Perfect 10/10 on both PostgreSQL T2 optimization and Cassandra T2 anti-pattern detection. AMDVLK is its best backend at 32 t/s (vs 22 on RADV).</li>
     <li>MiniMax-M2.7 is the 229B successor with an UD-IQ4_XS quant that squeezes into 101 GiB. Writing improved to 28/30 and all coding benchmarks max out (10/10 LRU, 59/59 LeetCode, 8/8 FastAPI). The model has an unusual no-think quirk. Its M2.5 predecessor required a custom Jinja template to suppress thinking. M2.7 reverses this entirely. The standard --reasoning-budget 0 flag works, but the custom template causes the model to reason inline in plain text without ever producing code. Combined 179/285 puts it just behind M2.5 at 185. PostgreSQL T2 optimization and T3 diagnosis are both perfect (9/10 and 6/6). Cassandra T4 procedural challenges benefit from leaving thinking on (7/30 vs 2/30 without). RADV is the right backend here, unlike M2.5 which preferred AMDVLK.</li>
@@ -787,8 +831,8 @@ const base = import.meta.env.BASE_URL;
     <li>Mistral-Medium-3.5-128B lands Combined 207/285 and writes 30/30, but coding needs the model's high-effort reasoning interface. Default no-reasoning LRU scored 2/10, while <code>reasoning_effort: high</code> raised it to 7/10 with a different expiry-map bug. ROCm is the right backend for prompt processing, and token generation stays around 3 t/s across all backends because the 125B dense workload is memory-bandwidth-bound.</li>
     <li>Nemotron-3-Nano-Omni-30B-A3B-Reasoning adds multimodal training but does not improve the text-only writing score. Combined 148/285 puts it below the working field, and task-specific sampling is required. Instruct-mode params raise LRU from 0/10 to 8/10 but lower polyglot from 6/65 to 2/65, while FastAPI and Cassandra T4 still fail on endpoint design and CQL syntax.</li>
     <li>Sampling params transform quality results. Unsloth-recommended params (presence_penalty 1.5, top_k 20, thinking mode via chat-template-kwargs) made the difference between 0/10 and 10/10 on several models.</li>
-    <li>The Sinatra webhook remains the only unsolved polyglot challenge. Ornith solves the cron matcher at 10/10 and reaches 9/10 on the FastAPI rate limiter. Laguna takes the rate limiter to 10/10 while earning partial credit on cron.</li>
-    <li>Gemma 4 still leads both database benchmarks. Dense 31B tops the tracked PostgreSQL and Cassandra scores, while the 26B MoE follows closely. Ornith reaches 46/57 on PostgreSQL and Laguna reaches 36/56 on Cassandra, so strong non-Gemma challengers now clear the old 35-point boundary.</li>
+    <li>The Sinatra webhook remains the only unsolved Polyglot challenge. Agents-A1 solves every other challenge almost completely, with 10/10 on cron, the rate limiter, and Go plus 7/8 on Apache Bash.</li>
+    <li>Gemma 4 still leads both database benchmarks. Dense 31B tops the tracked PostgreSQL and Cassandra scores, while the 26B MoE follows closely. Agents-A1 reaches 40/57 on PostgreSQL and Puzzle reaches 34/56 on Cassandra.</li>
     <li>Mistral-Small-4-119B is the first Mistral mixture of experts on the board, 119B total with 6B active. At RADV it runs 363 pp and 40 tg, A6B-class generation for a 119B model and far quicker than the dense Mistral-Medium-3.5 at 3 tg. Combined 174/285 rests on strong pure coding (10/10 LRU, 59/59 LeetCode, 24/65 polyglot) against a mid-pack 21/30 on creative writing. Reasoning is binary, either none or high, and high is token-hungry. The first LRU run scored 0/10 because the reasoning trace filled the entire 4096-token budget before any code reached the response, so the suite runs at --max-tokens 20480. The creative-writing output ends with an assistant sign-off offering to revise the story, which the scorecard treats as a deduction.</li>
     <li>Nex-N2-mini is an agentic fine-tune of Qwen3.5-35B-A3B that tracks its base closely. Combined 183/285 sits 9 points under the 192 the base records. Writing, LRU, FastAPI, and polyglot match cell for cell. Postgres climbs 6 to 38/57, but Cassandra drops 9 to 29/56 on Tier 4 CQL syntax errors, and LeetCode loses the heap-merge problem. The agentic training only really shows in the one column the base never ran, automation reliability, where it scores 57/65 at 98.5% usable across the 65 calls with a perfect 100% on the JSON-envelope tier. I left thinking on for the whole suite because the server used the model's own template, so these numbers reflect its native reasoning mode rather than a suppressed one. The disk quant is s-batman's Q8_0 at 34.4 GiB, the best documented of the community GGUFs since no Unsloth build exists.</li>
     <li>The Cassandra JSON extractor now parses with strict=False, so anti-pattern answers that pretty-print multi-line CQL inside a JSON string value still count. Models often write a CREATE TABLE across several lines with literal newlines, which strict JSON rejects even when the answer is correct. The change raised Mistral-Small-4 Tier 2 from 5/10 to 7/10. Cassandra scores recorded before 2026-06-05 predate it and may understate any model that emitted the same multi-line JSON.</li>
