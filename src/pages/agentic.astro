@@ -25,13 +25,13 @@ const base = import.meta.env.BASE_URL;
 
   <h2>What scaffolded mode showed</h2>
   <div class="card fade-up">
-    <p>Every model cleared all five phases scaffolded, including the solver. A 4B-active mixture-of-experts model built a working breadth-first search with deadlock pruning, found valid solutions on the graded levels, and correctly reported that a cornered box was unsolvable. The dense 31B did it in 188 seconds. Even the 12B got there. Given a clean base for each phase, the algorithm ladder didn't separate these models at all.</p>
-    <p>I designed phase 5 to be the wall, where local models would break and a frontier model would pull ahead. Every capable model cleared it instead, because they have all seen breadth-first search a thousand times. The difficulty lived somewhere I didn't plan it.</p>
+    <p>All six models in the original matrix cleared all five phases scaffolded, including the solver. A 4B-active mixture-of-experts model built a working breadth-first search with deadlock pruning, found valid solutions on the graded levels, and correctly reported that a cornered box was unsolvable. The dense 31B did it in 188 seconds. Even the 12B got there. Given a clean base for each phase, the algorithm ladder did not separate the original field.</p>
+    <p>Agents-A1 became the first exception in a later follow-up. It cleared the first four phases, then passed three of four solver cases. Its deadlock rule treated a box between two opposite walls as cornered and incorrectly rejected a solvable corridor level. Phase 5 still looked easier than I expected, but scaffolded capability no longer saturates across every tested model.</p>
   </div>
 
   <h2>What cumulative mode showed</h2>
   <div class="card fade-up">
-    <p>Building the whole game in one session, extending its own code, is where the models came apart. The grid below is one run of each at temperature 1.0, and it cleanly splits the strong models from the weak ones. The fine ordering among the strong three turned out to be noise once I repeated the run, but the gap between the top and the bottom is real. A clean pass means the phase passed inside the time budget. A timeout means the model churned past the cap, usually stuck in its own buggy code. A wrong-code fail means the model declared the phase done and the code was incorrect.</p>
+    <p>Building the whole game in one session, extending its own code, is where the models came apart. The original six rows below are one run of each at temperature 1.0. The later Agents-A1 row uses InternScience's published profile. The fine ordering among the strong three turned out to be noise once I repeated the run, but the gap between the top and the bottom is real. A clean pass means the phase passed inside the time budget. A timeout means the model churned past the cap, usually stuck in its own buggy code. A wrong-code fail means the model declared the phase done and the code was incorrect.</p>
     <table>
       <thead>
         <tr><th>Model</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>Cumulative result</th></tr>
@@ -41,6 +41,7 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">Gemma-4-31B QAT</td><td>pass</td><td>pass</td><td>slow</td><td>pass</td><td>pass</td><td>clean, one slow phase</td></tr>
         <tr><td class="model-name">Qwen3.6-27B</td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>missed the solver</td></tr>
         <tr><td class="model-name">gpt-5.5</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>pass</td><td>missed P4</td></tr>
+        <tr><td class="model-name">Agents-A1</td><td>pass</td><td>pass</td><td>timeout</td><td>pass</td><td>wrong</td><td>P4 ceiling, heavy churn</td></tr>
         <tr><td class="model-name">Gemma-4-26B-A4B</td><td>pass</td><td>stuck</td><td>slow</td><td>slow</td><td>slow</td><td>capable but thrashes</td></tr>
         <tr><td class="model-name">Gemma-4-12B</td><td>pass</td><td>wrong</td><td>pass</td><td>stuck</td><td>wrong</td><td>real wall at P2</td></tr>
       </tbody>
@@ -69,17 +70,34 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">Gemma-4-31B</td><td>1 of 3</td><td>P4, P5</td></tr>
       </tbody>
     </table>
-    <p>Every miss across all nine trials landed on P4 or P5, the precision phase and the solver. Phases 1 through 3 never failed once. So among the strong models a single agentic run is a coin flip on two phases, and you can't rank them from one sample. With only three trials I won't split gpt-5.5 from the 31B too finely, but Qwen staying clean every time is a signal a single run can't give, and the structural findings hold regardless. Scaffolded capability saturates, and cumulative coherence is what separates the strong models from the 26B and the 12B. The fine ranking inside the top tier does not survive a second trial. I later ran the QAT quant through the same three trials for the same reason, and the precision-phase stall that made it look messy in the first pass never came back. It cleared the full build in two of three runs. One more model whose single run lied.</p>
+    <p>Every miss across all nine trials landed on P4 or P5, the precision phase and the solver. Phases 1 through 3 never failed once. So among the strong models a single agentic run is a coin flip on two phases, and you can't rank them from one sample. With only three trials I won't split gpt-5.5 from the 31B too finely, but Qwen staying clean every time is a signal a single run can't give, and the structural findings hold regardless. The original scaffolded field saturated, while cumulative coherence separated the strong models from the 26B and the 12B. The fine ranking inside the top tier does not survive a second trial. I later ran the QAT quant through the same three trials for the same reason, and the precision-phase stall that made it look messy in the first pass never came back. It cleared the full build in two of three runs. One more model whose single run lied.</p>
+  </div>
+
+  <h2>Agents-A1 follow-up</h2>
+  <div class="card fade-up">
+    <p>I ran InternScience's official Agents-A1 Q8_0 after it set a new local Polyglot record on the single-shot suite. The server used mainline llama.cpp, RADV, a 64K context, the model's native template, target-only decoding, and InternScience's published sampling profile. Tool calls were structurally clean. The weakness was stopping discipline. It kept inventing extra test boards long after the requested behavior worked, and two cumulative phases consumed the full ten-minute agent cap.</p>
+    <table>
+      <thead>
+        <tr><th>Mode</th><th>Phase result</th><th data-type="number">Wall time</th><th data-type="number">Turns</th><th data-type="number">Tool calls</th><th>P5 score</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Scaffolded</td><td>pass, pass, pass, pass, fail</td><td>23m 48s</td><td>166</td><td>160</td><td>3 of 4</td></tr>
+        <tr><td class="model-name">Cumulative</td><td>pass, pass, pass, pass, fail</td><td>29m 24s</td><td>188</td><td>182</td><td>1 of 4</td></tr>
+      </tbody>
+    </table>
+    <p>The scaffolded solver over-pruned one valid level. The cumulative failure was sharper. Its final edit added a parameter to the deadlock helper without updating the caller. The trivial board won before reaching that call, while every nontrivial search crashed. The full two-mode run took 53 minutes and 12 seconds across 354 turns and 342 tool calls.</p>
+    <p>Agents-A1 stops at phase 4 in both modes, so it does not enter the three-trial top-tier comparison. It remains excellent on Polyglot and good on the automation reliability suite. This benchmark gives me no reason to replace Qwen3.6-27B for long coding-agent sessions.</p>
   </div>
 
   <h2>MTP under an agentic load</h2>
   <div class="card fade-up">
-    <p>Every local model here ran with Multi-Token Prediction on, the speculative decoding that this hardware leans on hard. The Gemma 4 models use a separate drafter file. Qwen3.6-27B uses the native version baked into the model. I wanted to know whether MTP holds up when the workload is a long agentic loop rather than a single generation, and it does. Qwen's native MTP ran the whole benchmark with no timeouts and no thrashing, mid-pack on speed, behind the 31B's separate-drafter setup but well ahead of the smaller and quantized Gemmas. Both styles of MTP are fine for driving an agent, though the separate-drafter 31B was a little faster here.</p>
+    <p>Every local model in the original matrix ran with Multi-Token Prediction on, the speculative decoding that this hardware leans on hard. The Gemma 4 models use a separate drafter file. Qwen3.6-27B uses the native version baked into the model. I wanted to know whether MTP holds up when the workload is a long agentic loop rather than a single generation, and it does. Qwen's native MTP ran the whole benchmark with no timeouts and no thrashing, mid-pack on speed, behind the 31B's separate-drafter setup but well ahead of the smaller and quantized Gemmas. Both styles of MTP are fine for driving an agent, though the separate-drafter 31B was a little faster here.</p>
+    <p>The Agents-A1 follow-up used normal target-only decoding, so its wall time is not an MTP comparison. Its inefficiency came from agent behavior visible in the transcript, repeated self-tests and long reasoning after the implementation already worked.</p>
     <p>Qwen3.6-27B was the most consistent agent in the set, clean through every cumulative phase in all three of its trials, ahead of both gpt-5.5 and the 31B on repeats. It did that with reasoning suppressed to match the Gemma family, so this is its instruct-mode floor, not its ceiling. A reasoning-on rerun is the obvious next step.</p>
   </div>
 
   <h2>Coherence over capability</h2>
   <div class="card fade-up">
-    <p>A single-shot score hides all of this. The strong dense models kept their code coherent across a dozen tool calls and five accreting phases, the mixture-of-experts model burned turns thrashing, and at 12B the failure mode was wrong code the model believed was finished. None of that shows up when you score one prompt in isolation.</p>
+    <p>A single-shot score hides all of this. The strong dense models kept their code coherent across dozens of tool calls and five accreting phases. Agents-A1 set the best local Polyglot score, then burned 342 tool calls and stopped at phase 4 here. At 12B the failure mode was wrong code the model believed was finished. None of that shows up when you score one prompt in isolation.</p>
   </div>
 </BaseLayout>

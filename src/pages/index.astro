@@ -83,6 +83,9 @@ const base = import.meta.env.BASE_URL;
 
   <p>Calibration is a perfect 22/22. The model answers all ten factual questions, catches all eight false premises, and expresses uncertainty on all four unanswerable questions. The full set takes 58.1 seconds with thinking enabled.</p>
 
+  <h3>Agentic Sokoban</h3>
+  <p>The multi-turn result is weaker than the single-shot coding scores. Agents-A1 clears phases 1 through 4 in both scaffolded and cumulative modes, then fails the solver phase in both. Scaffolded P5 passes three of four cases. Cumulative P5 passes one of four after a last-second helper-signature regression, and both cumulative P3 and P5 consume the full ten-minute cap. The complete two-mode run takes 53 minutes and 12 seconds across 354 turns and 342 tool calls. It stops at a phase-4 ceiling and does not qualify for the three-trial top tier. Qwen3.6-27B remains my coding-agent pick.</p>
+
   <h3>Writing</h3>
   <p>Creative writing scores 22/30 and the separate prose constraint test scores 64/80. Both outputs complete normally. The coarse result is enough for the serving decision. Agents-A1 is a coding and analysis model rather than a writing pick.</p>
 
@@ -164,6 +167,8 @@ const base = import.meta.env.BASE_URL;
 
   <h3>Stability</h3>
   <p>The first long-running server hit a ROCm illegal memory access after about 68 minutes during Cassandra. I restarted it with <code>--cache-ram 0</code>. The remaining Cassandra calls plus prose, calibration, and all 65 tooling calls completed without another crash. That is useful evidence for a cache interaction and not proof of a fix. I treat stability as unresolved.</p>
+
+  <p>After preserving the full results, I removed the 48.05 GiB model and permanently emptied Strix's trash on July 22. I retained the isolated runtime tree and every benchmark artifact for reproducibility.</p>
 
   <div class="insight fade-up">
     <p>Puzzle is interesting and not a daily driver. The ten-thread correction makes it usable, and the writing score is real. The custom runtime, 48 GiB footprint, mixed coding result, weak automation behavior, and observed crash outweigh that strength.</p>
@@ -289,7 +294,7 @@ const base = import.meta.env.BASE_URL;
   <div class="divider"></div>
 
   <h2>Agentic coding <span class="badge new">New</span></h2>
-  <p>Every other benchmark here is single-shot. I wanted to know something a single prompt can't tell me, whether a model can actually drive a coding agent through a long chain of tool calls. So I had <a href={`${base}agentic/`}>pi build a terminal Sokoban game</a> phase by phase, five accreting phases, scored two ways, across six models including gpt-5.5 as the frontier line. The result surprised me. The hard algorithm I built as the wall, a Sokoban solver, was the easy part. Every model wrote a working search. What separated them was keeping their own growing code coherent across the whole build. The first pass put the local Gemma-4-31B ahead of gpt-5.5, so I ran the top three models three times each, and the ranking came apart. The most consistent agent was the local Qwen3.6-27B, clean in every trial, while the 31B's flawless run turned out to be one draw of three. The <a href={`${base}agentic/`}>full writeup</a> covers the harness, the multi-tool-calling setup, MTP under an agentic load, and why a single agentic run can't rank the top models.</p>
+  <p>Every other benchmark here is single-shot. I wanted to know something a single prompt can't tell me, whether a model can actually drive a coding agent through a long chain of tool calls. So I had <a href={`${base}agentic/`}>pi build a terminal Sokoban game</a> phase by phase, five accreting phases, scored two ways, across seven models including gpt-5.5 as the frontier line. The original six all wrote a working scaffolded solver. Agents-A1 later became the first exception with three of four solver cases. What separated the models was keeping their own growing code coherent across the whole build. The first pass put the local Gemma-4-31B ahead of gpt-5.5, so I ran the top three models three times each, and the ranking came apart. The most consistent agent was the local Qwen3.6-27B, clean in every trial, while the 31B's flawless run turned out to be one draw of three. Agents-A1 stops at phase 4 in both modes after a 53-minute run. The <a href={`${base}agentic/`}>full writeup</a> covers the harness, the multi-tool-calling setup, MTP under an agentic load, and why a single agentic run can't rank the top models.</p>
 
   <div class="divider"></div>
 
