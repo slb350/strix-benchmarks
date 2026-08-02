@@ -31,19 +31,20 @@ const base = import.meta.env.BASE_URL;
 
   <h2>What cumulative mode showed</h2>
   <div class="card fade-up">
-    <p>Building the whole game in one session, extending its own code, is where the models came apart. The original six rows below are one run of each at temperature 1.0. The later Agents-A1 row uses InternScience's published profile. The fine ordering among the strong three turned out to be noise once I repeated the run, but the gap between the top and the bottom is real. A clean pass means the phase passed inside the time budget. A timeout means the model churned past the cap, usually stuck in its own buggy code. A wrong-code fail means the model declared the phase done and the code was incorrect.</p>
+    <p>Building the whole game in one session, extending its own code, is where the models came apart. The original six rows below are one run of each at temperature 1.0. The later Agents-A1 row uses InternScience's published profile. The fine ordering among the strong three turned out to be noise once I repeated the run, but the gap between the top and the bottom is real. A clean pass means the phase passed inside the time budget. A timeout means the model churned past the cap, usually stuck in its own buggy code. A wrong-code fail means the model declared the phase done and the code was incorrect. The phase cap column matters more than it looks. Every row ran at 600 seconds per phase except DeepSeek-V4-Flash, which generates at 12 tokens per second and needed 2400 to be measured on its coding rather than its throughput. It still burned the full cap on two of its ten phases, and at the standard 600 it would have stopped at phase 3 in both modes. A ceiling reached on a 4x budget is not the same result as the same ceiling reached inside the normal one.</p>
     <table>
       <thead>
-        <tr><th>Model</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>Cumulative result</th></tr>
+        <tr><th>Model</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>Phase cap</th><th>Cumulative result</th></tr>
       </thead>
       <tbody>
-        <tr><td class="model-name">Gemma-4-31B</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">all clean</td></tr>
-        <tr><td class="model-name">Gemma-4-31B QAT</td><td>pass</td><td>pass</td><td>slow</td><td>pass</td><td>pass</td><td>clean, one slow phase</td></tr>
-        <tr><td class="model-name">Qwen3.6-27B</td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>missed the solver</td></tr>
-        <tr><td class="model-name">gpt-5.5</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>pass</td><td>missed P4</td></tr>
-        <tr><td class="model-name">Agents-A1</td><td>pass</td><td>pass</td><td>timeout</td><td>pass</td><td>wrong</td><td>P4 ceiling, heavy churn</td></tr>
-        <tr><td class="model-name">Gemma-4-26B-A4B</td><td>pass</td><td>stuck</td><td>slow</td><td>slow</td><td>slow</td><td>capable but thrashes</td></tr>
-        <tr><td class="model-name">Gemma-4-12B</td><td>pass</td><td>wrong</td><td>pass</td><td>stuck</td><td>wrong</td><td>real wall at P2</td></tr>
+        <tr><td class="model-name">Gemma-4-31B</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">pass</td><td class="best">600s</td><td class="best">all clean</td></tr>
+        <tr><td class="model-name">Gemma-4-31B QAT</td><td>pass</td><td>pass</td><td>slow</td><td>pass</td><td>pass</td><td>600s</td><td>clean, one slow phase</td></tr>
+        <tr><td class="model-name">DeepSeek-V4-Flash-0731 <span class="badge new">New</span></td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>2400s</td><td>P5 only on a 4x budget</td></tr>
+        <tr><td class="model-name">Qwen3.6-27B</td><td>pass</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>600s</td><td>missed the solver</td></tr>
+        <tr><td class="model-name">gpt-5.5</td><td>pass</td><td>pass</td><td>pass</td><td>wrong</td><td>pass</td><td>600s</td><td>missed P4</td></tr>
+        <tr><td class="model-name">Agents-A1</td><td>pass</td><td>pass</td><td>timeout</td><td>pass</td><td>wrong</td><td>600s</td><td>P4 ceiling, heavy churn</td></tr>
+        <tr><td class="model-name">Gemma-4-26B-A4B</td><td>pass</td><td>stuck</td><td>slow</td><td>slow</td><td>slow</td><td>600s</td><td>capable but thrashes</td></tr>
+        <tr><td class="model-name">Gemma-4-12B</td><td>pass</td><td>wrong</td><td>pass</td><td>stuck</td><td>wrong</td><td>600s</td><td>real wall at P2</td></tr>
       </tbody>
     </table>
     <p>In this run the dense Gemma-4-31B built the entire game cumulatively with zero stumbles. It extended every feature from its own code, movement through solver, without needing a reset. Its QAT sibling came within one slow phase of the same result. That looked like a clean win for the 31B until I ran it again.</p>

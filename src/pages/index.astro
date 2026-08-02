@@ -28,8 +28,26 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Agents-A1 <span class="badge new">New</span></h2>
-  <p>Agents-A1 is the clear result from my latest Hugging Face search. InternScience published the checkpoint in late June and updated it in mid July. I ran the official Q8_0 through every local suite. It finishes at Combined 224/285, behind Gemma-4-31B and Ornith, and ahead of Gemma-4-12B. More importantly, it sets a new local Polyglot record at 54/65 while generating at almost 54 tokens per second.</p>
+  <h2>DeepSeek-V4-Flash-0731 <span class="badge new">New</span></h2>
+  <p>This is the strongest single-shot coder I have measured on this hardware and also the most awkward model I have run on it. DeepSeek published a 284B mixture of experts with roughly 13B active per token, and Unsloth's UD-IQ3_XXS quant occupies 97.05 GiB. It finishes at Combined 246/285, the top of my board, ahead of Gemma-4-31B at 238. Polyglot 63/65 and Cassandra 43/56 are both board bests, and LRU, FastAPI, LeetCode and the hallucination calibration set are all perfect. Then I tried to use it as an agent, and the picture changed.</p>
+
+  <h3>Why the 3-bit quant</h3>
+  <p>The experts ship natively at FP4, so a 2-bit build drops below native expert precision while 3-bit stays close to it. Every option from 1-bit through IQ3_XXS fits in 128 GB and everything above it does not, so the only real decision was whether to save about 7 GiB by dropping to 2-bit. That trade is not worth taking on a model whose experts are already FP4. One quirk worth knowing for anyone sizing these files, the Hugging Face API reports the first shard as null rather than 5 MB, so summing the listing comes out short.</p>
+
+  <h3>The speed problem</h3>
+  <p>I measured 114.7 prompt processing and 12.4 generation on RADV. That is poor for a model with 13B active parameters, and the cause is missing kernels rather than memory pressure. At load the server disables the Lightning Indexer, which is DeepSeek's sparse attention path, along with three fused hash-clustering operations, because Vulkan implements none of them. Cutting context from 65536 to 40960 cleared most of the swap and moved prompt processing only from 111 to 114, which rules memory out as the limiter. ROCm is not available either, since that build predates the architecture. There is one more trap worth knowing. The server picks four slots by default, which quadruples the key value cache and pushes the box straight into swap, so it needs an explicit single slot.</p>
+
+  <h3>Agentic work is where it comes apart</h3>
+  <p>On the five-phase Sokoban build it reaches a phase 5 ceiling in both scaffolded and cumulative modes, clearing all ten phases against deterministic verifiers. That reads well until you look at the budget. I raised the per-phase cap from 600 seconds to 2400 so the benchmark would measure coding rather than tokens per second, and it still consumed the full cap on two of the ten phases. At the standard 600 second cap it would have stopped at phase 3 in both modes. Gemma-4-31B reaches the same phase 5 ceiling inside the default budget at a sixth of the disk footprint. The whole run took two and a half hours against 53 minutes for Agents-A1.</p>
+
+  <h3>It found two broken benchmarks</h3>
+  <p>Chasing its low Ruby and FastAPI scores turned up harness bugs rather than model failures. The Sinatra challenge had never scored a point in 104 recorded runs, which I had been reading as difficulty. Sinatra 4.1 added host authorization that answers 403 to the test client before any route code runs, and underneath that the result parser only understood minitest 4 wording. The FastAPI rate limiter skipped underscore-prefixed names when resetting module state, so a model that named its store with a leading underscore leaked rate limit counts between tests. Both are fixed and ten models were rescored from stored submissions. Details are on the <a href={`${base}models/`}>models page</a>.</p>
+
+  <h3>Verdict</h3>
+  <p>Exceptional coder, large and clunky on this box. It owns the single-shot coding board and it is the only model here that has produced both a flawless Sinatra webhook and a correct sliding-window rate limiter. As a working agent it buys nothing that Gemma-4-31B does not already do faster in 16 GiB. It goes to the coldstore array as the reference for what this hardware can reach, while Gemma-4-31B and Ornith stay on NVMe for actual work.</p>
+
+  <h2>Agents-A1</h2>
+  <p>Agents-A1 is the clear result from my latest Hugging Face search. InternScience published the checkpoint in late June and updated it in mid July. I ran the official Q8_0 through every local suite. It finishes at Combined 224/285, behind Gemma-4-31B and Ornith, and ahead of Gemma-4-12B. It held the local Polyglot record at 54/65 until the Ruby challenge was repaired, and it generates at almost 54 tokens per second.</p>
 
   <h3>Model and runtime</h3>
   <p><a href="https://huggingface.co/InternScience/Agents-A1">Agents-A1</a> uses the Qwen3.5 hybrid mixture architecture with 35B total parameters and roughly 3B active for each token. The text stack has 40 layers, 256 routed experts with eight selected per token, one shared expert, and a 262K context window. The <a href="https://huggingface.co/InternScience/Agents-A1-Q8_0-GGUF">official Q8_0 GGUF</a> occupies 34.37 GiB. I verified the downloaded file against its Hugging Face LFS hash before loading it.</p>
