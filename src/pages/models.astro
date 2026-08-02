@@ -387,12 +387,12 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">23</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
-          <td class="best">59</td>
-          <td class="best">59</td>
+          <td class="best">63</td>
+          <td class="best">63</td>
           <td class="group-start">40</td>
           <td class="best">43</td>
           <td class="group-start">53.5</td>
-          <td class="group-start best">242</td>
+          <td class="group-start best">246</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-31B</td>
@@ -496,11 +496,11 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start best">10</td>
           <td class="best">8</td>
           <td class="best">59</td>
-          <td>27</td>
+          <td>31</td>
           <td class="group-start">35</td>
           <td>34</td>
           <td class="group-start">47.5</td>
-          <td class="group-start">200</td>
+          <td class="group-start">204</td>
         </tr>
         <tr>
           <td class="model-name">Laguna S 2.1</td>
@@ -592,11 +592,11 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start best">10</td>
           <td class="best">8</td>
           <td class="best">59</td>
-          <td class="best">14</td>
+          <td class="best">22</td>
           <td class="group-start">40</td>
           <td>31</td>
           <td class="group-start">-</td>
-          <td class="group-start">182</td>
+          <td class="group-start">190</td>
         </tr>
         <tr>
           <td class="model-name">MiniMax-M2.7</td>
@@ -748,11 +748,11 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">4</td>
           <td>4</td>
           <td class="best">59</td>
-          <td>6</td>
+          <td>10</td>
           <td class="group-start">26</td>
           <td>24</td>
           <td class="group-start">-</td>
-          <td class="group-start">141</td>
+          <td class="group-start">145</td>
         </tr>
         <tr>
           <td class="model-name">Nemotron-Cascade-2-30B-A3B</td>
@@ -796,11 +796,11 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">0</td>
           <td class="best">8</td>
           <td>30</td>
-          <td>2</td>
+          <td>9</td>
           <td class="group-start">12</td>
           <td>35</td>
           <td class="group-start">-</td>
-          <td class="group-start">107</td>
+          <td class="group-start">114</td>
         </tr>
         <tr>
           <td class="model-name">Granite-4.1-3B</td>
@@ -834,10 +834,10 @@ const base = import.meta.env.BASE_URL;
 
   <h2>Key Findings</h2>
   <ul class="findings fade-up">
-    <li>The Ruby polyglot challenge was broken for its entire history and I have now fixed it, which moved six models. Across 104 recorded runs not one model had ever scored a single point on the Sinatra webhook task, which I had been reading as a hard challenge. It was two harness bugs stacked. Sinatra 4.1 added host authorization, which answers 403 and the text "Host not permitted" to the test client's default host header before any route code runs, so every request failed no matter what the model wrote. Underneath that, the result parser only recognised minitest 4 wording, "N tests", while minitest 5 emits "N runs", so Ruby results parsed as zero even when the suite passed. I confirmed both by writing a correct reference app to the published spec and watching it score zero. The fix lives in the verifier rather than the prompt, because the task is about webhook logic and not about Sinatra deployment hardening. I then re-ran every stored Ruby submission through the corrected harness without re-querying any model, and 29 runs gained points. This was not a uniform lift. DeepSeek-V4-Flash, Gemma-4-12B and Mistral-Small-4 had been writing perfect Ruby all along, Ornith was at 9 of 10, and Agents-A1 genuinely fails on its own merits. Polyglot has effectively been scored out of 55 while being presented as out of 65. Original result files are untouched and the correction is recorded alongside them.</li>
-    <li>DeepSeek-V4-Flash-0731 is a 284B mixture of experts with roughly 13B active, and it is the first model here I ran on its own published sampling card instead of the shared baseline. Unsloth publishes temp 1.0, top-p 1.0, and min-p 0.0, and I pinned top-k and both penalties to no-ops because llama.cpp otherwise applies its own top-k of 40 and quietly contradicts a top-p of 1.0. That makes Combined 242/285 a number I record rather than rank, so read its table position as indicative and not earned against the rest of the board. Cassandra 43/56 is a clear board best, four ahead of the previous 39, with Tier 2 perfect at 10/10 and Tier 3 perfect at 6/6. Polyglot 59/65 is also a board best, and it is what led me to find a broken challenge described further down. LRU, FastAPI, LeetCode, and the hallucination calibration set are all perfect. Creative writing lands at 23/30, where the dialogue is the strongest I have seen from a general model on this bench but attraction barely registers on the page and the prose keeps explaining its own best images. Speed is the practical problem. I measured 114.7 prompt processing and 12.4 generation on RADV, which is poor for a 13B-active model, and the cause is missing kernels rather than memory pressure. The server disables the Lightning Indexer and three fused hash-clustering ops at load because Vulkan has no implementation for them, and cutting context from 65536 to 40960 cleared most of the swap while moving prompt processing only from 111 to 114. ROCm is not available either, since my ROCm build predates the architecture. I picked the UD-IQ3_XXS quant at 97.05 GiB over every 2-bit option because the experts ship natively at FP4, so 2-bit drops below native expert precision while 3-bit stays close to it. The 2-bit build would have saved about 7 GiB and both fit in 128 GB regardless. The full suite took 282 minutes.</li>
+    <li>The Ruby polyglot challenge was broken for its entire history and I have now fixed it, which moved six models. Across 104 recorded runs not one model had ever scored a single point on the Sinatra webhook task, which I had been reading as a hard challenge. It was two harness bugs stacked. Sinatra 4.1 added host authorization, which answers 403 and the text "Host not permitted" to the test client's default host header before any route code runs, so every request failed no matter what the model wrote. Underneath that, the result parser only recognised minitest 4 wording, "N tests", while minitest 5 emits "N runs", so Ruby results parsed as zero even when the suite passed. I confirmed both by writing a correct reference app to the published spec and watching it score zero. The fix lives in the verifier rather than the prompt, because the task is about webhook logic and not about Sinatra deployment hardening. I then re-ran every stored Ruby submission through the corrected harness without re-querying any model, and 29 runs gained points. This was not a uniform lift. DeepSeek-V4-Flash, Gemma-4-12B and Mistral-Small-4 had been writing perfect Ruby all along, Ornith was at 9 of 10, and Agents-A1 genuinely fails on its own merits. A second challenge was wrong in the same spirit. The FastAPI rate limiter resets module state between tests, but its skip list ignored any variable whose name began with an underscore, which is the ordinary way to mark module-private state in Python. A model that called its store _store had rate limit counts leak between tests and lost four points for the naming choice alone. The identical implementation scores 5 with an underscore and 9 without. Nineteen more runs gained points once that was fixed. Between the two bugs, polyglot has been scored out of roughly 55 while presented as out of 65. Original result files are untouched and both corrections are recorded alongside them.</li>
+    <li>DeepSeek-V4-Flash-0731 is a 284B mixture of experts with roughly 13B active, and it takes the top combined score at 246/285. I ran it on Unsloth's published card, temp 1.0, top-p 1.0, and min-p 0.0, with top-k and both penalties pinned to no-ops because llama.cpp otherwise applies its own top-k of 40 and quietly contradicts a top-p of 1.0. That is the same practice I follow elsewhere, running each model on its documented settings where the vendor publishes them. Cassandra 43/56 is a clear board best, four ahead of the previous 39, with Tier 2 perfect at 10/10 and Tier 3 perfect at 6/6. Polyglot 63/65 is also a board best by a wide margin, and chasing it is what uncovered two broken challenges described further down. LRU, FastAPI, LeetCode, and the hallucination calibration set are all perfect. Creative writing lands at 23/30, where the dialogue is the strongest I have seen from a general model on this bench but attraction barely registers on the page and the prose keeps explaining its own best images. Speed is the practical problem. I measured 114.7 prompt processing and 12.4 generation on RADV, which is poor for a 13B-active model, and the cause is missing kernels rather than memory pressure. The server disables the Lightning Indexer and three fused hash-clustering ops at load because Vulkan has no implementation for them, and cutting context from 65536 to 40960 cleared most of the swap while moving prompt processing only from 111 to 114. ROCm is not available either, since my ROCm build predates the architecture. I picked the UD-IQ3_XXS quant at 97.05 GiB over every 2-bit option because the experts ship natively at FP4, so 2-bit drops below native expert precision while 3-bit stays close to it. The 2-bit build would have saved about 7 GiB and both fit in 128 GB regardless. The full suite took 282 minutes.</li>
     <li>RADV dominates prompt processing across all model families (50-280% faster than AMDVLK on pp). Token generation is typically tied between drivers since it's bandwidth-bound. AMDVLK only wins on GPT-OSS-120B pp (661 vs 596 RADV).</li>
-    <li>Kimi-Linear-48B was the early Polyglot leader at 22/65 before the server-based runs moved the board. DeepSeek-V4-Flash now leads at 59, Ornith reaches 57, Agents-A1 reaches 54, and Gemma-4-31B reaches 44. Kimi remains notable for a perfect Go rule engine and 72 tokens per second at 28 GiB.</li>
+    <li>Kimi-Linear-48B was the early Polyglot leader at 22/65 before the server-based runs moved the board. DeepSeek-V4-Flash now leads at 63, Ornith reaches 57, Agents-A1 reaches 54, and Gemma-4-31B reaches 44. Kimi remains notable for a perfect Go rule engine and 72 tokens per second at 28 GiB.</li>
     <li>Devstral-Small-2 punches above its weight. A 24B dense coding model hitting 29/57 Postgres and 31/56 Cassandra while scoring 10/10 LRU and 59/59 LeetCode. The 15 t/s generation speed hurts but the quality-per-parameter is impressive.</li>
     <li>Nemotron-3-Nano collapses without thinking mode. 0/57 Postgres, 0/56 Cassandra, 0/59 LeetCode. The Mamba-2 hybrid architecture appears to need reasoning tokens enabled to produce structured output. Fast (1106 pp, 68 tg) but unusable for coding or database tasks with no-think.</li>
     <li>Magistral-Small reaches 35/56 on Cassandra, behind only DeepSeek-V4-Flash at 43 and the Gemma models among everything tested, and ahead of Devstral (31) and Kimi (24). But it scores 0/10 LRU, 12/57 Postgres, and leaked its reasoning scaffold into the creative-writing test output. A specialist, not a generalist.</li>
