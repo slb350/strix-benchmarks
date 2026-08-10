@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b10015</div>
+      <div class="value">b10355</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,25 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>DeepSeek-V4-Flash-0731 <span class="badge new">New</span></h2>
+  <h2>Muse-Glimmer-30B <span class="badge new">New</span></h2>
+  <p>Meta Superintelligence Labs published Muse Glimmer on 9 August and I benched it the next day. It is a dense 30B with a perception encoder, Apache 2.0, and it finishes at Combined 240/285. That is third, behind DeepSeek-V4-Flash at 246 and Gemma-4-31B at 241. It takes two board bests on the way, Polyglot at 64/65 and Tooling at 64.5/65, which is the first time a 30B has led either.</p>
+
+  <h3>Two things worth checking before downloading</h3>
+  <p>The weights publish under an org called meta-models. It is unverified on Hugging Face and carries about 360 followers next to 14 thousand on facebook and 84 thousand on meta-llama, which reads like impersonation until you find the press coverage pointing at the same repo. It is simply a new org. The second check mattered more. The model card says the weights are compressed to approximately 4-bit precision, so I wanted to know whether running a Q8 quant would be wasted bandwidth for no quality gain. It is not. The base weights are bfloat16 at 59.6 GB with no quantization config, and the 4-bit figure describes deployment quants Meta derives from them. Their own GGUF repo ships only a 19.65 GB dynamic K-quant and a 16.76 GB variant, so the Unsloth Q8_K_XL I ran at 30.07 GiB is a finer quant than anything Meta publishes.</p>
+
+  <h3>It reviews far better than it authors</h3>
+  <p>The totals are less interesting than the shape. Across both database suites it scores a perfect 10/10 on review and optimization and a perfect 6/6 on diagnosis, then drops to 14/31 on Postgres procedural work and 13/30 on Cassandra, with flat zeros on row-level security, recursive cycle detection, and batch procedures with savepoints. Every index recommendation, every query rewrite, and every root cause across two engines is correct, and then it cannot write the procedures. It knows about databases better than it writes them, which is what I would expect from a model distilled for agentic tool use.</p>
+
+  <h3>Speed and the DFlash drafter</h3>
+  <p>Plain generation runs 7.25 tokens per second at 234 prompt processing on RADV. That is the memory bandwidth ceiling for 30 GiB of dense weights on this box rather than a fault. Meta ships a DFlash drafter with the model and it earns its keep, taking generation to 13.53 tokens per second for a 1.89x gain at 59 percent draft acceptance. That sits between the Apple figures and the RTX 5090 figure on Meta's own card. I was comfortable using it for a scored run because every draft type in llama.cpp emits its tokens from the target model's own sampler chain, so speculation changes throughput and not the output distribution.</p>
+
+  <h3>Writing is good and misses the assignment</h3>
+  <p>Creative writing lands at 26/30 with top of board sensory work and dialogue. What holds it back is unusual. The prose keeps naming its own beats, announcing a moment as the first spark instead of letting it read as one. The separate prose test splits the same way. It ranks ahead of DeepSeek-V4-Flash and Agents-A1 there, and takes the top spot on voice risk for a clipped fragmentary register it holds for a whole chapter. It comes last on genre fulfilment, because it renders the other lead as a tactical assessment and never lets attraction reach the page. It also wrote 1512 words against a 2400 to 3400 target.</p>
+
+  <h3>Verdict</h3>
+  <p>The strongest 30B I have run, and the first Meta release in a long time that I would keep on NVMe. It leads Polyglot and Tooling outright and it is close to the top of the board on a fraction of DeepSeek's footprint. The weakness is narrow and easy to plan around, so I would reach for it as a reviewing and tool-calling agent and reach for something else to write stored procedures.</p>
+
+  <h2>DeepSeek-V4-Flash-0731</h2>
   <p>This is the strongest single-shot coder I have measured on this hardware and also the most awkward model I have run on it. DeepSeek published a 284B mixture of experts with roughly 13B active per token, and Unsloth's UD-IQ3_XXS quant occupies 97.05 GiB. It finishes at Combined 246/285, the top of my board, ahead of Gemma-4-31B at 238. Polyglot 63/65 and Cassandra 43/56 are both board bests, and LRU, FastAPI, LeetCode and the hallucination calibration set are all perfect. Then I tried to use it as an agent, and the picture changed.</p>
 
   <h3>Why the 3-bit quant</h3>
