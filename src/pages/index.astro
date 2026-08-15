@@ -11,8 +11,8 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b10433</div>
-      <div class="label">llama.cpp build</div>
+      <div class="value">b10448</div>
+      <div class="label">latest llama.cpp build</div>
     </div>
     <div class="stat-card">
       <div class="value">3</div>
@@ -36,6 +36,10 @@ const base = import.meta.env.BASE_URL;
 
   <h3>The Q8 drafter earns its memory</h3>
   <p>Plain llama-bench reaches 236.7 prompt processing and 7.53 generation on RADV. The fixed nine-prompt server control measures what the MTP path actually changes. Generation rises from 5.10 to 11.87 tokens per second while wall time falls from 301 to 129 seconds. That is a 2.33x gain at 60.84 percent draft acceptance. I kept MTP n=3 on for every scored run because the target model still verifies every accepted token.</p>
+
+  <h3>The Q4 follow-up cuts the wait</h3>
+  <p>I reran the eight medium-reasoning technical suites on Unsloth's UD-Q4_K_XL quant with MTP n=3. The six leaderboard technical benchmarks score 221/255 against 219/255 for Q8. Tooling moves from 62.5 to 61.5 and calibration stays perfect at 22/22. Comparable elapsed time falls from 12 hours 58 minutes to 2 hours 32 minutes, a 5.1x reduction in this run.</p>
+  <p>The wall-time gap is much larger than the controlled speed difference. On the same nine prompts with MTP, Q4 generates 15.35 tokens per second against 11.87 for Q8, a 29.3 percent gain. Much of the remaining time came from shorter sampled reasoning. The Q4 Tooling run emitted 57,922 tokens against 88,374 for Q8. Q8 used build 10433 and Q4 used build 10448, so I read the two-point score difference as a quality match rather than a new ranking. Q8 remains the Combined reference because I have not run the Q4 through the nonthinking writing profile. The full comparison is on the <a href={`${base}quantization/`}>quantization page</a>.</p>
 
   <h3>Medium reasoning has a boundary</h3>
   <p>The canonical technical suite takes 14.83 hours. Medium reasoning is extremely capable on bounded tasks and expensive on every call. The creative writing request ran for 60 minutes, filled 53,931 context tokens, and never reached a final answer. I preserved that as a failed mode qualification. I then ran the two direct writing prompts with Qwen's official nonthinking profile, which finished each one in about five minutes.</p>

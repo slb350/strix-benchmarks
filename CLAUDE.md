@@ -44,6 +44,10 @@ offenders to watch for:
 - When promoting a new benchmark result to the top of
   `src/pages/index.astro`, move the prior lead down rather than duplicating full
   sections.
+- Keep detailed per-quant comparisons on `src/pages/quantization.astro`. The
+  homepage may carry a compact follow-up and the Models page should link to the
+  comparison. Do not replace a reference row or assign a Combined score until
+  the alternative quant has results for every component of that score.
 
 ## Tooling Column
 

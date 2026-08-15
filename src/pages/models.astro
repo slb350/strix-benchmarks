@@ -383,6 +383,7 @@ const base = import.meta.env.BASE_URL;
 
   <h2>Quality</h2>
   <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet. Scores here are for each model's reference quant. The 31B row keeps its Unsloth quant numbers as the stable reference. Google's QAT Q4_0 matches it within noise on quality and pulls ahead on tooling, artifact size, and speed. Its full-suite breakdown and the complete comparison are on the <a href={`${base}quantization/`}>quantization page</a>.</p>
+  <p>Qwen3.8-27B also keeps its official Q8_0 row as the reference. The Unsloth UD-Q4_K_XL follow-up scored 221/255 on the six medium-reasoning technical benchmarks against 219/255 for Q8, then completed all eight comparable technical suites in 2 hours 32 minutes instead of 12 hours 58 minutes. I have not assigned Q4 a Combined score because its nonthinking writing profile has not run. The benchmark table and the controlled speed comparison are on the <a href={`${base}quantization/`}>quantization page</a>.</p>
   <div class="table-wrap fade-up">
     <table class="sortable table-sticky">
       <thead>

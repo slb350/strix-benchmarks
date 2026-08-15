@@ -1,11 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Quantization Insights" activePage="quantization" description="AesSedai vs Unsloth quant comparison, MXFP4 notes, and Qwen3.5 architecture observations">
+<BaseLayout title="Quantization Insights" activePage="quantization" description="Qwen3.8 Q4 vs Q8 results, quant provider comparisons, and architecture-specific quantization findings">
   <div class="page-header fade-up">
     <h1>Quantization Insights</h1>
     <p class="description">Empirical findings on quantization methods, quant provider comparisons, and architecture-specific behaviors discovered through benchmarking.</p>
   </div>
+
+  <h2>Qwen3.8-27B Q4 vs Q8</h2>
+  <div class="card fade-up">
+    <p>I ran the same eight medium-reasoning technical suites on the official Q8_0 target and Unsloth's UD-Q4_K_XL quant, both with MTP n=3 at 64K context. Q4 matches the Q8 result within run variance. The six leaderboard technical benchmarks total 221/255 for Q4 and 219/255 for Q8. Including Tooling and calibration moves the comparison to 304.5/342 and 303.5/342.</p>
+    <p>The elapsed-time difference is much larger. Q4 completes the comparable set in 2 hours 32 minutes against 12 hours 58 minutes for Q8. Every scored driver used the published medium-reasoning profile with no generation cap. The numbers below are wall time for each complete benchmark, including reasoning and answer generation.</p>
+  </div>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr>
+          <th>Benchmark</th>
+          <th>Q8_0 score</th>
+          <th>UD-Q4_K_XL score</th>
+          <th>Q8_0 elapsed</th>
+          <th>UD-Q4_K_XL elapsed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">LRU coding /10</td><td>10</td><td>10</td><td>29m 09s</td><td class="best">1m 48s</td></tr>
+        <tr><td class="model-name">FastAPI /8</td><td>8</td><td>8</td><td>6m 03s</td><td class="best">43s</td></tr>
+        <tr><td class="model-name">LeetCode /59</td><td>59</td><td>59</td><td>6m 04s</td><td class="best">4m 12s</td></tr>
+        <tr><td class="model-name">Polyglot /65</td><td>65</td><td>65</td><td>2h 38m 27s</td><td class="best">18m 11s</td></tr>
+        <tr><td class="model-name">PostgreSQL /57</td><td class="best">42</td><td>41</td><td>3h 51m 10s</td><td class="best">31m 30s</td></tr>
+        <tr><td class="model-name">Cassandra /56</td><td>35</td><td class="best">38</td><td>4h 03m 47s</td><td class="best">43m 10s</td></tr>
+        <tr><td class="model-name">Leaderboard technical /255</td><td>219</td><td class="best">221</td><td></td><td></td></tr>
+        <tr><td class="model-name">Tooling /65</td><td class="best">62.5</td><td>61.5</td><td>1h 40m 44s</td><td class="best">51m 50s</td></tr>
+        <tr><td class="model-name">Calibration /22</td><td>22</td><td>22</td><td>3m 14s</td><td class="best">1m 04s</td></tr>
+        <tr><td class="model-name">All eight /342</td><td>303.5</td><td class="best">304.5</td><td>12h 58m 38s</td><td class="best">2h 32m 28s</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card fade-up">
+    <p>The scored run does not show a 5.1x backend speedup. A fixed nine-prompt server control puts Q4 with MTP at 15.35 generated tokens per second and Q8 with MTP at 11.87, which is a 29.3 percent gain. The Q4 Tooling run emitted 57,922 completion tokens against 88,374 for Q8. Shorter reasoning paths account for much of the total wall-time reduction.</p>
+    <p>The comparison is close enough on score that I would not rank the quants from the one-point difference across all eight suites. Cassandra gains three points on Q4 while PostgreSQL loses one and Tooling loses one. These are sampled runs. The Q8 artifacts used llama.cpp build 10433 and the Q4 artifacts used build 10448, so the executable also changed between them.</p>
+  </div>
+
+  <div class="insight success fade-up">
+    <p>For medium-reasoning technical work, UD-Q4_K_XL is the practical result from this pair. It preserves the measured quality and finished much sooner in this run. The official Q8_0 remains the all-round reference because the Q4 nonthinking writing profile has not run and therefore has no Combined /285 score.</p>
+  </div>
+
+  <div class="divider"></div>
 
   <h2>AesSedai vs Unsloth (Qwen3.5 MoE)</h2>
   <div class="card fade-up">
