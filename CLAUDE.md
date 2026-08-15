@@ -13,6 +13,14 @@ Personal benchmarking site. First person ("I") throughout, never "we".
 - This is because I author that genre separately. Site copy must describe
   benchmark output as capability testing, not model-assisted authorship.
 - Keep copy direct and factual. This is a data site, not a blog post.
+- Keep public writing-benchmark summaries at the evaluation level and
+  spoiler-safe. State scores, completion or length, and broad craft findings.
+  Do not retell plot beats, reveals, character backstories, setting facts, or
+  scenario-specific continuity errors.
+- Report artifact size, memory fit, and quant tradeoffs when they help readers
+  choose or run a model. Do not discuss personal model inventory, NVMe or
+  coldstore placement, local retention, or storage incident history unless
+  storage itself is the measured subject.
 
 ## AI Slop Prevention
 
