@@ -8,13 +8,17 @@ Personal benchmarking site. First person ("I") throughout, never "we".
 - No semicolons
 - No em dashes
 - Hyphens are fine (compound words, model names)
-- Never use the word "romance" on site. The writing benchmarks are "creative writing" or just "writing".
-- This is because I author that genre separately. Site copy must describe benchmark output as capability testing, not model-assisted authorship.
+- Never use the word "romance" on site. The writing benchmarks are "creative
+  writing" or just "writing".
+- This is because I author that genre separately. Site copy must describe
+  benchmark output as capability testing, not model-assisted authorship.
 - Keep copy direct and factual. This is a data site, not a blog post.
 
 ## AI Slop Prevention
 
-Read `tropes.md` before writing or editing any prose on this site. It catalogs the sentence-level patterns that make text read as AI-generated. The biggest offenders to watch for:
+Read `tropes.md` before writing or editing any prose on this site. It catalogs
+the sentence-level patterns that make text read as AI-generated. The biggest
+offenders to watch for:
 
 - Bold-first bullets (every list item or callout starting with a bolded phrase)
 - Em dash addiction (use periods, commas, or restructure instead)
@@ -27,9 +31,14 @@ Read `tropes.md` before writing or editing any prose on this site. It catalogs t
 
 ## Homepage Feature Notes
 
-- Current lead feature is the tooling benchmark announcement, with Gemma-4-12B as the second section, both using the `.badge.new` treatment.
-- When promoting a new benchmark result to the top of `src/pages/index.astro`, move the prior lead down rather than duplicating full sections.
+- Current lead feature is Qwen3.8-27B, with Muse-Glimmer-30B retained
+  immediately below it without the `.badge.new` treatment.
+- When promoting a new benchmark result to the top of
+  `src/pages/index.astro`, move the prior lead down rather than duplicating full
+  sections.
 
 ## Tooling Column
 
-- The models page Quality table has a Tooling /65 column. It is scored separately and excluded from Combined /285. Untested models show a hyphen. Update the hyphen to a score as models run the suite.
+- The models page Quality table has a Tooling /65 column. It is scored
+  separately and excluded from Combined /285. Untested models show a hyphen.
+  Update the hyphen to a score as models run the suite.

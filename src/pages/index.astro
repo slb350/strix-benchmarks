@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="stats-grid fade-up">
     <div class="stat-card">
-      <div class="value">b10355</div>
+      <div class="value">b10433</div>
       <div class="label">llama.cpp build</div>
     </div>
     <div class="stat-card">
@@ -28,7 +28,31 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Muse-Glimmer-30B <span class="badge new">New</span></h2>
+  <h2>Qwen3.8-27B <span class="badge new">New</span></h2>
+  <p><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen released Qwen3.8-27B</a> on 14 August and I started the benchmark that day. It is a dense 27.78B hybrid with three gated DeltaNet layers for every full attention layer and a native 262K context window. I ran the official 26.63 GiB Q8_0 target with the official 2.95 GiB Q8_0 MTP drafter at 64K context. Technical suites used medium reasoning and direct writing used the published nonthinking profile.</p>
+
+  <h3>The technical sweep</h3>
+  <p>Combined reaches 242/285, second behind DeepSeek-V4-Flash at 246 and one point ahead of the Gemma-4-31B QAT build I keep on disk. LRU is 10/10, FastAPI is 8/8, LeetCode is 59/59, and Polyglot is the first 65/65 on the board. PostgreSQL reaches 42/57 and Cassandra reaches 35/56. The supplemental runs add 62.5/65 on Tooling at 98.5 percent usable reliability and a perfect 22/22 calibration score.</p>
+
+  <h3>The Q8 drafter earns its memory</h3>
+  <p>Plain llama-bench reaches 236.7 prompt processing and 7.53 generation on RADV. The fixed nine-prompt server control measures what the MTP path actually changes. Generation rises from 5.10 to 11.87 tokens per second while wall time falls from 301 to 129 seconds. That is a 2.33x gain at 60.84 percent draft acceptance. I kept MTP n=3 on for every scored run because the target model still verifies every accepted token.</p>
+
+  <h3>Medium reasoning has a boundary</h3>
+  <p>The canonical technical suite takes 14.83 hours. Medium reasoning is extremely capable on bounded tasks and expensive on every call. The creative writing request ran for 60 minutes, filled 53,931 context tokens, and never reached a final answer. I preserved that as a failed mode qualification. I then ran the two direct writing prompts with Qwen's official nonthinking profile, which finished each one in about five minutes.</p>
+
+  <h3>The database shape is consistent</h3>
+  <p>Both database suites sweep review, optimization, and diagnosis. The losses gather in procedural authoring. PostgreSQL scores 21/31 in its final tier and Cassandra scores 15/30. This model reads plans and finds operational problems more reliably than it writes engine-specific procedures, policies, and triggers.</p>
+
+  <h3>Writing needs a craft pass</h3>
+  <p>The 2083-word creative writing sample scores 23/30. Its beach rescue opens with sharp banter and excellent sensory control. The paired grief disclosures arrive as matching case histories, repeated wall imagery explains the emotional turn, and the turtle hatchling moves in the wrong direction. The prose sample is mechanically exact at 2443 words with all seven beats, zero narrative colons, zero semicolons, and one dash. It ranks fourth in a five-sample comparison because the voice relies on safe fragments and familiar imagery. It also inserts men into an all-female setting.</p>
+
+  <h3>Two corrections stayed auditable</h3>
+  <p>The original Polyglot artifact read 64/65 because the Apache fixture expected the wrong status count. A reference implementation and regression test confirmed the model's answer, then the retained submission rescored to 65/65. The original calibration artifact read 21/22 because the matcher missed a typographic apostrophe in a correct answer. I kept companion rescore artifacts for both changes and did not alter the generated text.</p>
+
+  <h3>Verdict</h3>
+  <p>Qwen3.8-27B earns a permanent place on NVMe. I would use medium reasoning for difficult technical work and the official nonthinking profile for direct generation. MTP makes the dense Q8 practical enough for local use, while the writing results still need human revision for voice and specificity.</p>
+
+  <h2>Muse-Glimmer-30B</h2>
   <p>Meta Superintelligence Labs published Muse Glimmer on 9 August and I benched it the next day. It is a dense 30B with a perception encoder, Apache 2.0, and it finishes at Combined 240/285. That is third, behind DeepSeek-V4-Flash at 246 and Gemma-4-31B at 241. It takes two board bests on the way, Polyglot at 64/65 and Tooling at 64.5/65, which is the first time a 30B has led either.</p>
 
   <h3>Two things worth checking before downloading</h3>
@@ -1035,7 +1059,7 @@ const base = import.meta.env.BASE_URL;
         <tr><td class="model-name">Kernel</td><td>6.17.0-29-generic</td></tr>
         <tr><td class="model-name">Vulkan</td><td>1.4.321 (Mesa RADV 25.2.3 + AMDVLK 2025.Q2.1)</td></tr>
         <tr><td class="model-name">ROCm</td><td>TheRock 7.13.0a20260408 nightly</td></tr>
-        <tr><td class="model-name">llama.cpp</td><td>b9518 (Vulkan), b9172 (ROCm)</td></tr>
+        <tr><td class="model-name">llama.cpp</td><td>b10433 (Vulkan), b9172 (ROCm)</td></tr>
       </tbody>
     </table>
   </div>
@@ -1059,7 +1083,7 @@ const base = import.meta.env.BASE_URL;
   <h2>Explore results</h2>
   <div class="stats-grid fade-up">
     <a href={`${base}models/`} class="stat-card">
-      <div class="value">28+</div>
+      <div class="value">35+</div>
       <div class="label">Models compared</div>
     </a>
     <a href={`${base}quantization/`} class="stat-card">
