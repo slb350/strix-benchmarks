@@ -39,11 +39,14 @@ offenders to watch for:
 
 ## Homepage Feature Notes
 
-- Current lead feature is Qwen3.8-27B, with Muse-Glimmer-30B retained
-  immediately below it without the `.badge.new` treatment.
-- When promoting a new benchmark result to the top of
-  `src/pages/index.astro`, move the prior lead down rather than duplicating full
-  sections.
+- Treat `src/pages/index.astro` as a reverse-chronological benchmark news feed.
+  Every newly published model result or material follow-up goes at the top,
+  immediately below the hardware stats. Never insert a newer result beneath an
+  older feature.
+- Keep the previous lead directly below the new entry and remove its
+  `.badge.new` treatment. Only the current newest entry carries that badge.
+- Move existing sections rather than duplicating them when the feed order
+  changes.
 - Keep detailed per-quant comparisons on `src/pages/quantization.astro`. The
   homepage may carry a compact follow-up and the Models page should link to the
   comparison. Do not replace a reference row or assign a Combined score until

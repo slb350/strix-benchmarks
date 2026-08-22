@@ -28,7 +28,31 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Qwen3.8-27B <span class="badge new">New</span></h2>
+  <h2>Ornith 1.5 <span class="badge new">New</span></h2>
+  <p>Ornith AI released a dense <a href="https://huggingface.co/ornith-ai/Ornith-1.5-9B">9B model</a> and a sparse <a href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B">35B-A3B model</a>. I ran the verified official Q8_0 files through the full benchmark set at 64K context with thinking enabled. The 9B used its published precise-coding sampler for technical work and its separate general sampler for writing. The 35B used its published general sampler throughout.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr><th>Model</th><th data-type="number">Size</th><th data-type="number">pp512</th><th data-type="number">tg128</th><th data-type="number">Combined /285</th><th data-type="number">Full run</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Ornith-1.5-35B-A3B</td><td>35.20 GiB</td><td>804.19</td><td class="best">49.93</td><td class="best">226</td><td class="best">129.7 min</td></tr>
+        <tr><td class="model-name">Ornith-1.5-9B</td><td>8.87 GiB</td><td class="best">830.81</td><td>23.75</td><td>175</td><td>573.7 min</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The 35B is the useful model</h3>
+  <p>The 35B reaches 226/285 with 10/10 LRU, 8/8 FastAPI, 59/59 LeetCode, and 64/65 Polyglot. Tooling adds 62.5/65 with every call machine usable, and calibration is a perfect 22/22. Its sparse architecture generates at 49.93 tokens per second, more than twice the 23.75 from the dense 9B. Some correct coding answers still take several minutes, but every benchmark completes without filling the context window.</p>
+
+  <h3>The 9B loses its size advantage</h3>
+  <p>The 9B remains strong on bounded tasks at 10/10 LRU, 57/59 LeetCode, 59/65 Tooling, and 22/22 calibration. Longer work exposes poor stopping behavior. Polyglot falls to 24/65 and several Polyglot and database prompts consume most of the 64K context without returning a usable answer. Its technical run takes 558 minutes. Adding the separate writing run brings the complete evaluation to 573.7 minutes, more than four times the 35B total.</p>
+
+  <h3>Writing and verdict</h3>
+  <p>Creative writing reaches 22/30 on the 35B and 15/30 on the 9B. In the separate blind prose comparison, the 35B places second behind the human reference and the 9B places third. The 35B has steadier control, while the 9B has broader continuity and pacing problems. I would use the 35B for coding and automation workloads on Strix. The 9B saves storage but gives that advantage back in wall time on longer tasks. The complete score breakdown is on the <a href={`${base}models/`}>models page</a>.</p>
+
+  <h2>Qwen3.8-27B</h2>
   <p><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen released Qwen3.8-27B</a> on 14 August and I started the benchmark that day. It is a dense 27.78B hybrid with three gated DeltaNet layers for every full attention layer and a native 262K context window. I ran the official 26.63 GiB Q8_0 target with the official 2.95 GiB Q8_0 MTP drafter at 64K context. Technical suites used medium reasoning and direct writing used the published nonthinking profile.</p>
 
   <h3>The technical sweep</h3>
@@ -73,30 +97,6 @@ const base = import.meta.env.BASE_URL;
 
   <h3>Verdict</h3>
   <p>The strongest 30B I have run. It leads Polyglot and Tooling outright and it is close to the top of the board on a fraction of DeepSeek's footprint. The weakness is narrow and easy to plan around, so I would reach for it as a reviewing and tool-calling agent and reach for something else to write stored procedures.</p>
-
-  <h2>Ornith 1.5 <span class="badge new">New</span></h2>
-  <p>Ornith AI released a dense <a href="https://huggingface.co/ornith-ai/Ornith-1.5-9B">9B model</a> and a sparse <a href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B">35B-A3B model</a>. I ran the verified official Q8_0 files through the full benchmark set at 64K context with thinking enabled. The 9B used its published precise-coding sampler for technical work and its separate general sampler for writing. The 35B used its published general sampler throughout.</p>
-
-  <div class="table-wrap fade-up">
-    <table>
-      <thead>
-        <tr><th>Model</th><th data-type="number">Size</th><th data-type="number">pp512</th><th data-type="number">tg128</th><th data-type="number">Combined /285</th><th data-type="number">Full run</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="model-name">Ornith-1.5-35B-A3B</td><td>35.20 GiB</td><td>804.19</td><td class="best">49.93</td><td class="best">226</td><td class="best">129.7 min</td></tr>
-        <tr><td class="model-name">Ornith-1.5-9B</td><td>8.87 GiB</td><td class="best">830.81</td><td>23.75</td><td>175</td><td>573.7 min</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>The 35B is the useful model</h3>
-  <p>The 35B reaches 226/285 with 10/10 LRU, 8/8 FastAPI, 59/59 LeetCode, and 64/65 Polyglot. Tooling adds 62.5/65 with every call machine usable, and calibration is a perfect 22/22. Its sparse architecture generates at 49.93 tokens per second, more than twice the 23.75 from the dense 9B. Some correct coding answers still take several minutes, but every benchmark completes without filling the context window.</p>
-
-  <h3>The 9B loses its size advantage</h3>
-  <p>The 9B remains strong on bounded tasks at 10/10 LRU, 57/59 LeetCode, 59/65 Tooling, and 22/22 calibration. Longer work exposes poor stopping behavior. Polyglot falls to 24/65 and several Polyglot and database prompts consume most of the 64K context without returning a usable answer. Its technical run takes 558 minutes. Adding the separate writing run brings the complete evaluation to 573.7 minutes, more than four times the 35B total.</p>
-
-  <h3>Writing and verdict</h3>
-  <p>Creative writing reaches 22/30 on the 35B and 15/30 on the 9B. In the separate blind prose comparison, the 35B places second behind the human reference and the 9B places third. The 35B has steadier control, while the 9B has broader continuity and pacing problems. I would use the 35B for coding and automation workloads on Strix. The 9B saves storage but gives that advantage back in wall time on longer tasks. The complete score breakdown is on the <a href={`${base}models/`}>models page</a>.</p>
 
   <h2>DeepSeek-V4-Flash-0731</h2>
   <p>This is the strongest single-shot coder I have measured on this hardware and also the most awkward model I have run on it. DeepSeek published a 284B mixture of experts with roughly 13B active per token, and Unsloth's UD-IQ3_XXS quant occupies 97.05 GiB. It finishes at Combined 246/285, the top of my board, ahead of Gemma-4-31B at 238. Polyglot 63/65 and Cassandra 43/56 are both board bests, and LRU, FastAPI, LeetCode and the hallucination calibration set are all perfect. Then I tried to use it as an agent, and the picture changed.</p>
@@ -183,7 +183,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>Nemotron-Labs-3 Puzzle 75B-A9B <span class="badge new">New</span></h2>
+  <h2>Nemotron-Labs-3 Puzzle 75B-A9B</h2>
   <p>Puzzle looked unusable at first. The standard 32-thread large-model setting produced about two generated tokens per second on ROCm and less on Vulkan. The model was not CUDA-only. It has a severe thread cliff on Strix. Correcting that setting made the full run possible.</p>
 
   <h3>Model and runtime</h3>
@@ -381,12 +381,12 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>Agentic coding <span class="badge new">New</span></h2>
+  <h2>Agentic coding</h2>
   <p>Every other benchmark here is single-shot. I wanted to know something a single prompt can't tell me, whether a model can actually drive a coding agent through a long chain of tool calls. So I had <a href={`${base}agentic/`}>pi build a terminal Sokoban game</a> phase by phase, five accreting phases, scored two ways, across seven models including gpt-5.5 as the frontier line. The original six all wrote a working scaffolded solver. Agents-A1 later became the first exception with three of four solver cases. What separated the models was keeping their own growing code coherent across the whole build. The first pass put the local Gemma-4-31B ahead of gpt-5.5, so I ran the top three models three times each, and the ranking came apart. The most consistent agent was the local Qwen3.6-27B, clean in every trial, while the 31B's flawless run turned out to be one draw of three. Agents-A1 stops at phase 4 in both modes after a 53-minute run. The <a href={`${base}agentic/`}>full writeup</a> covers the harness, the multi-tool-calling setup, MTP under an agentic load, and why a single agentic run can't rank the top models.</p>
 
   <div class="divider"></div>
 
-  <h2>Gemma 4 MTP <span class="badge new">New</span></h2>
+  <h2>Gemma 4 MTP</h2>
   <p>Multi-Token Prediction landed for Gemma 4 in mainline llama.cpp on June 7 (PR #23398), and it works differently from the Qwen3.6 version I covered earlier. Qwen ships the draft head inside the main GGUF. Gemma 4 uses a separate assistant drafter file of about 0.45 GiB that you load alongside the model with <code>--model-draft assistant.gguf --spec-type draft-mtp</code>. The drafter shares the main model's KV cache. I added support for it to my launcher, tested drafters for all five Gemma 4 variants, and ran the numbers.</p>
 
   <p>The question that matters for speculative decoding is whether it costs anything. To answer it cleanly I ran the full tracked suite twice on the same build 9553, once against the plain 31B and once with the drafter at n=4, so the only variable between the two runs is MTP itself. The plain run reproduced my earlier tooling score and per-call latency almost exactly, which rules out build drift. The whole suite finished in 36 minutes with the drafter against 72 minutes without it, and the scores did not move.</p>
@@ -450,7 +450,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
-  <h2>Tooling benchmark <span class="badge new">New</span></h2>
+  <h2>Tooling benchmark</h2>
   <p>I added a tenth suite that answers a question the other nine do not. Most of my actual local model usage is unattended automation, scripts that summarize articles into strict JSON, sort transactions into fixed categories, and pull dates and amounts out of messy text. Those pipelines call a model dozens of times per run, parse the output with code, never retry, and silently drop anything that fails to parse. For that kind of work, peak quality matters less than whether call 47 of 65 comes back machine-readable.</p>
   <p>The tooling benchmark runs 19 challenges as 65 separate calls across four tiers. Strict JSON output against real pipeline prompts, extraction and classification with exact ground truth, plain-text format contracts, and a robustness tier covering prompt injection, deliberately altered facts, and refusals on harmless input. Every challenge runs multiple trials at temperature 0.7, and the headline numbers are reliability rates and per-call latency rather than a single best answer.</p>
   <p>Nine runs are on the board now. Ornith-1.0-35B holds the highest raw total at 61/65, but it ran thinking-on at 43 seconds per call, roughly eight times slower than anything else here, with strict parsing down at 87.7 percent, so the point total oversells it for unattended work. Among the models you would actually wire into a pipeline, Qwen3.6-27B leads at 60.5/65 with every one of its 65 calls machine-usable and 96.9 percent parsing with zero recovery. Google's day-zero Gemma-4-31B QAT Q4_0 sits second at 59.5, beating the Unsloth quant of the same model by five points at the same file size and posting the best strict parse rate measured so far at 98.5 percent. Gemma-4-26B-A4B at Q8_0 takes third at 59. Laguna S 2.1 joins at 57.5 with 90.8 percent usable output and a much slower 19.2 seconds per call. The QAT 26B sibling trades five points for half the footprint and the fastest pace on the bench at 4.7 seconds per call. The recurring point sink across every model is the same, summaries that run just short of a stated word minimum while still parsing cleanly, which is why the reliability column and the score column disagree.</p>
@@ -511,7 +511,7 @@ const base = import.meta.env.BASE_URL;
           <td>39</td>
         </tr>
         <tr>
-          <td class="model-name">Gemma-4-12B <span class="badge new">New</span></td>
+          <td class="model-name">Gemma-4-12B</td>
           <td>Dense (12B)</td>
           <td>13.6 GiB</td>
           <td>716</td>
