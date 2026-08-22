@@ -124,6 +124,15 @@ const base = import.meta.env.BASE_URL;
           <td>57.6</td>
         </tr>
         <tr>
+          <td class="model-name">Ornith-1.5-35B-A3B <span class="badge new">New</span></td>
+          <td>Official Q8_0</td>
+          <td>35.20 GiB</td>
+          <td class="group-start">804.19</td>
+          <td>49.93</td>
+          <td class="group-start missing">n/a</td>
+          <td class="missing">n/a</td>
+        </tr>
+        <tr>
           <td class="model-name">Ornith-1.0-35B</td>
           <td>Q8_0</td>
           <td>34.36 GiB</td>
@@ -167,6 +176,15 @@ const base = import.meta.env.BASE_URL;
           <td>35.7</td>
           <td class="group-start">289</td>
           <td>35.2</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ornith-1.5-9B <span class="badge new">New</span></td>
+          <td>Official Q8_0</td>
+          <td>8.87 GiB</td>
+          <td class="group-start">830.81</td>
+          <td>23.75</td>
+          <td class="group-start missing">n/a</td>
+          <td class="missing">n/a</td>
         </tr>
         <tr>
           <td class="model-name">Nemotron-Cascade-2-30B-A3B</td>
@@ -462,6 +480,18 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">236</td>
         </tr>
         <tr>
+          <td class="model-name">Ornith-1.5-35B-A3B <span class="badge new">New</span></td>
+          <td class="group-start">22</td>
+          <td class="group-start best">10</td>
+          <td class="best">8</td>
+          <td class="best">59</td>
+          <td>64</td>
+          <td class="group-start">32</td>
+          <td>31</td>
+          <td class="group-start">62.5</td>
+          <td class="group-start">226</td>
+        </tr>
+        <tr>
           <td class="model-name">Agents-A1 <span class="badge new">New</span></td>
           <td class="group-start">22</td>
           <td class="group-start best">10</td>
@@ -652,6 +682,18 @@ const base = import.meta.env.BASE_URL;
           <td>28</td>
           <td class="group-start">-</td>
           <td class="group-start">179</td>
+        </tr>
+        <tr>
+          <td class="model-name">Ornith-1.5-9B <span class="badge new">New</span></td>
+          <td class="group-start">15</td>
+          <td class="group-start best">10</td>
+          <td>7</td>
+          <td>57</td>
+          <td>24</td>
+          <td class="group-start">35</td>
+          <td>27</td>
+          <td class="group-start">59</td>
+          <td class="group-start">175</td>
         </tr>
         <tr>
           <td class="model-name">Gemma-4-E4B</td>
@@ -877,6 +919,8 @@ const base = import.meta.env.BASE_URL;
 
   <h2>Key Findings</h2>
   <ul class="findings fade-up">
+    <li>I prefer <a href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B">Ornith-1.5-35B-A3B</a> among the two new models. I tested the verified official 35.20 GiB Q8_0 with thinking enabled and the published sampler. It reaches 226/285 Combined with 10/10 LRU, 8/8 FastAPI, 59/59 LeetCode, and 64/65 Polyglot. Tooling adds 62.5/65 with every call machine usable, and calibration is 22/22. Database review and diagnosis are strong while procedural authoring remains weak. PostgreSQL reaches 32/57 and Cassandra reaches 31/56. RADV gives 804.19 prompt tokens per second and 49.93 generation tokens per second. The full suite takes 129.7 minutes. Several correct coding answers still run for four to twelve minutes, which makes the model more verbose than I want from a routine local assistant. Creative writing reaches 22/30. Its separate prose sample ranks second in a blind comparison against the 9B and a human reference, with better control than the smaller model but less character depth than the reference.</li>
+    <li><a href="https://huggingface.co/ornith-ai/Ornith-1.5-9B">Ornith-1.5-9B</a> reaches 175/285 Combined from the verified official 8.87 GiB Q8_0. I used its precise coding sampler for technical work and its separate general sampler for writing. Bounded tasks remain competitive at 10/10 LRU, 57/59 LeetCode, 59/65 Tooling, and 22/22 calibration. Longer tasks reveal poor stopping behavior. Polyglot falls to 24/65 and takes 170.9 minutes. Several Polyglot and database prompts fill most of the 64K context without producing a usable final answer. The technical suite takes 558 minutes even though generation runs at 23.75 tokens per second. Creative writing reaches 15/30, with broad continuity and pacing problems. The prose sample ranks third in the same blind comparison.</li>
     <li>I started Qwen3.8-27B on release day with the official 26.63 GiB Q8_0 target and 2.95 GiB Q8_0 MTP drafter. It finishes at 242/285 Combined, second behind DeepSeek-V4-Flash at 246 and one point ahead of Gemma-4-31B QAT at 241. LRU, FastAPI, LeetCode, and Polyglot are all perfect, with the first 65/65 Polyglot score on the board. PostgreSQL reaches 42/57 and Cassandra reaches 35/56. Both database runs sweep review, optimization, and diagnosis, then lose most of their points on procedural authoring. Tooling reaches 62.5/65 at 98.5 percent usable reliability and calibration reaches 22/22. Medium reasoning gives the technical work plenty of room, though the full suite takes 14.83 hours and the creative writing request reaches the 60 minute cap without a final answer. I retained that failed mode qualification and scored the official nonthinking run instead. It finishes 2083 words in 269 seconds for 23/30. Dialogue and sensory control are strong, while over-explanation, overly symmetrical character work, and a continuity miss cost points. The separate prose run finishes 2443 words in 312 seconds with all seven beats and exact mechanics. It ranks fourth in the five-sample comparison, held back by safe phrasing, familiar imagery, and a setting-consistency error. The fixed server control gives MTP a clean comparison. Generation rises from 5.10 to 11.87 tokens per second for a 2.33x gain at 60.84 percent acceptance. Two retained rescoring artifacts document the only score corrections. The Polyglot Apache fixture had the wrong expected status count, and the calibration matcher missed a typographic apostrophe. The generated answers were unchanged.</li>
     <li>Muse Glimmer 30B is the first Meta release I have benched since the Llama line went quiet, and it lands at 240/285 Combined the day after release. That puts it third, behind DeepSeek-V4-Flash at 246 and Gemma-4-31B QAT at 241, a strong showing for a dense 30B against a 284B mixture of experts. It takes two board bests on the way. Polyglot reaches 64/65, one ahead of DeepSeek, and Tooling reaches 64.5/65 with every call machine usable and the prompt injection resisted. The base weights are bfloat16 at 59.6 GB with no quantization config. Meta's own GGUF repo ships 19.65 GB and 16.76 GB variants, while the tested Unsloth Q8_K_XL is 30.07 GiB and preserves finer precision. Across both database benchmarks it scores a perfect 10/10 on review and optimization and a perfect 6/6 on diagnosis, then falls to 14/31 and 13/30 on procedural authoring. It understands databases better than it writes them. Creative writing reaches 26/30 with board-leading sensory work and dialogue, then loses points for labeling emotional beats instead of dramatizing them. The prose test ranks ahead of DeepSeek-V4-Flash and Agents-A1 and leads on voice risk, but it finishes last on genre fulfillment and stops at 1512 words against a 2400 to 3400 target. Plain generation runs 7.25 tokens per second at 234 prompt processing on RADV. Meta's DFlash drafter raises generation to 13.53 tokens per second for a 1.89x gain at 59 percent draft acceptance. The uncapped Tooling run remains comparable because the old ceiling never bound on an earlier row.</li>
     <li>The Ruby polyglot challenge was broken for its entire history and I have now fixed it, which moved six models. Across 104 recorded runs not one model had ever scored a single point on the Sinatra webhook task, which I had been reading as a hard challenge. It was two harness bugs stacked. Sinatra 4.1 added host authorization, which answers 403 and the text "Host not permitted" to the test client's default host header before any route code runs, so every request failed no matter what the model wrote. Underneath that, the result parser only recognised minitest 4 wording, "N tests", while minitest 5 emits "N runs", so Ruby results parsed as zero even when the suite passed. I confirmed both by writing a correct reference app to the published spec and watching it score zero. The fix lives in the verifier rather than the prompt, because the task is about webhook logic and not about Sinatra deployment hardening. I then re-ran every stored Ruby submission through the corrected harness without re-querying any model, and 29 runs gained points. This was not a uniform lift. DeepSeek-V4-Flash, Gemma-4-12B and Mistral-Small-4 had been writing perfect Ruby all along, Ornith was at 9 of 10, and Agents-A1 genuinely fails on its own merits. A second challenge was wrong in the same spirit. The FastAPI rate limiter resets module state between tests, but its skip list ignored any variable whose name began with an underscore, which is the ordinary way to mark module-private state in Python. A model that called its store _store had rate limit counts leak between tests and lost four points for the naming choice alone. The identical implementation scores 5 with an underscore and 9 without. Nineteen more runs gained points once that was fixed. Between the two bugs, polyglot has been scored out of roughly 55 while presented as out of 65. Original result files are untouched and both corrections are recorded alongside them.</li>
