@@ -74,6 +74,30 @@ const base = import.meta.env.BASE_URL;
   <h3>Verdict</h3>
   <p>The strongest 30B I have run. It leads Polyglot and Tooling outright and it is close to the top of the board on a fraction of DeepSeek's footprint. The weakness is narrow and easy to plan around, so I would reach for it as a reviewing and tool-calling agent and reach for something else to write stored procedures.</p>
 
+  <h2>Ornith 1.5 <span class="badge new">New</span></h2>
+  <p>Ornith AI released a dense <a href="https://huggingface.co/ornith-ai/Ornith-1.5-9B">9B model</a> and a sparse <a href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B">35B-A3B model</a>. I ran the verified official Q8_0 files through the full benchmark set at 64K context with thinking enabled. The 9B used its published precise-coding sampler for technical work and its separate general sampler for writing. The 35B used its published general sampler throughout.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead>
+        <tr><th>Model</th><th data-type="number">Size</th><th data-type="number">pp512</th><th data-type="number">tg128</th><th data-type="number">Combined /285</th><th data-type="number">Full run</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Ornith-1.5-35B-A3B</td><td>35.20 GiB</td><td>804.19</td><td class="best">49.93</td><td class="best">226</td><td class="best">129.7 min</td></tr>
+        <tr><td class="model-name">Ornith-1.5-9B</td><td>8.87 GiB</td><td class="best">830.81</td><td>23.75</td><td>175</td><td>573.7 min</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The 35B is the useful model</h3>
+  <p>The 35B reaches 226/285 with 10/10 LRU, 8/8 FastAPI, 59/59 LeetCode, and 64/65 Polyglot. Tooling adds 62.5/65 with every call machine usable, and calibration is a perfect 22/22. Its sparse architecture generates at 49.93 tokens per second, more than twice the 23.75 from the dense 9B. Some correct coding answers still take several minutes, but every benchmark completes without filling the context window.</p>
+
+  <h3>The 9B loses its size advantage</h3>
+  <p>The 9B remains strong on bounded tasks at 10/10 LRU, 57/59 LeetCode, 59/65 Tooling, and 22/22 calibration. Longer work exposes poor stopping behavior. Polyglot falls to 24/65 and several Polyglot and database prompts consume most of the 64K context without returning a usable answer. Its technical run takes 558 minutes. Adding the separate writing run brings the complete evaluation to 573.7 minutes, more than four times the 35B total.</p>
+
+  <h3>Writing and verdict</h3>
+  <p>Creative writing reaches 22/30 on the 35B and 15/30 on the 9B. In the separate blind prose comparison, the 35B places second behind the human reference and the 9B places third. The 35B has steadier control, while the 9B has broader continuity and pacing problems. I would use the 35B for coding and automation workloads on Strix. The 9B saves storage but gives that advantage back in wall time on longer tasks. The complete score breakdown is on the <a href={`${base}models/`}>models page</a>.</p>
+
   <h2>DeepSeek-V4-Flash-0731</h2>
   <p>This is the strongest single-shot coder I have measured on this hardware and also the most awkward model I have run on it. DeepSeek published a 284B mixture of experts with roughly 13B active per token, and Unsloth's UD-IQ3_XXS quant occupies 97.05 GiB. It finishes at Combined 246/285, the top of my board, ahead of Gemma-4-31B at 238. Polyglot 63/65 and Cassandra 43/56 are both board bests, and LRU, FastAPI, LeetCode and the hallucination calibration set are all perfect. Then I tried to use it as an agent, and the picture changed.</p>
 
