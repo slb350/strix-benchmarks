@@ -28,7 +28,26 @@ const base = import.meta.env.BASE_URL;
     </div>
   </div>
 
-  <h2>Ornith 1.5 <span class="badge new">New</span></h2>
+  <h2>Qwen3.8-Flash-Next <span class="badge new">New</span></h2>
+  <p>I finished all ten suites on <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> using IQ4_NL-PROJFIX and <a href="https://pwilkin.github.io/strix-halo/">pwilkin's Strix Halo stack</a>. The recorded total is 222/285 after 7 hours 37 minutes. That includes benchmark-side failures described below, so I am keeping this result separate from the main quality ranking. The scored run used 128K context, FP16 KV, MTP width 3, and the official xhigh technical and nonthinking writing profiles.</p>
+
+  <div class="table-wrap fade-up">
+    <table>
+      <thead><tr><th>Writing /30</th><th>LRU /10</th><th>FastAPI /8</th><th>LeetCode /59</th><th>Polyglot /65</th><th>Postgres /57</th><th>Cassandra /56</th><th>Recorded /285</th></tr></thead>
+      <tbody><tr><td>16</td><td>10</td><td>8</td><td>59</td><td>43</td><td>45</td><td>41</td><td>222</td></tr></tbody>
+    </table>
+  </div>
+
+  <p>Tooling adds 63/65 with every call machine usable, and calibration reaches 22/22. The two direct-writing samples finish in about two minutes each. My manual review finds fluent output with too much emotional explanation and inconsistent scene logic. The separate prose sample trails Qwen3.8-27B and Muse Glimmer in this comparison. These are individual samples under each model's own settings.</p>
+
+  <h3>Long context fits with FP16 KV</h3>
+  <p>The custom build keeps generation usable as the input grows. In a separate fresh-prompt throughput sweep, I measured 31.68 tokens per second at 128K allocation, 29.09 at 192K, and 28.49 at 256K. Time to first token rose from 131.5 to 221.0 to 320.7 seconds. The largest prompt contained 253,936 tokens and left at least 19.8 GiB of system memory available. These measurements exclude model loading and use fixed 512-token outputs. They establish throughput and memory fit, not quality across the full context window. This pinned build requires FP16 KV on its optimized path.</p>
+
+  <h3>What the recorded score can support</h3>
+  <p>The Polyglot run returned no extracted code for two tasks, including one that exhausted its context. The driver did not retain those raw responses, which limits the diagnosis. PostgreSQL rejected a concurrent index inside the verifier's transaction. Cassandra lost points to a disabled materialized-view feature and metadata queries rejected by the server. I have kept the original scores and fixed denominators. The <a href={`${base}models/#flash-next`}>model notes</a> separate these limitations from the measured results.</p>
+  <p>I would keep Flash-Next under consideration for agentic coding. <a href="https://artificialanalysis.ai/models/comparisons/qwen3-8-flash-next-vs-qwen3-8-27b">Artificial Analysis</a> places it ahead of 27B overall and on agentic tasks. My run gives me a fast long-context option, but does not establish a general quality advantage over 27B. A matched coding-agent comparison remains untested here.</p>
+
+  <h2>Ornith 1.5</h2>
   <p>Ornith AI released a dense <a href="https://huggingface.co/ornith-ai/Ornith-1.5-9B">9B model</a> and a sparse <a href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B">35B-A3B model</a>. I ran the verified official Q8_0 files through the full benchmark set at 64K context with thinking enabled. The 9B used its published precise-coding sampler for technical work and its separate general sampler for writing. The 35B used its published general sampler throughout.</p>
 
   <div class="table-wrap fade-up">

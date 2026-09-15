@@ -45,6 +45,11 @@ offenders to watch for:
   older feature.
 - Keep the previous lead directly below the new entry and remove its
   `.badge.new` treatment. Only the current newest entry carries that badge.
+- Retire obsolete New badges across the site when publishing a new lead.
+  The homepage lead is the only entry that carries the current New badge.
+- Keep completed runs with unresolved verifier limitations in a separate
+  recorded-results section. Preserve denominators and explain the limits
+  before assigning a ranked quality row.
 - Move existing sections rather than duplicating them when the feed order
   changes.
 - Keep detailed per-quant comparisons on `src/pages/quantization.astro`. The

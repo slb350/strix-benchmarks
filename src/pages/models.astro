@@ -124,7 +124,7 @@ const base = import.meta.env.BASE_URL;
           <td>57.6</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.5-35B-A3B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.5-35B-A3B</td>
           <td>Official Q8_0</td>
           <td>35.20 GiB</td>
           <td class="group-start">804.19</td>
@@ -142,7 +142,7 @@ const base = import.meta.env.BASE_URL;
           <td>52.5</td>
         </tr>
         <tr>
-          <td class="model-name">Agents-A1 <span class="badge new">New</span></td>
+          <td class="model-name">Agents-A1</td>
           <td>Official Q8_0</td>
           <td>34.37 GiB</td>
           <td class="group-start">1010.49</td>
@@ -178,7 +178,7 @@ const base = import.meta.env.BASE_URL;
           <td>35.2</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.5-9B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.5-9B</td>
           <td>Official Q8_0</td>
           <td>8.87 GiB</td>
           <td class="group-start">830.81</td>
@@ -313,7 +313,7 @@ const base = import.meta.env.BASE_URL;
           <td>11.9</td>
         </tr>
         <tr>
-          <td class="model-name">Puzzle 75B-A9B <span class="badge new">New</span></td>
+          <td class="model-name">Puzzle 75B-A9B</td>
           <td>YanissAmz Q4_K_M</td>
           <td>48.05 GiB</td>
           <td class="group-start">231.87</td>
@@ -358,7 +358,7 @@ const base = import.meta.env.BASE_URL;
           <td>32</td>
         </tr>
         <tr>
-          <td class="model-name">Qwen3.8-27B <span class="badge new">New</span></td>
+          <td class="model-name">Qwen3.8-27B</td>
           <td>Official Q8_0</td>
           <td>26.63 GiB</td>
           <td class="group-start">236.7</td>
@@ -399,6 +399,34 @@ const base = import.meta.env.BASE_URL;
 
   <div class="divider"></div>
 
+  <h2 id="flash-next">Flash-Next recorded result</h2>
+  <p>I completed Qwen3.8-Flash-Next IQ4_NL-PROJFIX on pwilkin's custom ROCm stack on 14 September 2026. All ten suites finished in 7 hours 37 minutes. The recorded Combined total is 222/285. I keep it outside the ranked quality table because the audit found verifier and evidence-retention limits. I have neither removed failed tests from the denominator nor awarded unverified replacement points.</p>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead><tr><th>Model and profile</th><th>Writing /30</th><th>LRU /10</th><th>FastAPI /8</th><th>LeetCode /59</th><th>Polyglot /65</th><th>Postgres /57</th><th>Cassandra /56</th><th>Recorded /285</th></tr></thead>
+      <tbody><tr><td>Flash-Next IQ4_NL, xhigh technical, nonthinking writing</td><td>16</td><td>10</td><td>8</td><td>59</td><td>43</td><td>45</td><td>41</td><td>222</td></tr></tbody>
+    </table>
+  </div>
+  <p>Tooling is 63/65 with 100 percent usable reliability and 96.9 percent strict reliability. Calibration is 22/22. Both are supplemental. The writing samples finish in 110.6 and 116.1 seconds. Manual review finds excessive explanation and weak consistency, with the separate prose sample behind Qwen3.8-27B and Muse Glimmer. I do not treat this single-sample comparison as a model ceiling.</p>
+  <p>The target weights occupy 93.16 GiB, with a separate 2.6 GiB MTP sidecar. The scored setup uses 131,072 context, FP16 K/V, one slot, batch and microbatch 16,384, MTP width 3, disabled RAM cache, and no context shifting. Technical generation uses temperature 1.0, top-p 0.95, and xhigh reasoning. Writing uses temperature 0.7, top-p 0.8, presence penalty 1.5, and thinking off. Both profiles use top-k 20, min-p 0, repetition penalty 1, unlimited generation, and a 3,600-second request timeout.</p>
+  <p>I pinned llama.cpp to d67d58836b4987fa9dbc03b3d87c95eae6ceaddf and the custom rocm-systems tree to 7dda3ac6cfe6bbe0b7f08c23a67cfa118d8641a1. The <a href="https://huggingface.co/ilintar/qwen3.8-flash-next-gguf-strix-halo/tree/ba5b0d696d6997d82fcc55ba3f8e6128db6e0311">model revision</a> is ba5b0d696d6997d82fcc55ba3f8e6128db6e0311. The performance table uses a separate reference runtime.</p>
+  <h3>Fresh-prompt context sweep</h3>
+  <div class="table-wrap fade-up">
+    <table>
+      <thead><tr><th>Context allocation</th><th>Input tokens</th><th>TTFT seconds</th><th>Prompt tokens/s</th><th>Generation tokens/s</th><th>Minimum available GiB</th></tr></thead>
+      <tbody>
+        <tr><td>128K</td><td>122,869</td><td>131.48</td><td>934.96</td><td>31.68</td><td>25.9</td></tr>
+        <tr><td>192K</td><td>188,400</td><td>220.97</td><td>852.93</td><td>29.09</td><td>23.4</td></tr>
+        <tr><td>256K</td><td>253,936</td><td>320.67</td><td>792.19</td><td>28.49</td><td>19.8</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Each context gets one fresh-server request at temperature zero with thinking off and 512 output tokens. TTFT measures request start to the first nonempty text event over loopback and excludes model loading. Generation rates cover decode after prefill. All input tokens were processed without prompt-cache reuse, and process swap stayed at zero. These are long-input measurements, separate from the pp512 and tg128 reference table. Q8 KV is unsupported on this pinned optimized path.</p>
+  <h3>Audit limits</h3>
+  <p>Polyglot scores 43/65. The log-parser and cron tasks score zero after no code was extracted. Server logs record 39,828 generated tokens for the former and 130,606 for the latter, which filled its context. The saved artifacts omit their raw responses, so I cannot distinguish every model failure from an extraction failure. A fresh draw would be a separate attempt.</p>
+  <p>PostgreSQL records 45/57. Its covering-index prompt does not prohibit CONCURRENTLY, but the verifier executes the answer inside a transaction and rejects that statement. Cassandra records 41/56. Its schema test loses three points when the verifier's metadata queries require filtering, and the five-point materialized-view task stops because that feature is disabled. A separate review answer fails the keyword matcher, with insufficient retained text to settle the semantic result. These scores include benchmark limitations and cannot support attributing every lost point to the model. Corrected scores require replaying retained submissions through repaired verifiers.</p>
+  <p>The run-owned server and database containers were removed after completion. The original results remain unchanged. My next useful comparison would exercise Flash-Next and 27B through the same coding agent, with repeated tasks and completion time alongside success rate.</p>
+
   <h2>Quality</h2>
   <p>The Tooling column is new and tracks automation reliability out of 65. It is scored separately and does not count toward the Combined total. Models marked with a hyphen have not run it yet. Scores here are for each model's reference quant. The 31B row keeps its Unsloth quant numbers as the stable reference. Google's QAT Q4_0 matches it within noise on quality and pulls ahead on tooling, artifact size, and speed. Its full-suite breakdown and the complete comparison are on the <a href={`${base}quantization/`}>quantization page</a>.</p>
   <p>Qwen3.8-27B also keeps its official Q8_0 row as the reference. The Unsloth UD-Q4_K_XL follow-up scored 221/255 on the six medium-reasoning technical benchmarks against 219/255 for Q8, then completed all eight comparable technical suites in 2 hours 32 minutes instead of 12 hours 58 minutes. I have not assigned Q4 a Combined score because its nonthinking writing profile has not run. The benchmark table and the controlled speed comparison are on the <a href={`${base}quantization/`}>quantization page</a>.</p>
@@ -420,7 +448,7 @@ const base = import.meta.env.BASE_URL;
       </thead>
       <tbody>
         <tr>
-          <td class="model-name">Qwen3.8-27B <span class="badge new">New</span></td>
+          <td class="model-name">Qwen3.8-27B</td>
           <td class="group-start">23</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -468,7 +496,7 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">238</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.0-35B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.0-35B</td>
           <td class="group-start">28</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -480,7 +508,7 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">236</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.5-35B-A3B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.5-35B-A3B</td>
           <td class="group-start">22</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -492,7 +520,7 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">226</td>
         </tr>
         <tr>
-          <td class="model-name">Agents-A1 <span class="badge new">New</span></td>
+          <td class="model-name">Agents-A1</td>
           <td class="group-start">22</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -564,7 +592,7 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">205</td>
         </tr>
         <tr>
-          <td class="model-name">Puzzle 75B-A9B <span class="badge new">New</span></td>
+          <td class="model-name">Puzzle 75B-A9B</td>
           <td class="group-start">27</td>
           <td class="group-start best">10</td>
           <td class="best">8</td>
@@ -684,7 +712,7 @@ const base = import.meta.env.BASE_URL;
           <td class="group-start">179</td>
         </tr>
         <tr>
-          <td class="model-name">Ornith-1.5-9B <span class="badge new">New</span></td>
+          <td class="model-name">Ornith-1.5-9B</td>
           <td class="group-start">15</td>
           <td class="group-start best">10</td>
           <td>7</td>
